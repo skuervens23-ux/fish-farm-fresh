@@ -14,16 +14,211 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      pembayaran: {
+        Row: {
+          created_at: string
+          dicatat_oleh: string
+          id: string
+          jumlah: number
+          metode: Database["public"]["Enums"]["metode_pembayaran"]
+          referensi_id: string
+          tipe: Database["public"]["Enums"]["tipe_pembayaran"]
+        }
+        Insert: {
+          created_at?: string
+          dicatat_oleh: string
+          id?: string
+          jumlah: number
+          metode?: Database["public"]["Enums"]["metode_pembayaran"]
+          referensi_id: string
+          tipe: Database["public"]["Enums"]["tipe_pembayaran"]
+        }
+        Update: {
+          created_at?: string
+          dicatat_oleh?: string
+          id?: string
+          jumlah?: number
+          metode?: Database["public"]["Enums"]["metode_pembayaran"]
+          referensi_id?: string
+          tipe?: Database["public"]["Enums"]["tipe_pembayaran"]
+        }
+        Relationships: []
+      }
+      pembelian: {
+        Row: {
+          created_at: string
+          dicatat_oleh: string
+          harga_per_kg: number
+          id: string
+          jenis_ikan: string
+          jumlah_dibayar: number
+          jumlah_kg: number
+          jumlah_mati: number
+          petani_id: string
+          status_bayar: Database["public"]["Enums"]["status_bayar"]
+          status_pengiriman: Database["public"]["Enums"]["status_pengiriman"]
+          tanggal: string
+          total_harga: number
+        }
+        Insert: {
+          created_at?: string
+          dicatat_oleh: string
+          harga_per_kg: number
+          id?: string
+          jenis_ikan: string
+          jumlah_dibayar?: number
+          jumlah_kg: number
+          jumlah_mati?: number
+          petani_id: string
+          status_bayar: Database["public"]["Enums"]["status_bayar"]
+          status_pengiriman?: Database["public"]["Enums"]["status_pengiriman"]
+          tanggal?: string
+          total_harga?: number
+        }
+        Update: {
+          created_at?: string
+          dicatat_oleh?: string
+          harga_per_kg?: number
+          id?: string
+          jenis_ikan?: string
+          jumlah_dibayar?: number
+          jumlah_kg?: number
+          jumlah_mati?: number
+          petani_id?: string
+          status_bayar?: Database["public"]["Enums"]["status_bayar"]
+          status_pengiriman?: Database["public"]["Enums"]["status_pengiriman"]
+          tanggal?: string
+          total_harga?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pembelian_petani_id_fkey"
+            columns: ["petani_id"]
+            isOneToOne: false
+            referencedRelation: "petani"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      petani: {
+        Row: {
+          alamat: string | null
+          created_at: string
+          created_by: string | null
+          id: string
+          is_active: boolean
+          nama: string
+          telepon: string | null
+        }
+        Insert: {
+          alamat?: string | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          is_active?: boolean
+          nama: string
+          telepon?: string | null
+        }
+        Update: {
+          alamat?: string | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          is_active?: boolean
+          nama?: string
+          telepon?: string | null
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          id: string
+          nama: string
+        }
+        Insert: {
+          created_at?: string
+          id: string
+          nama?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          nama?: string
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      create_pembelian: {
+        Args: {
+          _harga_per_kg: number
+          _jenis_ikan: string
+          _jumlah_dibayar: number
+          _jumlah_kg: number
+          _petani_id: string
+          _status_bayar: Database["public"]["Enums"]["status_bayar"]
+        }
+        Returns: {
+          created_at: string
+          dicatat_oleh: string
+          harga_per_kg: number
+          id: string
+          jenis_ikan: string
+          jumlah_dibayar: number
+          jumlah_kg: number
+          jumlah_mati: number
+          petani_id: string
+          status_bayar: Database["public"]["Enums"]["status_bayar"]
+          status_pengiriman: Database["public"]["Enums"]["status_pengiriman"]
+          tanggal: string
+          total_harga: number
+        }
+        SetofOptions: {
+          from: "*"
+          to: "pembelian"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "mandor" | "owner"
+      metode_pembayaran: "tunai"
+      status_bayar: "lunas" | "belum" | "sebagian"
+      status_pengiriman: "dikirim" | "ditampung_kolam"
+      tipe_pembayaran: "bayar_petani" | "terima_pembeli"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +345,12 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["mandor", "owner"],
+      metode_pembayaran: ["tunai"],
+      status_bayar: ["lunas", "belum", "sebagian"],
+      status_pengiriman: ["dikirim", "ditampung_kolam"],
+      tipe_pembayaran: ["bayar_petani", "terima_pembeli"],
+    },
   },
 } as const
