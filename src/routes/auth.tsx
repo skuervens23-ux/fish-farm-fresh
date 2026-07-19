@@ -33,6 +33,17 @@ function AuthPage() {
     });
   }, [navigate]);
 
+  function translateAuthError(msg: string): string {
+    const m = msg.toLowerCase();
+    if (m.includes("invalid login")) return "Email atau password salah.";
+    if (m.includes("email not confirmed")) return "Email belum dikonfirmasi. Silakan daftar ulang atau hubungi admin.";
+    if (m.includes("user already registered") || m.includes("already registered")) return "Email sudah terdaftar. Silakan masuk.";
+    if (m.includes("weak_password") || m.includes("weak password") || m.includes("pwned")) return "Password terlalu lemah. Gunakan kombinasi huruf, angka, dan simbol.";
+    if (m.includes("rate limit")) return "Terlalu banyak percobaan. Coba lagi beberapa saat.";
+    if (m.includes("network")) return "Koneksi bermasalah. Periksa internet Anda.";
+    return msg;
+  }
+
   async function handleLogin(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const form = new FormData(e.currentTarget);
@@ -46,7 +57,8 @@ function AuthPage() {
       password: passR.data,
     });
     setLoading(false);
-    if (error) return toast.error(error.message);
+    if (error) return toast.error(translateAuthError(error.message));
+    toast.success("Berhasil masuk.");
     navigate({ to: "/pembelian", replace: true });
   }
 
@@ -60,7 +72,7 @@ function AuthPage() {
     if (!emailR.success) return toast.error(emailR.error.issues[0].message);
     if (!passR.success) return toast.error(passR.error.issues[0].message);
     setLoading(true);
-    const { error } = await supabase.auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
       email: emailR.data,
       password: passR.data,
       options: {
@@ -68,9 +80,24 @@ function AuthPage() {
         data: { nama: namaR.data },
       },
     });
+    if (error) {
+      setLoading(false);
+      return toast.error(translateAuthError(error.message));
+    }
+    // Auto-confirm aktif → langsung ada session. Jika belum, coba sign-in otomatis.
+    if (!data.session) {
+      const { error: signInErr } = await supabase.auth.signInWithPassword({
+        email: emailR.data,
+        password: passR.data,
+      });
+      if (signInErr) {
+        setLoading(false);
+        return toast.error(translateAuthError(signInErr.message));
+      }
+    }
     setLoading(false);
-    if (error) return toast.error(error.message);
-    toast.success("Akun dibuat. Silakan masuk.");
+    toast.success("Akun dibuat. Selamat datang!");
+    navigate({ to: "/pembelian", replace: true });
   }
 
   return (
