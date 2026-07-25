@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthenticatedPetaniIndexRouteImport } from './routes/_authenticated/petani.index'
 import { Route as AuthenticatedPembelianIndexRouteImport } from './routes/_authenticated/pembelian.index'
 import { Route as AuthenticatedPembelianBaruRouteImport } from './routes/_authenticated/pembelian.baru'
 
@@ -29,6 +30,12 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedPetaniIndexRoute =
+  AuthenticatedPetaniIndexRouteImport.update({
+    id: '/petani/',
+    path: '/petani/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedPembelianIndexRoute =
   AuthenticatedPembelianIndexRouteImport.update({
     id: '/pembelian/',
@@ -47,12 +54,14 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/pembelian/baru': typeof AuthenticatedPembelianBaruRoute
   '/pembelian/': typeof AuthenticatedPembelianIndexRoute
+  '/petani/': typeof AuthenticatedPetaniIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/pembelian/baru': typeof AuthenticatedPembelianBaruRoute
   '/pembelian': typeof AuthenticatedPembelianIndexRoute
+  '/petani': typeof AuthenticatedPetaniIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -61,12 +70,13 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/_authenticated/pembelian/baru': typeof AuthenticatedPembelianBaruRoute
   '/_authenticated/pembelian/': typeof AuthenticatedPembelianIndexRoute
+  '/_authenticated/petani/': typeof AuthenticatedPetaniIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/auth' | '/pembelian/baru' | '/pembelian/'
+  fullPaths: '/' | '/auth' | '/pembelian/baru' | '/pembelian/' | '/petani/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/pembelian/baru' | '/pembelian'
+  to: '/' | '/auth' | '/pembelian/baru' | '/pembelian' | '/petani'
   id:
     | '__root__'
     | '/'
@@ -74,6 +84,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/_authenticated/pembelian/baru'
     | '/_authenticated/pembelian/'
+    | '/_authenticated/petani/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -105,6 +116,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/petani/': {
+      id: '/_authenticated/petani/'
+      path: '/petani'
+      fullPath: '/petani/'
+      preLoaderRoute: typeof AuthenticatedPetaniIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/pembelian/': {
       id: '/_authenticated/pembelian/'
       path: '/pembelian'
@@ -125,11 +143,13 @@ declare module '@tanstack/react-router' {
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedPembelianBaruRoute: typeof AuthenticatedPembelianBaruRoute
   AuthenticatedPembelianIndexRoute: typeof AuthenticatedPembelianIndexRoute
+  AuthenticatedPetaniIndexRoute: typeof AuthenticatedPetaniIndexRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedPembelianBaruRoute: AuthenticatedPembelianBaruRoute,
   AuthenticatedPembelianIndexRoute: AuthenticatedPembelianIndexRoute,
+  AuthenticatedPetaniIndexRoute: AuthenticatedPetaniIndexRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
@@ -143,13 +163,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
