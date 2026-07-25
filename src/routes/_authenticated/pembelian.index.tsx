@@ -1,12 +1,26 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Plus, LogOut, Users } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { formatKg, formatRupiah, formatTanggal } from "@/lib/format";
 import { useUserRole } from "@/hooks/useUserRole";
+
+type Pembelian = {
+  id: string;
+  tanggal: string;
+  jenis_ikan: string;
+  jumlah_kg: number | string;
+  harga_per_kg: number | string;
+  total_harga: number | string;
+  jumlah_dibayar: number | string;
+  status_bayar: "lunas" | "belum" | "sebagian";
+  petani: { nama: string } | null;
+};
 
 export const Route = createFileRoute("/_authenticated/pembelian/")({
   component: PembelianList,
@@ -22,10 +36,11 @@ function PembelianList() {
       const { data, error } = await supabase
         .from("pembelian")
         .select("id, tanggal, jenis_ikan, jumlah_kg, harga_per_kg, total_harga, status_bayar, jumlah_dibayar, petani:petani_id(nama)")
+        .order("tanggal", { ascending: false })
         .order("created_at", { ascending: false })
-        .limit(50);
+        .limit(200);
       if (error) throw error;
-      return data;
+      return data as unknown as Pembelian[];
     },
   });
 
@@ -37,6 +52,9 @@ function PembelianList() {
     (s, p) => s + Math.max(0, Number(p.total_harga) - Number(p.jumlah_dibayar)),
     0,
   );
+
+  const grupHarian = useMemo(() => groupBy(data, (p) => p.tanggal), [data]);
+  const grupMingguan = useMemo(() => groupBy(data, (p) => weekKey(p.tanggal)), [data]);
 
   async function signOut() {
     await supabase.auth.signOut();
@@ -101,43 +119,37 @@ function PembelianList() {
             Belum ada pembelian. Tekan tombol di bawah untuk menambah.
           </Card>
         )}
-        <ul className="space-y-3">
-          {data.map((p) => {
-            const sisa = Number(p.total_harga) - Number(p.jumlah_dibayar);
-            return (
-              <li key={p.id}>
-                <Card className="p-4">
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="min-w-0">
-                      <div className="truncate text-sm font-medium text-foreground">
-                        {p.petani?.nama ?? "—"}
-                      </div>
-                      <div className="text-xs text-muted-foreground">
-                        {formatTanggal(p.tanggal)} · {p.jenis_ikan}
-                      </div>
-                    </div>
-                    <StatusBadge status={p.status_bayar} />
-                  </div>
-                  <div className="mt-3 grid grid-cols-2 gap-2 text-sm">
-                    <div>
-                      <div className="text-xs text-muted-foreground">Jumlah</div>
-                      <div className="font-medium">{formatKg(Number(p.jumlah_kg))}</div>
-                    </div>
-                    <div>
-                      <div className="text-xs text-muted-foreground">Total</div>
-                      <div className="font-medium">{formatRupiah(Number(p.total_harga))}</div>
-                    </div>
-                  </div>
-                  {sisa > 0 && (
-                    <div className="mt-2 text-xs text-destructive">
-                      Sisa hutang: {formatRupiah(sisa)}
-                    </div>
-                  )}
-                </Card>
-              </li>
-            );
-          })}
-        </ul>
+
+        {data.length > 0 && (
+          <Tabs defaultValue="harian" className="w-full">
+            <TabsList className="grid w-full grid-cols-2">
+              <TabsTrigger value="harian">Harian</TabsTrigger>
+              <TabsTrigger value="mingguan">Mingguan</TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="harian" className="mt-4 space-y-5">
+              {grupHarian.map(([key, items]) => (
+                <GrupSection
+                  key={key}
+                  judul={formatTanggal(key)}
+                  items={items}
+                  showItemDate={false}
+                />
+              ))}
+            </TabsContent>
+
+            <TabsContent value="mingguan" className="mt-4 space-y-5">
+              {grupMingguan.map(([key, items]) => (
+                <GrupSection
+                  key={key}
+                  judul={labelMinggu(items)}
+                  items={items}
+                  showItemDate
+                />
+              ))}
+            </TabsContent>
+          </Tabs>
+        )}
       </div>
 
       <div className="fixed inset-x-0 bottom-0 border-t border-border bg-background p-4">
@@ -154,6 +166,84 @@ function PembelianList() {
   );
 }
 
+function GrupSection({
+  judul,
+  items,
+  showItemDate,
+}: {
+  judul: string;
+  items: Pembelian[];
+  showItemDate: boolean;
+}) {
+  const total = items.reduce((s, p) => s + Number(p.total_harga), 0);
+  const hutang = items.reduce(
+    (s, p) => s + Math.max(0, Number(p.total_harga) - Number(p.jumlah_dibayar)),
+    0,
+  );
+  const totalKg = items.reduce((s, p) => s + Number(p.jumlah_kg), 0);
+
+  return (
+    <section>
+      <div className="mb-2 flex items-center justify-between">
+        <h2 className="text-sm font-semibold text-foreground">{judul}</h2>
+        <span className="text-xs text-muted-foreground">{items.length} transaksi</span>
+      </div>
+      <Card className="mb-3 grid grid-cols-3 gap-2 p-3 text-xs">
+        <div>
+          <div className="text-muted-foreground">Kg</div>
+          <div className="font-medium text-foreground">{formatKg(totalKg)}</div>
+        </div>
+        <div>
+          <div className="text-muted-foreground">Total</div>
+          <div className="font-medium text-primary">{formatRupiah(total)}</div>
+        </div>
+        <div>
+          <div className="text-muted-foreground">Hutang</div>
+          <div className="font-medium text-hutang">{formatRupiah(hutang)}</div>
+        </div>
+      </Card>
+      <ul className="space-y-3">
+        {items.map((p) => {
+          const sisa = Number(p.total_harga) - Number(p.jumlah_dibayar);
+          return (
+            <li key={p.id}>
+              <Card className="p-4">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <div className="truncate text-sm font-medium text-foreground">
+                      {p.petani?.nama ?? "—"}
+                    </div>
+                    <div className="text-xs text-muted-foreground">
+                      {showItemDate ? `${formatTanggal(p.tanggal)} · ` : ""}
+                      {p.jenis_ikan}
+                    </div>
+                  </div>
+                  <StatusBadge status={p.status_bayar} />
+                </div>
+                <div className="mt-3 grid grid-cols-2 gap-2 text-sm">
+                  <div>
+                    <div className="text-xs text-muted-foreground">Jumlah</div>
+                    <div className="font-medium">{formatKg(Number(p.jumlah_kg))}</div>
+                  </div>
+                  <div>
+                    <div className="text-xs text-muted-foreground">Total</div>
+                    <div className="font-medium">{formatRupiah(Number(p.total_harga))}</div>
+                  </div>
+                </div>
+                {sisa > 0 && (
+                  <div className="mt-2 text-xs text-destructive">
+                    Sisa hutang: {formatRupiah(sisa)}
+                  </div>
+                )}
+              </Card>
+            </li>
+          );
+        })}
+      </ul>
+    </section>
+  );
+}
+
 function StatusBadge({ status }: { status: "lunas" | "belum" | "sebagian" }) {
   const map = {
     lunas: { label: "Lunas", cls: "bg-success/15 text-success" },
@@ -166,4 +256,34 @@ function StatusBadge({ status }: { status: "lunas" | "belum" | "sebagian" }) {
       {s.label}
     </Badge>
   );
+}
+
+// ---------- helpers ----------
+
+function groupBy<T>(arr: T[], keyFn: (t: T) => string): Array<[string, T[]]> {
+  const map = new Map<string, T[]>();
+  for (const item of arr) {
+    const k = keyFn(item);
+    const list = map.get(k);
+    if (list) list.push(item);
+    else map.set(k, [item]);
+  }
+  return Array.from(map.entries());
+}
+
+// Minggu = Senin sampai Minggu. Key = tanggal Senin (YYYY-MM-DD).
+function weekKey(dateStr: string): string {
+  const d = new Date(dateStr + "T00:00:00");
+  const day = d.getDay(); // 0=Min, 1=Sen, ... 6=Sab
+  const diff = day === 0 ? -6 : 1 - day;
+  d.setDate(d.getDate() + diff);
+  return d.toISOString().slice(0, 10);
+}
+
+function labelMinggu(items: Pembelian[]): string {
+  const tanggalList = items.map((p) => p.tanggal).sort();
+  const mulai = tanggalList[0];
+  const akhir = tanggalList[tanggalList.length - 1];
+  if (mulai === akhir) return formatTanggal(mulai);
+  return `${formatTanggal(mulai)} – ${formatTanggal(akhir)}`;
 }
