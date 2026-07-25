@@ -1,11 +1,12 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { Plus, LogOut } from "lucide-react";
+import { Plus, LogOut, Users } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { formatKg, formatRupiah, formatTanggal } from "@/lib/format";
+import { useUserRole } from "@/hooks/useUserRole";
 
 export const Route = createFileRoute("/_authenticated/pembelian/")({
   component: PembelianList,
@@ -13,6 +14,8 @@ export const Route = createFileRoute("/_authenticated/pembelian/")({
 
 function PembelianList() {
   const navigate = useNavigate();
+  const { role, isOwner } = useUserRole();
+
   const { data = [], isLoading } = useQuery({
     queryKey: ["pembelian"],
     queryFn: async () => {
@@ -26,6 +29,15 @@ function PembelianList() {
     },
   });
 
+  const today = new Date().toISOString().slice(0, 10);
+  const totalHariIni = data
+    .filter((p) => p.tanggal === today)
+    .reduce((s, p) => s + Number(p.total_harga), 0);
+  const totalHutang = data.reduce(
+    (s, p) => s + Math.max(0, Number(p.total_harga) - Number(p.jumlah_dibayar)),
+    0,
+  );
+
   async function signOut() {
     await supabase.auth.signOut();
     navigate({ to: "/auth", replace: true });
@@ -35,14 +47,54 @@ function PembelianList() {
     <main className="min-h-screen bg-muted/40 pb-24">
       <header className="sticky top-0 z-10 border-b border-border bg-background">
         <div className="mx-auto flex max-w-[420px] items-center justify-between px-4 py-3">
-          <h1 className="text-lg font-semibold text-foreground">Pembelian</h1>
-          <Button variant="ghost" size="icon" onClick={signOut} aria-label="Keluar">
-            <LogOut className="h-4 w-4" />
-          </Button>
+          <div className="flex items-center gap-2">
+            <h1 className="text-lg font-semibold text-foreground">Pembelian</h1>
+            {role && (
+              <Badge
+                variant="secondary"
+                className={
+                  isOwner
+                    ? "bg-primary/15 text-primary"
+                    : "bg-muted text-muted-foreground"
+                }
+              >
+                {isOwner ? "Owner" : "Mandor"}
+              </Badge>
+            )}
+          </div>
+          <div className="flex items-center gap-1">
+            {isOwner && (
+              <Button variant="ghost" size="icon" asChild aria-label="Kelola Petani">
+                <Link to="/petani">
+                  <Users className="h-4 w-4" />
+                </Link>
+              </Button>
+            )}
+            <Button variant="ghost" size="icon" onClick={signOut} aria-label="Keluar">
+              <LogOut className="h-4 w-4" />
+            </Button>
+          </div>
         </div>
       </header>
 
       <div className="mx-auto max-w-[420px] px-4 pt-4">
+        {isOwner && (
+          <Card className="mb-4 grid grid-cols-2 gap-3 p-4">
+            <div>
+              <div className="text-xs text-muted-foreground">Total hari ini</div>
+              <div className="text-base font-semibold text-primary">
+                {formatRupiah(totalHariIni)}
+              </div>
+            </div>
+            <div>
+              <div className="text-xs text-muted-foreground">Total hutang</div>
+              <div className="text-base font-semibold text-hutang">
+                {formatRupiah(totalHutang)}
+              </div>
+            </div>
+          </Card>
+        )}
+
         {isLoading && <p className="text-sm text-muted-foreground">Memuat…</p>}
         {!isLoading && data.length === 0 && (
           <Card className="p-6 text-center text-sm text-muted-foreground">
@@ -104,9 +156,9 @@ function PembelianList() {
 
 function StatusBadge({ status }: { status: "lunas" | "belum" | "sebagian" }) {
   const map = {
-    lunas: { label: "Lunas", cls: "bg-emerald-500/15 text-emerald-700 dark:text-emerald-400" },
-    belum: { label: "Belum bayar", cls: "bg-red-500/15 text-red-700 dark:text-red-400" },
-    sebagian: { label: "Sebagian", cls: "bg-amber-500/15 text-amber-700 dark:text-amber-500" },
+    lunas: { label: "Lunas", cls: "bg-success/15 text-success" },
+    belum: { label: "Belum bayar", cls: "bg-destructive/15 text-destructive" },
+    sebagian: { label: "Sebagian", cls: "bg-warning/15 text-warning" },
   } as const;
   const s = map[status];
   return (
