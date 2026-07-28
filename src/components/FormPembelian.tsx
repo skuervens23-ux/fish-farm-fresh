@@ -27,7 +27,7 @@ const schema = z
   .refine(
     (d) => {
       if (d.status_bayar !== "sebagian") return true;
-      const total = +(d.jumlah_kg * d.harga_per_kg).toFixed(2);
+      const total = +(d.jumlah_kg * 50 * d.harga_per_kg).toFixed(2);
       return d.jumlah_dibayar > 0 && d.jumlah_dibayar < total;
     },
     { message: "Jumlah dibayar harus > 0 dan < total", path: ["jumlah_dibayar"] },
@@ -62,7 +62,7 @@ export function FormPembelian() {
 
   const jumlahNum = parseFloat(jumlahKg) || 0;
   const hargaNum = parseFloat(hargaPerKg) || 0;
-  const total = useMemo(() => +(jumlahNum * hargaNum).toFixed(2), [jumlahNum, hargaNum]);
+  const total = useMemo(() => +(jumlahNum * 50 * hargaNum).toFixed(2), [jumlahNum, hargaNum]);
   const dibayarNum = parseFloat(jumlahDibayar) || 0;
   const sisa =
     statusBayar === "lunas" ? 0 : statusBayar === "belum" ? total : Math.max(0, total - dibayarNum);
