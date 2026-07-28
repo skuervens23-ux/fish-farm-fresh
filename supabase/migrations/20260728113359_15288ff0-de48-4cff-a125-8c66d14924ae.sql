@@ -1,0 +1,1 @@
+UPDATE public.pembelian SET jumlah_dibayar = total_harga WHERE status_bayar = 'lunas' AND jumlah_dibayar <> total_harga;
