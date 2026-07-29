@@ -1,4 +1,3 @@
-import * as XLSX from "xlsx";
 
 export type BarisLaporan = {
   tanggal: string;
@@ -34,7 +33,7 @@ export function weekRangeLabel(senin: string): string {
 }
 
 /** Bangun workbook: 1 sheet ringkasan + 1 sheet per minggu. */
-export function buildWorkbookMingguan(rows: BarisLaporan[]) {
+async function buildWorkbookMingguan(XLSX: typeof import("xlsx"), rows: BarisLaporan[]) {
   const wb = XLSX.utils.book_new();
   const grup = new Map<string, BarisLaporan[]>();
   for (const r of rows) {
@@ -90,8 +89,9 @@ export function buildWorkbookMingguan(rows: BarisLaporan[]) {
   return wb;
 }
 
-export function unduhLaporanMingguan(rows: BarisLaporan[], namaFile?: string) {
-  const wb = buildWorkbookMingguan(rows);
+export async function unduhLaporanMingguan(rows: BarisLaporan[], namaFile?: string) {
+  const XLSX = await import("xlsx");
+  const wb = await buildWorkbookMingguan(XLSX, rows);
   const nama = namaFile ?? `Laporan-Pembelian-${new Date().toISOString().slice(0, 10)}.xlsx`;
   XLSX.writeFile(wb, nama);
 }

@@ -81,9 +81,9 @@ function PembelianList() {
   const grupHarian = useMemo(() => groupBy(data, (p) => p.tanggal), [data]);
   const grupMingguan = useMemo(() => groupBy(data, (p) => weekKey(p.tanggal)), [data]);
 
-  function exportExcel() {
+  async function exportExcel() {
     if (data.length === 0) return toast.error("Tidak ada data untuk diekspor");
-    unduhLaporanMingguan(
+    await unduhLaporanMingguan(
       data.map((p) => ({
         tanggal: p.tanggal,
         petani: p.petani?.nama ?? "—",
