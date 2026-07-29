@@ -15,6 +15,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedPetaniIndexRouteImport } from './routes/_authenticated/petani.index'
 import { Route as AuthenticatedPembelianIndexRouteImport } from './routes/_authenticated/pembelian.index'
 import { Route as AuthenticatedPembelianBaruRouteImport } from './routes/_authenticated/pembelian.baru'
+import { Route as AuthenticatedPembelianIdRouteImport } from './routes/_authenticated/pembelian.$id'
 
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
@@ -48,10 +49,17 @@ const AuthenticatedPembelianBaruRoute =
     path: '/pembelian/baru',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedPembelianIdRoute =
+  AuthenticatedPembelianIdRouteImport.update({
+    id: '/pembelian/$id',
+    path: '/pembelian/$id',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/pembelian/$id': typeof AuthenticatedPembelianIdRoute
   '/pembelian/baru': typeof AuthenticatedPembelianBaruRoute
   '/pembelian/': typeof AuthenticatedPembelianIndexRoute
   '/petani/': typeof AuthenticatedPetaniIndexRoute
@@ -59,6 +67,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/pembelian/$id': typeof AuthenticatedPembelianIdRoute
   '/pembelian/baru': typeof AuthenticatedPembelianBaruRoute
   '/pembelian': typeof AuthenticatedPembelianIndexRoute
   '/petani': typeof AuthenticatedPetaniIndexRoute
@@ -68,20 +77,34 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
+  '/_authenticated/pembelian/$id': typeof AuthenticatedPembelianIdRoute
   '/_authenticated/pembelian/baru': typeof AuthenticatedPembelianBaruRoute
   '/_authenticated/pembelian/': typeof AuthenticatedPembelianIndexRoute
   '/_authenticated/petani/': typeof AuthenticatedPetaniIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/auth' | '/pembelian/baru' | '/pembelian/' | '/petani/'
+  fullPaths:
+    | '/'
+    | '/auth'
+    | '/pembelian/$id'
+    | '/pembelian/baru'
+    | '/pembelian/'
+    | '/petani/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/pembelian/baru' | '/pembelian' | '/petani'
+  to:
+    | '/'
+    | '/auth'
+    | '/pembelian/$id'
+    | '/pembelian/baru'
+    | '/pembelian'
+    | '/petani'
   id:
     | '__root__'
     | '/'
     | '/_authenticated'
     | '/auth'
+    | '/_authenticated/pembelian/$id'
     | '/_authenticated/pembelian/baru'
     | '/_authenticated/pembelian/'
     | '/_authenticated/petani/'
@@ -137,16 +160,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedPembelianBaruRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/pembelian/$id': {
+      id: '/_authenticated/pembelian/$id'
+      path: '/pembelian/$id'
+      fullPath: '/pembelian/$id'
+      preLoaderRoute: typeof AuthenticatedPembelianIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
   }
 }
 
 interface AuthenticatedRouteRouteChildren {
+  AuthenticatedPembelianIdRoute: typeof AuthenticatedPembelianIdRoute
   AuthenticatedPembelianBaruRoute: typeof AuthenticatedPembelianBaruRoute
   AuthenticatedPembelianIndexRoute: typeof AuthenticatedPembelianIndexRoute
   AuthenticatedPetaniIndexRoute: typeof AuthenticatedPetaniIndexRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedPembelianIdRoute: AuthenticatedPembelianIdRoute,
   AuthenticatedPembelianBaruRoute: AuthenticatedPembelianBaruRoute,
   AuthenticatedPembelianIndexRoute: AuthenticatedPembelianIndexRoute,
   AuthenticatedPetaniIndexRoute: AuthenticatedPetaniIndexRoute,

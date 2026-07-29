@@ -1,14 +1,18 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Plus, LogOut, Users } from "lucide-react";
+import { Plus, LogOut, Users, Search, FileSpreadsheet } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { formatKg, formatRupiah, formatTanggal } from "@/lib/format";
 import { useUserRole } from "@/hooks/useUserRole";
+import { unduhLaporanMingguan } from "@/lib/laporan";
+import { toast } from "sonner";
 
 type Pembelian = {
   id: string;
@@ -22,6 +26,13 @@ type Pembelian = {
   petani: { nama: string } | null;
 };
 
+const FILTER_STATUS = [
+  { value: "semua", label: "Semua" },
+  { value: "belum", label: "Belum" },
+  { value: "sebagian", label: "Sebagian" },
+  { value: "lunas", label: "Lunas" },
+] as const;
+
 export const Route = createFileRoute("/_authenticated/pembelian/")({
   component: PembelianList,
 });
@@ -29,8 +40,10 @@ export const Route = createFileRoute("/_authenticated/pembelian/")({
 function PembelianList() {
   const navigate = useNavigate();
   const { role, isOwner } = useUserRole();
+  const [q, setQ] = useState("");
+  const [status, setStatus] = useState<(typeof FILTER_STATUS)[number]["value"]>("semua");
 
-  const { data = [], isLoading } = useQuery({
+  const { data: semua = [], isLoading } = useQuery({
     queryKey: ["pembelian"],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -44,6 +57,18 @@ function PembelianList() {
     },
   });
 
+  const data = useMemo(() => {
+    const key = q.trim().toLowerCase();
+    return semua.filter((p) => {
+      if (status !== "semua" && p.status_bayar !== status) return false;
+      if (!key) return true;
+      return (
+        (p.petani?.nama ?? "").toLowerCase().includes(key) ||
+        p.jenis_ikan.toLowerCase().includes(key)
+      );
+    });
+  }, [semua, q, status]);
+
   const today = new Date().toISOString().slice(0, 10);
   const totalHariIni = data
     .filter((p) => p.tanggal === today)
@@ -56,10 +81,28 @@ function PembelianList() {
   const grupHarian = useMemo(() => groupBy(data, (p) => p.tanggal), [data]);
   const grupMingguan = useMemo(() => groupBy(data, (p) => weekKey(p.tanggal)), [data]);
 
+  function exportExcel() {
+    if (data.length === 0) return toast.error("Tidak ada data untuk diekspor");
+    unduhLaporanMingguan(
+      data.map((p) => ({
+        tanggal: p.tanggal,
+        petani: p.petani?.nama ?? "—",
+        jenis_ikan: p.jenis_ikan,
+        jumlah_kg: Number(p.jumlah_kg),
+        harga_per_kg: Number(p.harga_per_kg),
+        total_harga: Number(p.total_harga),
+        jumlah_dibayar: Number(p.jumlah_dibayar),
+        status_bayar: p.status_bayar,
+      })),
+    );
+    toast.success("Laporan mingguan diunduh");
+  }
+
   async function signOut() {
     await supabase.auth.signOut();
     navigate({ to: "/auth", replace: true });
   }
+
 
   return (
     <main className="min-h-screen bg-muted/40 pb-24">
