@@ -125,6 +125,16 @@ function PembelianList() {
           </div>
           <div className="flex items-center gap-1">
             {isOwner && (
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={exportExcel}
+                aria-label="Unduh laporan mingguan Excel"
+              >
+                <FileSpreadsheet className="h-4 w-4" />
+              </Button>
+            )}
+            {isOwner && (
               <Button variant="ghost" size="icon" asChild aria-label="Kelola Petani">
                 <Link to="/petani">
                   <Users className="h-4 w-4" />
@@ -156,12 +166,55 @@ function PembelianList() {
           </Card>
         )}
 
-        {isLoading && <p className="text-sm text-muted-foreground">Memuat…</p>}
+        <div className="mb-3 space-y-2">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Input
+              value={q}
+              onChange={(e) => setQ(e.target.value)}
+              placeholder="Cari petani atau jenis ikan…"
+              className="h-11 pl-9"
+              aria-label="Cari transaksi"
+            />
+          </div>
+          <div className="flex gap-2 overflow-x-auto pb-1">
+            {FILTER_STATUS.map((f) => (
+              <Button
+                key={f.value}
+                type="button"
+                size="sm"
+                variant={status === f.value ? "default" : "outline"}
+                className="shrink-0 rounded-full"
+                onClick={() => setStatus(f.value)}
+              >
+                {f.label}
+              </Button>
+            ))}
+          </div>
+        </div>
+
+        {isOwner && (
+          <Button variant="outline" className="mb-4 h-11 w-full" onClick={exportExcel}>
+            <FileSpreadsheet className="mr-2 h-4 w-4" />
+            Unduh Laporan Mingguan (Excel)
+          </Button>
+        )}
+
+        {isLoading && (
+          <div className="space-y-3">
+            <Skeleton className="h-20 w-full" />
+            <Skeleton className="h-28 w-full" />
+            <Skeleton className="h-28 w-full" />
+          </div>
+        )}
         {!isLoading && data.length === 0 && (
           <Card className="p-6 text-center text-sm text-muted-foreground">
-            Belum ada pembelian. Tekan tombol di bawah untuk menambah.
+            {semua.length === 0
+              ? "Belum ada pembelian. Tekan tombol di bawah untuk menambah."
+              : "Tidak ada transaksi yang cocok dengan pencarian/filter."}
           </Card>
         )}
+
 
         {data.length > 0 && (
           <Tabs defaultValue="harian" className="w-full">
