@@ -11,6 +11,23 @@ import { BayarHutangDialog } from "@/components/BayarHutangDialog";
 import { formatKg, formatRupiah, formatTanggal } from "@/lib/format";
 
 export const Route = createFileRoute("/_authenticated/pembelian/$id")({
+  head: () => ({
+    meta: [
+      { title: "Detail Pembelian Ikan | Bandar Ikan" },
+      {
+        name: "description",
+        content:
+          "Rincian transaksi pembelian ikan: total harga, sisa hutang, riwayat pembayaran, dan pelunasan.",
+      },
+      { property: "og:title", content: "Detail Pembelian Ikan" },
+      {
+        property: "og:description",
+        content: "Rincian transaksi pembelian ikan dan pelunasan hutang petani.",
+      },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
+    ],
+  }),
   component: DetailPembelian,
 });
 
