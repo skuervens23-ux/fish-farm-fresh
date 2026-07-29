@@ -1,14 +1,18 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Plus, LogOut, Users } from "lucide-react";
+import { Plus, LogOut, Users, Search, FileSpreadsheet } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { formatKg, formatRupiah, formatTanggal } from "@/lib/format";
 import { useUserRole } from "@/hooks/useUserRole";
+import { unduhLaporanMingguan } from "@/lib/laporan";
+import { toast } from "sonner";
 
 type Pembelian = {
   id: string;
@@ -22,6 +26,13 @@ type Pembelian = {
   petani: { nama: string } | null;
 };
 
+const FILTER_STATUS = [
+  { value: "semua", label: "Semua" },
+  { value: "belum", label: "Belum" },
+  { value: "sebagian", label: "Sebagian" },
+  { value: "lunas", label: "Lunas" },
+] as const;
+
 export const Route = createFileRoute("/_authenticated/pembelian/")({
   component: PembelianList,
 });
@@ -29,8 +40,10 @@ export const Route = createFileRoute("/_authenticated/pembelian/")({
 function PembelianList() {
   const navigate = useNavigate();
   const { role, isOwner } = useUserRole();
+  const [q, setQ] = useState("");
+  const [status, setStatus] = useState<(typeof FILTER_STATUS)[number]["value"]>("semua");
 
-  const { data = [], isLoading } = useQuery({
+  const { data: semua = [], isLoading } = useQuery({
     queryKey: ["pembelian"],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -44,6 +57,18 @@ function PembelianList() {
     },
   });
 
+  const data = useMemo(() => {
+    const key = q.trim().toLowerCase();
+    return semua.filter((p) => {
+      if (status !== "semua" && p.status_bayar !== status) return false;
+      if (!key) return true;
+      return (
+        (p.petani?.nama ?? "").toLowerCase().includes(key) ||
+        p.jenis_ikan.toLowerCase().includes(key)
+      );
+    });
+  }, [semua, q, status]);
+
   const today = new Date().toISOString().slice(0, 10);
   const totalHariIni = data
     .filter((p) => p.tanggal === today)
@@ -56,10 +81,28 @@ function PembelianList() {
   const grupHarian = useMemo(() => groupBy(data, (p) => p.tanggal), [data]);
   const grupMingguan = useMemo(() => groupBy(data, (p) => weekKey(p.tanggal)), [data]);
 
+  async function exportExcel() {
+    if (data.length === 0) return toast.error("Tidak ada data untuk diekspor");
+    await unduhLaporanMingguan(
+      data.map((p) => ({
+        tanggal: p.tanggal,
+        petani: p.petani?.nama ?? "—",
+        jenis_ikan: p.jenis_ikan,
+        jumlah_kg: Number(p.jumlah_kg),
+        harga_per_kg: Number(p.harga_per_kg),
+        total_harga: Number(p.total_harga),
+        jumlah_dibayar: Number(p.jumlah_dibayar),
+        status_bayar: p.status_bayar,
+      })),
+    );
+    toast.success("Laporan mingguan diunduh");
+  }
+
   async function signOut() {
     await supabase.auth.signOut();
     navigate({ to: "/auth", replace: true });
   }
+
 
   return (
     <main className="min-h-screen bg-muted/40 pb-24">
@@ -82,6 +125,7 @@ function PembelianList() {
           </div>
           <div className="flex items-center gap-1">
             {isOwner && (
+
               <Button variant="ghost" size="icon" asChild aria-label="Kelola Petani">
                 <Link to="/petani">
                   <Users className="h-4 w-4" />
@@ -113,12 +157,55 @@ function PembelianList() {
           </Card>
         )}
 
-        {isLoading && <p className="text-sm text-muted-foreground">Memuat…</p>}
+        <div className="mb-3 space-y-2">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Input
+              value={q}
+              onChange={(e) => setQ(e.target.value)}
+              placeholder="Cari petani atau jenis ikan…"
+              className="h-11 pl-9"
+              aria-label="Cari transaksi"
+            />
+          </div>
+          <div className="flex gap-2 overflow-x-auto pb-1">
+            {FILTER_STATUS.map((f) => (
+              <Button
+                key={f.value}
+                type="button"
+                size="sm"
+                variant={status === f.value ? "default" : "outline"}
+                className="shrink-0 rounded-full"
+                onClick={() => setStatus(f.value)}
+              >
+                {f.label}
+              </Button>
+            ))}
+          </div>
+        </div>
+
+        {isOwner && (
+          <Button variant="outline" className="mb-4 h-11 w-full" onClick={exportExcel}>
+            <FileSpreadsheet className="mr-2 h-4 w-4" />
+            Unduh Laporan Mingguan (Excel)
+          </Button>
+        )}
+
+        {isLoading && (
+          <div className="space-y-3">
+            <Skeleton className="h-20 w-full" />
+            <Skeleton className="h-28 w-full" />
+            <Skeleton className="h-28 w-full" />
+          </div>
+        )}
         {!isLoading && data.length === 0 && (
           <Card className="p-6 text-center text-sm text-muted-foreground">
-            Belum ada pembelian. Tekan tombol di bawah untuk menambah.
+            {semua.length === 0
+              ? "Belum ada pembelian. Tekan tombol di bawah untuk menambah."
+              : "Tidak ada transaksi yang cocok dengan pencarian/filter."}
           </Card>
         )}
+
 
         {data.length > 0 && (
           <Tabs defaultValue="harian" className="w-full">
@@ -207,36 +294,39 @@ function GrupSection({
           const sisa = Number(p.total_harga) - Number(p.jumlah_dibayar);
           return (
             <li key={p.id}>
-              <Card className="p-4">
-                <div className="flex items-start justify-between gap-3">
-                  <div className="min-w-0">
-                    <div className="truncate text-sm font-medium text-foreground">
-                      {p.petani?.nama ?? "—"}
+              <Link to="/pembelian/$id" params={{ id: p.id }} className="block">
+                <Card className="p-4 transition-colors hover:bg-accent/40">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="min-w-0">
+                      <div className="truncate text-sm font-medium text-foreground">
+                        {p.petani?.nama ?? "—"}
+                      </div>
+                      <div className="text-xs text-muted-foreground">
+                        {showItemDate ? `${formatTanggal(p.tanggal)} · ` : ""}
+                        {p.jenis_ikan}
+                      </div>
                     </div>
-                    <div className="text-xs text-muted-foreground">
-                      {showItemDate ? `${formatTanggal(p.tanggal)} · ` : ""}
-                      {p.jenis_ikan}
+                    <StatusBadge status={p.status_bayar} />
+                  </div>
+                  <div className="mt-3 grid grid-cols-2 gap-2 text-sm">
+                    <div>
+                      <div className="text-xs text-muted-foreground">Jumlah</div>
+                      <div className="font-medium">{formatKg(Number(p.jumlah_kg))}</div>
+                    </div>
+                    <div>
+                      <div className="text-xs text-muted-foreground">Total</div>
+                      <div className="font-medium">{formatRupiah(Number(p.total_harga))}</div>
                     </div>
                   </div>
-                  <StatusBadge status={p.status_bayar} />
-                </div>
-                <div className="mt-3 grid grid-cols-2 gap-2 text-sm">
-                  <div>
-                    <div className="text-xs text-muted-foreground">Jumlah</div>
-                    <div className="font-medium">{formatKg(Number(p.jumlah_kg))}</div>
-                  </div>
-                  <div>
-                    <div className="text-xs text-muted-foreground">Total</div>
-                    <div className="font-medium">{formatRupiah(Number(p.total_harga))}</div>
-                  </div>
-                </div>
-                {sisa > 0 && (
-                  <div className="mt-2 text-xs text-destructive">
-                    Sisa hutang: {formatRupiah(sisa)}
-                  </div>
-                )}
-              </Card>
+                  {sisa > 0 && (
+                    <div className="mt-2 text-xs text-destructive">
+                      Sisa hutang: {formatRupiah(sisa)}
+                    </div>
+                  )}
+                </Card>
+              </Link>
             </li>
+
           );
         })}
       </ul>
