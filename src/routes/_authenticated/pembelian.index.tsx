@@ -125,16 +125,7 @@ function PembelianList() {
           </div>
           <div className="flex items-center gap-1">
             {isOwner && (
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={exportExcel}
-                aria-label="Unduh laporan mingguan Excel"
-              >
-                <FileSpreadsheet className="h-4 w-4" />
-              </Button>
-            )}
-            {isOwner && (
+
               <Button variant="ghost" size="icon" asChild aria-label="Kelola Petani">
                 <Link to="/petani">
                   <Users className="h-4 w-4" />
