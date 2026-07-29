@@ -294,36 +294,39 @@ function GrupSection({
           const sisa = Number(p.total_harga) - Number(p.jumlah_dibayar);
           return (
             <li key={p.id}>
-              <Card className="p-4">
-                <div className="flex items-start justify-between gap-3">
-                  <div className="min-w-0">
-                    <div className="truncate text-sm font-medium text-foreground">
-                      {p.petani?.nama ?? "—"}
+              <Link to="/pembelian/$id" params={{ id: p.id }} className="block">
+                <Card className="p-4 transition-colors hover:bg-accent/40">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="min-w-0">
+                      <div className="truncate text-sm font-medium text-foreground">
+                        {p.petani?.nama ?? "—"}
+                      </div>
+                      <div className="text-xs text-muted-foreground">
+                        {showItemDate ? `${formatTanggal(p.tanggal)} · ` : ""}
+                        {p.jenis_ikan}
+                      </div>
                     </div>
-                    <div className="text-xs text-muted-foreground">
-                      {showItemDate ? `${formatTanggal(p.tanggal)} · ` : ""}
-                      {p.jenis_ikan}
+                    <StatusBadge status={p.status_bayar} />
+                  </div>
+                  <div className="mt-3 grid grid-cols-2 gap-2 text-sm">
+                    <div>
+                      <div className="text-xs text-muted-foreground">Jumlah</div>
+                      <div className="font-medium">{formatKg(Number(p.jumlah_kg))}</div>
+                    </div>
+                    <div>
+                      <div className="text-xs text-muted-foreground">Total</div>
+                      <div className="font-medium">{formatRupiah(Number(p.total_harga))}</div>
                     </div>
                   </div>
-                  <StatusBadge status={p.status_bayar} />
-                </div>
-                <div className="mt-3 grid grid-cols-2 gap-2 text-sm">
-                  <div>
-                    <div className="text-xs text-muted-foreground">Jumlah</div>
-                    <div className="font-medium">{formatKg(Number(p.jumlah_kg))}</div>
-                  </div>
-                  <div>
-                    <div className="text-xs text-muted-foreground">Total</div>
-                    <div className="font-medium">{formatRupiah(Number(p.total_harga))}</div>
-                  </div>
-                </div>
-                {sisa > 0 && (
-                  <div className="mt-2 text-xs text-destructive">
-                    Sisa hutang: {formatRupiah(sisa)}
-                  </div>
-                )}
-              </Card>
+                  {sisa > 0 && (
+                    <div className="mt-2 text-xs text-destructive">
+                      Sisa hutang: {formatRupiah(sisa)}
+                    </div>
+                  )}
+                </Card>
+              </Link>
             </li>
+
           );
         })}
       </ul>
