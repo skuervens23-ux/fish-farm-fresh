@@ -174,6 +174,30 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      bayar_hutang: {
+        Args: { _jumlah: number; _pembelian_id: string }
+        Returns: {
+          created_at: string
+          dicatat_oleh: string
+          harga_per_kg: number
+          id: string
+          jenis_ikan: string
+          jumlah_dibayar: number
+          jumlah_kg: number
+          jumlah_mati: number
+          petani_id: string
+          status_bayar: Database["public"]["Enums"]["status_bayar"]
+          status_pengiriman: Database["public"]["Enums"]["status_pengiriman"]
+          tanggal: string
+          total_harga: number
+        }
+        SetofOptions: {
+          from: "*"
+          to: "pembelian"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
       create_pembelian: {
         Args: {
           _harga_per_kg: number
