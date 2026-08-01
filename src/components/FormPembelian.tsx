@@ -45,7 +45,9 @@ export function FormPembelian() {
   const [hargaPerKg, setHargaPerKg] = useState("");
   const [statusBayar, setStatusBayar] = useState<StatusBayar>("lunas");
   const [jumlahDibayar, setJumlahDibayar] = useState("");
-  const [saving, setSaving] = useState(false);
+  const [catatan, setCatatan] = useState("");
+  const [fotoNota, setFotoNota] = useState<string | null>(null);
+  const [saving, setSaving] = useState<null | "draft" | "kirim">(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [dialogDefault, setDialogDefault] = useState("");
 
