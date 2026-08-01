@@ -20,6 +20,7 @@ import { Route as AuthenticatedPetaniIndexRouteImport } from './routes/_authenti
 import { Route as AuthenticatedPembelianIndexRouteImport } from './routes/_authenticated/pembelian.index'
 import { Route as AuthenticatedPelangganIndexRouteImport } from './routes/_authenticated/pelanggan.index'
 import { Route as AuthenticatedPenjualanBaruRouteImport } from './routes/_authenticated/penjualan.baru'
+import { Route as AuthenticatedPenjualanIdRouteImport } from './routes/_authenticated/penjualan.$id'
 import { Route as AuthenticatedPembelianBaruRouteImport } from './routes/_authenticated/pembelian.baru'
 import { Route as AuthenticatedPembelianIdRouteImport } from './routes/_authenticated/pembelian.$id'
 
@@ -82,6 +83,12 @@ const AuthenticatedPenjualanBaruRoute =
     path: '/penjualan/baru',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedPenjualanIdRoute =
+  AuthenticatedPenjualanIdRouteImport.update({
+    id: '/penjualan/$id',
+    path: '/penjualan/$id',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedPembelianBaruRoute =
   AuthenticatedPembelianBaruRouteImport.update({
     id: '/pembelian/baru',
@@ -104,6 +111,7 @@ export interface FileRoutesByFullPath {
   '/riwayat': typeof AuthenticatedRiwayatRoute
   '/pembelian/$id': typeof AuthenticatedPembelianIdRoute
   '/pembelian/baru': typeof AuthenticatedPembelianBaruRoute
+  '/penjualan/$id': typeof AuthenticatedPenjualanIdRoute
   '/penjualan/baru': typeof AuthenticatedPenjualanBaruRoute
   '/pelanggan/': typeof AuthenticatedPelangganIndexRoute
   '/pembelian/': typeof AuthenticatedPembelianIndexRoute
@@ -118,6 +126,7 @@ export interface FileRoutesByTo {
   '/riwayat': typeof AuthenticatedRiwayatRoute
   '/pembelian/$id': typeof AuthenticatedPembelianIdRoute
   '/pembelian/baru': typeof AuthenticatedPembelianBaruRoute
+  '/penjualan/$id': typeof AuthenticatedPenjualanIdRoute
   '/penjualan/baru': typeof AuthenticatedPenjualanBaruRoute
   '/pelanggan': typeof AuthenticatedPelangganIndexRoute
   '/pembelian': typeof AuthenticatedPembelianIndexRoute
@@ -134,6 +143,7 @@ export interface FileRoutesById {
   '/_authenticated/riwayat': typeof AuthenticatedRiwayatRoute
   '/_authenticated/pembelian/$id': typeof AuthenticatedPembelianIdRoute
   '/_authenticated/pembelian/baru': typeof AuthenticatedPembelianBaruRoute
+  '/_authenticated/penjualan/$id': typeof AuthenticatedPenjualanIdRoute
   '/_authenticated/penjualan/baru': typeof AuthenticatedPenjualanBaruRoute
   '/_authenticated/pelanggan/': typeof AuthenticatedPelangganIndexRoute
   '/_authenticated/pembelian/': typeof AuthenticatedPembelianIndexRoute
@@ -150,6 +160,7 @@ export interface FileRouteTypes {
     | '/riwayat'
     | '/pembelian/$id'
     | '/pembelian/baru'
+    | '/penjualan/$id'
     | '/penjualan/baru'
     | '/pelanggan/'
     | '/pembelian/'
@@ -164,6 +175,7 @@ export interface FileRouteTypes {
     | '/riwayat'
     | '/pembelian/$id'
     | '/pembelian/baru'
+    | '/penjualan/$id'
     | '/penjualan/baru'
     | '/pelanggan'
     | '/pembelian'
@@ -179,6 +191,7 @@ export interface FileRouteTypes {
     | '/_authenticated/riwayat'
     | '/_authenticated/pembelian/$id'
     | '/_authenticated/pembelian/baru'
+    | '/_authenticated/penjualan/$id'
     | '/_authenticated/penjualan/baru'
     | '/_authenticated/pelanggan/'
     | '/_authenticated/pembelian/'
@@ -270,6 +283,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedPenjualanBaruRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/penjualan/$id': {
+      id: '/_authenticated/penjualan/$id'
+      path: '/penjualan/$id'
+      fullPath: '/penjualan/$id'
+      preLoaderRoute: typeof AuthenticatedPenjualanIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/pembelian/baru': {
       id: '/_authenticated/pembelian/baru'
       path: '/pembelian/baru'
@@ -294,6 +314,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedRiwayatRoute: typeof AuthenticatedRiwayatRoute
   AuthenticatedPembelianIdRoute: typeof AuthenticatedPembelianIdRoute
   AuthenticatedPembelianBaruRoute: typeof AuthenticatedPembelianBaruRoute
+  AuthenticatedPenjualanIdRoute: typeof AuthenticatedPenjualanIdRoute
   AuthenticatedPenjualanBaruRoute: typeof AuthenticatedPenjualanBaruRoute
   AuthenticatedPelangganIndexRoute: typeof AuthenticatedPelangganIndexRoute
   AuthenticatedPembelianIndexRoute: typeof AuthenticatedPembelianIndexRoute
@@ -307,6 +328,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedRiwayatRoute: AuthenticatedRiwayatRoute,
   AuthenticatedPembelianIdRoute: AuthenticatedPembelianIdRoute,
   AuthenticatedPembelianBaruRoute: AuthenticatedPembelianBaruRoute,
+  AuthenticatedPenjualanIdRoute: AuthenticatedPenjualanIdRoute,
   AuthenticatedPenjualanBaruRoute: AuthenticatedPenjualanBaruRoute,
   AuthenticatedPelangganIndexRoute: AuthenticatedPelangganIndexRoute,
   AuthenticatedPembelianIndexRoute: AuthenticatedPembelianIndexRoute,

@@ -11,6 +11,8 @@ import { SearchSelect } from "./SearchSelect";
 import { RingkasanTotal } from "./RingkasanTotal";
 import { RadioStatusBayar, type StatusBayar } from "./RadioStatusBayar";
 import { TambahPetaniDialog } from "./TambahPetaniDialog";
+import { UploadFoto } from "./UploadFoto";
+import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 
 const IKAN_UMUM = ["Nila", "Lele", "Mas", "Gurame", "Patin", "Bawal"];
