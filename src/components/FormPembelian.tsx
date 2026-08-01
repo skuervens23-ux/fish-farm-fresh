@@ -196,9 +196,33 @@ export function FormPembelian() {
           </div>
         )}
 
-        <Button type="submit" className="h-12 w-full text-base" disabled={saving}>
-          {saving ? "Menyimpan…" : "Simpan Pembelian"}
-        </Button>
+        <UploadFoto label="Foto Nota" value={fotoNota} onChange={setFotoNota} />
+
+        <div className="space-y-2">
+          <Label htmlFor="catatan-beli">Catatan</Label>
+          <Textarea
+            id="catatan-beli"
+            value={catatan}
+            onChange={(e) => setCatatan(e.target.value)}
+            rows={3}
+            placeholder="Catatan tambahan (opsional)"
+          />
+        </div>
+
+        <div className="grid grid-cols-2 gap-3">
+          <Button
+            type="button"
+            variant="outline"
+            className="h-12"
+            disabled={saving !== null}
+            onClick={() => void simpan("draft")}
+          >
+            {saving === "draft" ? "Menyimpan…" : "Simpan Draft"}
+          </Button>
+          <Button type="submit" className="h-12 text-base" disabled={saving !== null}>
+            {saving === "kirim" ? "Mengirim…" : "Kirim ke Admin"}
+          </Button>
+        </div>
       </form>
 
       <TambahPetaniDialog
