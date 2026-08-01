@@ -78,6 +78,7 @@ export function FormPembelian() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+  async function simpan(mode: "draft" | "kirim") {
     if (saving) return;
 
     const parsed = schema.safeParse({
@@ -92,7 +93,7 @@ export function FormPembelian() {
       return toast.error(parsed.error.issues[0].message);
     }
 
-    setSaving(true);
+    setSaving(mode);
     const { error } = await supabase.rpc("create_pembelian", {
       _petani_id: parsed.data.petani_id,
       _jenis_ikan: parsed.data.jenis_ikan,
@@ -100,14 +101,20 @@ export function FormPembelian() {
       _harga_per_kg: parsed.data.harga_per_kg,
       _status_bayar: parsed.data.status_bayar,
       _jumlah_dibayar: parsed.data.jumlah_dibayar,
+      _status_transaksi: mode === "draft" ? "draft" : "menunggu",
+      _catatan: catatan || undefined,
+      _foto_nota_url: fotoNota ?? undefined,
     });
-    setSaving(false);
+    setSaving(null);
 
     if (error) return toast.error(error.message);
-    toast.success("Pembelian tersimpan");
+    toast.success(mode === "draft" ? "Draft tersimpan" : "Pembelian dikirim ke admin");
     qc.invalidateQueries({ queryKey: ["pembelian"] });
-    navigate({ to: "/pembelian" });
+    qc.invalidateQueries({ queryKey: ["transaksi"] });
+    qc.invalidateQueries({ queryKey: ["menunggu-count"] });
+    navigate({ to: mode === "draft" ? "/draft" : "/riwayat" });
   }
+
 
   const petaniOptions = petaniList.map((p) => ({ value: p.id, label: p.nama }));
   const ikanOptions = Array.from(new Set([...IKAN_UMUM, ...(jenisIkan ? [jenisIkan] : [])])).map((n) => ({
