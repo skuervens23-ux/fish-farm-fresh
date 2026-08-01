@@ -82,10 +82,14 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: "Pembelian Ikan Hidup — Catat Transaksi Harian" },
       { name: "description", content: "Aplikasi pencatatan pembelian ikan hidup dari petani: total otomatis, status pembayaran, dan hutang tercatat rapi." },
-      { property: "og:title", content: "Pembelian Ikan Hidup" },
-      { property: "og:description", content: "Catat pembelian ikan hidup dari petani dengan status pembayaran dan hutang otomatis." },
+      { property: "og:title", content: "Pembelian Ikan Hidup — Catat Transaksi Harian" },
+      { property: "og:description", content: "Aplikasi pencatatan pembelian ikan hidup dari petani: total otomatis, status pembayaran, dan hutang tercatat rapi." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "Pembelian Ikan Hidup — Catat Transaksi Harian" },
+      { name: "twitter:description", content: "Aplikasi pencatatan pembelian ikan hidup dari petani: total otomatis, status pembayaran, dan hutang tercatat rapi." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/89a0d0c9-7a0c-4f0d-8ae5-975819c393f9/id-preview-6d33fc07--fdf5c2d3-fdc3-4862-a32e-de9fdff624ec.lovable.app-1785592584744.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/89a0d0c9-7a0c-4f0d-8ae5-975819c393f9/id-preview-6d33fc07--fdf5c2d3-fdc3-4862-a32e-de9fdff624ec.lovable.app-1785592584744.png" },
     ],
 
     links: [
