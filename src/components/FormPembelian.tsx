@@ -122,7 +122,13 @@ export function FormPembelian() {
 
   return (
     <>
-      <form onSubmit={handleSubmit} className="mx-auto w-full max-w-[420px] space-y-5">
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          void simpan("kirim");
+        }}
+        className="mx-auto w-full max-w-[520px] space-y-5"
+      >
         <div className="space-y-2">
           <Label>Petani *</Label>
           <SearchSelect
