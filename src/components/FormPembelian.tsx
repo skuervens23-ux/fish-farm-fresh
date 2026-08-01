@@ -76,8 +76,6 @@ export function FormPembelian() {
     if (statusBayar !== "sebagian") setJumlahDibayar("");
   }, [statusBayar]);
 
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
   async function simpan(mode: "draft" | "kirim") {
     if (saving) return;
 
