@@ -12,8 +12,14 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthenticatedRiwayatRouteImport } from './routes/_authenticated/riwayat'
+import { Route as AuthenticatedPersetujuanRouteImport } from './routes/_authenticated/persetujuan'
+import { Route as AuthenticatedDraftRouteImport } from './routes/_authenticated/draft'
+import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedPetaniIndexRouteImport } from './routes/_authenticated/petani.index'
 import { Route as AuthenticatedPembelianIndexRouteImport } from './routes/_authenticated/pembelian.index'
+import { Route as AuthenticatedPelangganIndexRouteImport } from './routes/_authenticated/pelanggan.index'
+import { Route as AuthenticatedPenjualanBaruRouteImport } from './routes/_authenticated/penjualan.baru'
 import { Route as AuthenticatedPembelianBaruRouteImport } from './routes/_authenticated/pembelian.baru'
 import { Route as AuthenticatedPembelianIdRouteImport } from './routes/_authenticated/pembelian.$id'
 
@@ -31,6 +37,27 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedRiwayatRoute = AuthenticatedRiwayatRouteImport.update({
+  id: '/riwayat',
+  path: '/riwayat',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedPersetujuanRoute =
+  AuthenticatedPersetujuanRouteImport.update({
+    id: '/persetujuan',
+    path: '/persetujuan',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedDraftRoute = AuthenticatedDraftRouteImport.update({
+  id: '/draft',
+  path: '/draft',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedPetaniIndexRoute =
   AuthenticatedPetaniIndexRouteImport.update({
     id: '/petani/',
@@ -41,6 +68,18 @@ const AuthenticatedPembelianIndexRoute =
   AuthenticatedPembelianIndexRouteImport.update({
     id: '/pembelian/',
     path: '/pembelian/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedPelangganIndexRoute =
+  AuthenticatedPelangganIndexRouteImport.update({
+    id: '/pelanggan/',
+    path: '/pelanggan/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedPenjualanBaruRoute =
+  AuthenticatedPenjualanBaruRouteImport.update({
+    id: '/penjualan/baru',
+    path: '/penjualan/baru',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const AuthenticatedPembelianBaruRoute =
@@ -59,16 +98,28 @@ const AuthenticatedPembelianIdRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/dashboard': typeof AuthenticatedDashboardRoute
+  '/draft': typeof AuthenticatedDraftRoute
+  '/persetujuan': typeof AuthenticatedPersetujuanRoute
+  '/riwayat': typeof AuthenticatedRiwayatRoute
   '/pembelian/$id': typeof AuthenticatedPembelianIdRoute
   '/pembelian/baru': typeof AuthenticatedPembelianBaruRoute
+  '/penjualan/baru': typeof AuthenticatedPenjualanBaruRoute
+  '/pelanggan/': typeof AuthenticatedPelangganIndexRoute
   '/pembelian/': typeof AuthenticatedPembelianIndexRoute
   '/petani/': typeof AuthenticatedPetaniIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/dashboard': typeof AuthenticatedDashboardRoute
+  '/draft': typeof AuthenticatedDraftRoute
+  '/persetujuan': typeof AuthenticatedPersetujuanRoute
+  '/riwayat': typeof AuthenticatedRiwayatRoute
   '/pembelian/$id': typeof AuthenticatedPembelianIdRoute
   '/pembelian/baru': typeof AuthenticatedPembelianBaruRoute
+  '/penjualan/baru': typeof AuthenticatedPenjualanBaruRoute
+  '/pelanggan': typeof AuthenticatedPelangganIndexRoute
   '/pembelian': typeof AuthenticatedPembelianIndexRoute
   '/petani': typeof AuthenticatedPetaniIndexRoute
 }
@@ -77,8 +128,14 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
+  '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
+  '/_authenticated/draft': typeof AuthenticatedDraftRoute
+  '/_authenticated/persetujuan': typeof AuthenticatedPersetujuanRoute
+  '/_authenticated/riwayat': typeof AuthenticatedRiwayatRoute
   '/_authenticated/pembelian/$id': typeof AuthenticatedPembelianIdRoute
   '/_authenticated/pembelian/baru': typeof AuthenticatedPembelianBaruRoute
+  '/_authenticated/penjualan/baru': typeof AuthenticatedPenjualanBaruRoute
+  '/_authenticated/pelanggan/': typeof AuthenticatedPelangganIndexRoute
   '/_authenticated/pembelian/': typeof AuthenticatedPembelianIndexRoute
   '/_authenticated/petani/': typeof AuthenticatedPetaniIndexRoute
 }
@@ -87,16 +144,28 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/auth'
+    | '/dashboard'
+    | '/draft'
+    | '/persetujuan'
+    | '/riwayat'
     | '/pembelian/$id'
     | '/pembelian/baru'
+    | '/penjualan/baru'
+    | '/pelanggan/'
     | '/pembelian/'
     | '/petani/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/auth'
+    | '/dashboard'
+    | '/draft'
+    | '/persetujuan'
+    | '/riwayat'
     | '/pembelian/$id'
     | '/pembelian/baru'
+    | '/penjualan/baru'
+    | '/pelanggan'
     | '/pembelian'
     | '/petani'
   id:
@@ -104,8 +173,14 @@ export interface FileRouteTypes {
     | '/'
     | '/_authenticated'
     | '/auth'
+    | '/_authenticated/dashboard'
+    | '/_authenticated/draft'
+    | '/_authenticated/persetujuan'
+    | '/_authenticated/riwayat'
     | '/_authenticated/pembelian/$id'
     | '/_authenticated/pembelian/baru'
+    | '/_authenticated/penjualan/baru'
+    | '/_authenticated/pelanggan/'
     | '/_authenticated/pembelian/'
     | '/_authenticated/petani/'
   fileRoutesById: FileRoutesById
@@ -139,6 +214,34 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/riwayat': {
+      id: '/_authenticated/riwayat'
+      path: '/riwayat'
+      fullPath: '/riwayat'
+      preLoaderRoute: typeof AuthenticatedRiwayatRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/persetujuan': {
+      id: '/_authenticated/persetujuan'
+      path: '/persetujuan'
+      fullPath: '/persetujuan'
+      preLoaderRoute: typeof AuthenticatedPersetujuanRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/draft': {
+      id: '/_authenticated/draft'
+      path: '/draft'
+      fullPath: '/draft'
+      preLoaderRoute: typeof AuthenticatedDraftRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/dashboard': {
+      id: '/_authenticated/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof AuthenticatedDashboardRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/petani/': {
       id: '/_authenticated/petani/'
       path: '/petani'
@@ -151,6 +254,20 @@ declare module '@tanstack/react-router' {
       path: '/pembelian'
       fullPath: '/pembelian/'
       preLoaderRoute: typeof AuthenticatedPembelianIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/pelanggan/': {
+      id: '/_authenticated/pelanggan/'
+      path: '/pelanggan'
+      fullPath: '/pelanggan/'
+      preLoaderRoute: typeof AuthenticatedPelangganIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/penjualan/baru': {
+      id: '/_authenticated/penjualan/baru'
+      path: '/penjualan/baru'
+      fullPath: '/penjualan/baru'
+      preLoaderRoute: typeof AuthenticatedPenjualanBaruRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/pembelian/baru': {
@@ -171,15 +288,27 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedRouteRouteChildren {
+  AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
+  AuthenticatedDraftRoute: typeof AuthenticatedDraftRoute
+  AuthenticatedPersetujuanRoute: typeof AuthenticatedPersetujuanRoute
+  AuthenticatedRiwayatRoute: typeof AuthenticatedRiwayatRoute
   AuthenticatedPembelianIdRoute: typeof AuthenticatedPembelianIdRoute
   AuthenticatedPembelianBaruRoute: typeof AuthenticatedPembelianBaruRoute
+  AuthenticatedPenjualanBaruRoute: typeof AuthenticatedPenjualanBaruRoute
+  AuthenticatedPelangganIndexRoute: typeof AuthenticatedPelangganIndexRoute
   AuthenticatedPembelianIndexRoute: typeof AuthenticatedPembelianIndexRoute
   AuthenticatedPetaniIndexRoute: typeof AuthenticatedPetaniIndexRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
+  AuthenticatedDraftRoute: AuthenticatedDraftRoute,
+  AuthenticatedPersetujuanRoute: AuthenticatedPersetujuanRoute,
+  AuthenticatedRiwayatRoute: AuthenticatedRiwayatRoute,
   AuthenticatedPembelianIdRoute: AuthenticatedPembelianIdRoute,
   AuthenticatedPembelianBaruRoute: AuthenticatedPembelianBaruRoute,
+  AuthenticatedPenjualanBaruRoute: AuthenticatedPenjualanBaruRoute,
+  AuthenticatedPelangganIndexRoute: AuthenticatedPelangganIndexRoute,
   AuthenticatedPembelianIndexRoute: AuthenticatedPembelianIndexRoute,
   AuthenticatedPetaniIndexRoute: AuthenticatedPetaniIndexRoute,
 }
@@ -195,13 +324,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
