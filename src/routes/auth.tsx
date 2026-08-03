@@ -16,6 +16,9 @@ export const Route = createFileRoute("/auth")({
       { name: "description", content: "Masuk atau daftar untuk mengelola pembelian ikan hidup dari petani." },
     ],
   }),
+  validateSearch: (search: Record<string, unknown>) => ({
+    next: typeof search.next === "string" && search.next.startsWith("/") ? search.next : undefined,
+  }),
   component: AuthPage,
 });
 
@@ -25,13 +28,26 @@ const namaSchema = z.string().trim().min(2, "Nama minimal 2 karakter").max(80);
 
 function AuthPage() {
   const navigate = useNavigate();
+  const { next } = Route.useSearch();
+  const tujuan = next ?? "/pembelian";
+
+  function lanjut() {
+    if (next) {
+      window.location.href = next;
+      return;
+    }
+    navigate({ to: "/pembelian", replace: true });
+  }
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
-      if (data.session) navigate({ to: "/pembelian", replace: true });
+      if (data.session) {
+        if (next) window.location.href = next;
+        else navigate({ to: "/pembelian", replace: true });
+      }
     });
-  }, [navigate]);
+  }, [navigate, next]);
 
   function translateAuthError(msg: string): string {
     const m = msg.toLowerCase();
@@ -59,7 +75,7 @@ function AuthPage() {
     setLoading(false);
     if (error) return toast.error(translateAuthError(error.message));
     toast.success("Berhasil masuk.");
-    navigate({ to: "/pembelian", replace: true });
+    lanjut();
   }
 
   async function handleSignup(e: React.FormEvent<HTMLFormElement>) {
@@ -76,7 +92,7 @@ function AuthPage() {
       email: emailR.data,
       password: passR.data,
       options: {
-        emailRedirectTo: window.location.origin,
+        emailRedirectTo: `${window.location.origin}${tujuan}`,
         data: { nama: namaR.data },
       },
     });
@@ -97,7 +113,7 @@ function AuthPage() {
     }
     setLoading(false);
     toast.success("Akun dibuat. Selamat datang!");
-    navigate({ to: "/pembelian", replace: true });
+    lanjut();
   }
 
   return (

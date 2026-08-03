@@ -1,0 +1,219 @@
+{
+  "version": 1,
+  "sdk_version": "0.26.1",
+  "path": "/mcp",
+  "auth": {
+    "type": "oauth",
+    "issuer": "https://lcjmozioljbdwhlvqyvu.supabase.co/auth/v1",
+    "accepted_audiences": [
+      "authenticated"
+    ]
+  },
+  "mcp": {
+    "server": {
+      "name": "pond-purchase-hub",
+      "version": "0.1.0",
+      "title": "Pond Purchase Hub"
+    },
+    "tools": [
+      {
+        "name": "list_pembelian",
+        "title": "Daftar pembelian",
+        "description": "Daftar transaksi pembelian ikan dari petani, dengan filter tanggal, status transaksi, dan status bayar.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "dari_tanggal": {
+              "description": "Tanggal awal (YYYY-MM-DD).",
+              "type": "string"
+            },
+            "sampai_tanggal": {
+              "description": "Tanggal akhir (YYYY-MM-DD).",
+              "type": "string"
+            },
+            "status_transaksi": {
+              "description": "Filter status alur transaksi.",
+              "type": "string",
+              "enum": [
+                "draft",
+                "menunggu",
+                "disetujui",
+                "ditolak"
+              ]
+            },
+            "status_bayar": {
+              "description": "Filter status pembayaran.",
+              "type": "string",
+              "enum": [
+                "belum",
+                "sebagian",
+                "lunas"
+              ]
+            },
+            "limit": {
+              "description": "Jumlah baris maksimum (default 50).",
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 200
+            }
+          }
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "list_penjualan",
+        "title": "Daftar penjualan",
+        "description": "Daftar transaksi penjualan ikan ke pelanggan, dengan filter tanggal, status transaksi, dan status bayar.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "dari_tanggal": {
+              "description": "Tanggal awal (YYYY-MM-DD).",
+              "type": "string"
+            },
+            "sampai_tanggal": {
+              "description": "Tanggal akhir (YYYY-MM-DD).",
+              "type": "string"
+            },
+            "status_transaksi": {
+              "description": "Filter status alur transaksi.",
+              "type": "string",
+              "enum": [
+                "draft",
+                "menunggu",
+                "disetujui",
+                "ditolak"
+              ]
+            },
+            "status_bayar": {
+              "description": "Filter status pembayaran.",
+              "type": "string",
+              "enum": [
+                "belum",
+                "sebagian",
+                "lunas"
+              ]
+            },
+            "limit": {
+              "description": "Jumlah baris maksimum (default 50).",
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 200
+            }
+          }
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "list_mitra",
+        "title": "Daftar petani & pelanggan",
+        "description": "Daftar data master mitra: petani (pemasok) atau pelanggan (pembeli).",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "tipe": {
+              "type": "string",
+              "enum": [
+                "petani",
+                "pelanggan"
+              ],
+              "description": "Jenis mitra yang ingin ditampilkan."
+            },
+            "cari": {
+              "description": "Kata kunci nama mitra.",
+              "type": "string"
+            },
+            "hanya_aktif": {
+              "description": "Hanya tampilkan mitra aktif (default true).",
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "tipe"
+          ]
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "ringkasan_transaksi",
+        "title": "Ringkasan transaksi",
+        "description": "Ringkasan pembelian dan penjualan pada rentang tanggal: total kg, total rupiah, total dibayar, sisa hutang/piutang.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "dari_tanggal": {
+              "type": "string",
+              "description": "Tanggal awal (YYYY-MM-DD)."
+            },
+            "sampai_tanggal": {
+              "type": "string",
+              "description": "Tanggal akhir (YYYY-MM-DD)."
+            }
+          },
+          "required": [
+            "dari_tanggal",
+            "sampai_tanggal"
+          ]
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "bayar_hutang_pembelian",
+        "title": "Bayar hutang pembelian",
+        "description": "Catat pembayaran sisa hutang untuk satu transaksi pembelian. Jumlah tidak boleh melebihi sisa hutang.",
+        "annotations": {
+          "readOnlyHint": false,
+          "destructiveHint": false,
+          "idempotentHint": false,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "pembelian_id": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "ID transaksi pembelian."
+            },
+            "jumlah": {
+              "type": "number",
+              "exclusiveMinimum": 0,
+              "description": "Nominal pembayaran dalam rupiah."
+            }
+          },
+          "required": [
+            "pembelian_id",
+            "jumlah"
+          ]
+        },
+        "outputSchema": null
+      }
+    ]
+  }
+}
