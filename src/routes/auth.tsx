@@ -16,9 +16,10 @@ export const Route = createFileRoute("/auth")({
       { name: "description", content: "Masuk atau daftar untuk mengelola pembelian ikan hidup dari petani." },
     ],
   }),
-  validateSearch: (search: Record<string, unknown>) => ({
-    next: typeof search.next === "string" && search.next.startsWith("/") ? search.next : undefined,
-  }),
+  validateSearch: (search: Record<string, unknown>): { next?: string } =>
+    typeof search.next === "string" && search.next.startsWith("/")
+      ? { next: search.next }
+      : {},
   component: AuthPage,
 });
 
