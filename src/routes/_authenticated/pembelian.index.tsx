@@ -1,10 +1,11 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Plus, LogOut, Users, Search, FileSpreadsheet } from "lucide-react";
+import { Plus, Users, Search, FileSpreadsheet } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { AppShell } from "@/components/AppShell";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -34,12 +35,25 @@ const FILTER_STATUS = [
 ] as const;
 
 export const Route = createFileRoute("/_authenticated/pembelian/")({
+  head: () => ({
+    meta: [
+      { title: "Daftar Pembelian Ikan | Bandar Ikan" },
+      {
+        name: "description",
+        content:
+          "Daftar pembelian ikan dari petani per hari dan per minggu, lengkap dengan status bayar dan sisa hutang.",
+      },
+      { property: "og:title", content: "Daftar Pembelian Ikan" },
+      { property: "og:description", content: "Rekap pembelian harian dan mingguan beserta hutang petani." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
+    ],
+  }),
   component: PembelianList,
 });
 
 function PembelianList() {
-  const navigate = useNavigate();
-  const { role, isOwner } = useUserRole();
+  const { isOwner } = useUserRole();
   const [q, setQ] = useState("");
   const [status, setStatus] = useState<(typeof FILTER_STATUS)[number]["value"]>("semua");
 
@@ -98,48 +112,22 @@ function PembelianList() {
     toast.success("Laporan mingguan diunduh");
   }
 
-  async function signOut() {
-    await supabase.auth.signOut();
-    navigate({ to: "/auth", replace: true });
-  }
-
 
   return (
-    <main className="min-h-screen bg-muted/40 pb-24">
-      <header className="sticky top-0 z-10 border-b border-border bg-background">
-        <div className="mx-auto flex max-w-[420px] items-center justify-between px-4 py-3">
-          <div className="flex items-center gap-2">
-            <h1 className="text-lg font-semibold text-foreground">Pembelian</h1>
-            {role && (
-              <Badge
-                variant="secondary"
-                className={
-                  isOwner
-                    ? "bg-primary/15 text-primary"
-                    : "bg-muted text-muted-foreground"
-                }
-              >
-                {isOwner ? "Owner" : "Mandor"}
-              </Badge>
-            )}
-          </div>
-          <div className="flex items-center gap-1">
-            {isOwner && (
-
-              <Button variant="ghost" size="icon" asChild aria-label="Kelola Petani">
-                <Link to="/petani">
-                  <Users className="h-4 w-4" />
-                </Link>
-              </Button>
-            )}
-            <Button variant="ghost" size="icon" onClick={signOut} aria-label="Keluar">
-              <LogOut className="h-4 w-4" />
-            </Button>
-          </div>
-        </div>
-      </header>
-
-      <div className="mx-auto max-w-[420px] px-4 pt-4">
+    <AppShell
+      title="Pembelian"
+      backTo="/dashboard"
+      actions={
+        isOwner ? (
+          <Button variant="ghost" size="icon" asChild aria-label="Kelola Petani">
+            <Link to="/petani">
+              <Users className="h-4 w-4" />
+            </Link>
+          </Button>
+        ) : undefined
+      }
+    >
+      <div className="mx-auto max-w-2xl px-4 pb-28 pt-4">
         {isOwner && (
           <Card className="mb-4 grid grid-cols-2 gap-3 p-4">
             <div>
@@ -239,8 +227,8 @@ function PembelianList() {
         )}
       </div>
 
-      <div className="fixed inset-x-0 bottom-0 border-t border-border bg-background p-4">
-        <div className="mx-auto max-w-[420px]">
+      <div className="fixed inset-x-0 bottom-0 z-20 border-t border-border bg-background p-4">
+        <div className="mx-auto max-w-2xl">
           <Button asChild className="h-12 w-full text-base">
             <Link to="/pembelian/baru">
               <Plus className="mr-2 h-4 w-4" />
@@ -249,7 +237,7 @@ function PembelianList() {
           </Button>
         </div>
       </div>
-    </main>
+    </AppShell>
   );
 }
 
