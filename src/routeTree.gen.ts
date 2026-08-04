@@ -15,6 +15,7 @@ import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRiwayatRouteImport } from './routes/_authenticated/riwayat'
 import { Route as AuthenticatedPersetujuanRouteImport } from './routes/_authenticated/persetujuan'
+import { Route as AuthenticatedKasRouteImport } from './routes/_authenticated/kas'
 import { Route as AuthenticatedDraftRouteImport } from './routes/_authenticated/draft'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
@@ -59,6 +60,11 @@ const AuthenticatedPersetujuanRoute =
     path: '/persetujuan',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedKasRoute = AuthenticatedKasRouteImport.update({
+  id: '/kas',
+  path: '/kas',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedDraftRoute = AuthenticatedDraftRouteImport.update({
   id: '/draft',
   path: '/draft',
@@ -143,6 +149,7 @@ export interface FileRoutesByFullPath {
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/draft': typeof AuthenticatedDraftRoute
+  '/kas': typeof AuthenticatedKasRoute
   '/persetujuan': typeof AuthenticatedPersetujuanRoute
   '/riwayat': typeof AuthenticatedRiwayatRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
@@ -163,6 +170,7 @@ export interface FileRoutesByTo {
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/draft': typeof AuthenticatedDraftRoute
+  '/kas': typeof AuthenticatedKasRoute
   '/persetujuan': typeof AuthenticatedPersetujuanRoute
   '/riwayat': typeof AuthenticatedRiwayatRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
@@ -185,6 +193,7 @@ export interface FileRoutesById {
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/draft': typeof AuthenticatedDraftRoute
+  '/_authenticated/kas': typeof AuthenticatedKasRoute
   '/_authenticated/persetujuan': typeof AuthenticatedPersetujuanRoute
   '/_authenticated/riwayat': typeof AuthenticatedRiwayatRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
@@ -207,6 +216,7 @@ export interface FileRouteTypes {
     | '/.well-known/oauth-protected-resource'
     | '/dashboard'
     | '/draft'
+    | '/kas'
     | '/persetujuan'
     | '/riwayat'
     | '/.lovable/oauth/consent'
@@ -227,6 +237,7 @@ export interface FileRouteTypes {
     | '/.well-known/oauth-protected-resource'
     | '/dashboard'
     | '/draft'
+    | '/kas'
     | '/persetujuan'
     | '/riwayat'
     | '/.lovable/oauth/consent'
@@ -248,6 +259,7 @@ export interface FileRouteTypes {
     | '/.well-known/oauth-protected-resource'
     | '/_authenticated/dashboard'
     | '/_authenticated/draft'
+    | '/_authenticated/kas'
     | '/_authenticated/persetujuan'
     | '/_authenticated/riwayat'
     | '/.lovable/oauth/consent'
@@ -314,6 +326,13 @@ declare module '@tanstack/react-router' {
       path: '/persetujuan'
       fullPath: '/persetujuan'
       preLoaderRoute: typeof AuthenticatedPersetujuanRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/kas': {
+      id: '/_authenticated/kas'
+      path: '/kas'
+      fullPath: '/kas'
+      preLoaderRoute: typeof AuthenticatedKasRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/draft': {
@@ -413,6 +432,7 @@ declare module '@tanstack/react-router' {
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedDraftRoute: typeof AuthenticatedDraftRoute
+  AuthenticatedKasRoute: typeof AuthenticatedKasRoute
   AuthenticatedPersetujuanRoute: typeof AuthenticatedPersetujuanRoute
   AuthenticatedRiwayatRoute: typeof AuthenticatedRiwayatRoute
   AuthenticatedPembelianIdRoute: typeof AuthenticatedPembelianIdRoute
@@ -427,6 +447,7 @@ interface AuthenticatedRouteRouteChildren {
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedDraftRoute: AuthenticatedDraftRoute,
+  AuthenticatedKasRoute: AuthenticatedKasRoute,
   AuthenticatedPersetujuanRoute: AuthenticatedPersetujuanRoute,
   AuthenticatedRiwayatRoute: AuthenticatedRiwayatRoute,
   AuthenticatedPembelianIdRoute: AuthenticatedPembelianIdRoute,
