@@ -16,6 +16,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedStokRouteImport } from './routes/_authenticated/stok'
 import { Route as AuthenticatedRiwayatRouteImport } from './routes/_authenticated/riwayat'
 import { Route as AuthenticatedPersetujuanRouteImport } from './routes/_authenticated/persetujuan'
+import { Route as AuthenticatedPenggunaRouteImport } from './routes/_authenticated/pengguna'
 import { Route as AuthenticatedLaporanRouteImport } from './routes/_authenticated/laporan'
 import { Route as AuthenticatedKasRouteImport } from './routes/_authenticated/kas'
 import { Route as AuthenticatedDraftRouteImport } from './routes/_authenticated/draft'
@@ -67,6 +68,11 @@ const AuthenticatedPersetujuanRoute =
     path: '/persetujuan',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedPenggunaRoute = AuthenticatedPenggunaRouteImport.update({
+  id: '/pengguna',
+  path: '/pengguna',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedLaporanRoute = AuthenticatedLaporanRouteImport.update({
   id: '/laporan',
   path: '/laporan',
@@ -163,6 +169,7 @@ export interface FileRoutesByFullPath {
   '/draft': typeof AuthenticatedDraftRoute
   '/kas': typeof AuthenticatedKasRoute
   '/laporan': typeof AuthenticatedLaporanRoute
+  '/pengguna': typeof AuthenticatedPenggunaRoute
   '/persetujuan': typeof AuthenticatedPersetujuanRoute
   '/riwayat': typeof AuthenticatedRiwayatRoute
   '/stok': typeof AuthenticatedStokRoute
@@ -186,6 +193,7 @@ export interface FileRoutesByTo {
   '/draft': typeof AuthenticatedDraftRoute
   '/kas': typeof AuthenticatedKasRoute
   '/laporan': typeof AuthenticatedLaporanRoute
+  '/pengguna': typeof AuthenticatedPenggunaRoute
   '/persetujuan': typeof AuthenticatedPersetujuanRoute
   '/riwayat': typeof AuthenticatedRiwayatRoute
   '/stok': typeof AuthenticatedStokRoute
@@ -211,6 +219,7 @@ export interface FileRoutesById {
   '/_authenticated/draft': typeof AuthenticatedDraftRoute
   '/_authenticated/kas': typeof AuthenticatedKasRoute
   '/_authenticated/laporan': typeof AuthenticatedLaporanRoute
+  '/_authenticated/pengguna': typeof AuthenticatedPenggunaRoute
   '/_authenticated/persetujuan': typeof AuthenticatedPersetujuanRoute
   '/_authenticated/riwayat': typeof AuthenticatedRiwayatRoute
   '/_authenticated/stok': typeof AuthenticatedStokRoute
@@ -236,6 +245,7 @@ export interface FileRouteTypes {
     | '/draft'
     | '/kas'
     | '/laporan'
+    | '/pengguna'
     | '/persetujuan'
     | '/riwayat'
     | '/stok'
@@ -259,6 +269,7 @@ export interface FileRouteTypes {
     | '/draft'
     | '/kas'
     | '/laporan'
+    | '/pengguna'
     | '/persetujuan'
     | '/riwayat'
     | '/stok'
@@ -283,6 +294,7 @@ export interface FileRouteTypes {
     | '/_authenticated/draft'
     | '/_authenticated/kas'
     | '/_authenticated/laporan'
+    | '/_authenticated/pengguna'
     | '/_authenticated/persetujuan'
     | '/_authenticated/riwayat'
     | '/_authenticated/stok'
@@ -357,6 +369,13 @@ declare module '@tanstack/react-router' {
       path: '/persetujuan'
       fullPath: '/persetujuan'
       preLoaderRoute: typeof AuthenticatedPersetujuanRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/pengguna': {
+      id: '/_authenticated/pengguna'
+      path: '/pengguna'
+      fullPath: '/pengguna'
+      preLoaderRoute: typeof AuthenticatedPenggunaRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/laporan': {
@@ -472,6 +491,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedDraftRoute: typeof AuthenticatedDraftRoute
   AuthenticatedKasRoute: typeof AuthenticatedKasRoute
   AuthenticatedLaporanRoute: typeof AuthenticatedLaporanRoute
+  AuthenticatedPenggunaRoute: typeof AuthenticatedPenggunaRoute
   AuthenticatedPersetujuanRoute: typeof AuthenticatedPersetujuanRoute
   AuthenticatedRiwayatRoute: typeof AuthenticatedRiwayatRoute
   AuthenticatedStokRoute: typeof AuthenticatedStokRoute
@@ -489,6 +509,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedDraftRoute: AuthenticatedDraftRoute,
   AuthenticatedKasRoute: AuthenticatedKasRoute,
   AuthenticatedLaporanRoute: AuthenticatedLaporanRoute,
+  AuthenticatedPenggunaRoute: AuthenticatedPenggunaRoute,
   AuthenticatedPersetujuanRoute: AuthenticatedPersetujuanRoute,
   AuthenticatedRiwayatRoute: AuthenticatedRiwayatRoute,
   AuthenticatedStokRoute: AuthenticatedStokRoute,
