@@ -16,6 +16,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedStokRouteImport } from './routes/_authenticated/stok'
 import { Route as AuthenticatedRiwayatRouteImport } from './routes/_authenticated/riwayat'
 import { Route as AuthenticatedPersetujuanRouteImport } from './routes/_authenticated/persetujuan'
+import { Route as AuthenticatedLaporanRouteImport } from './routes/_authenticated/laporan'
 import { Route as AuthenticatedKasRouteImport } from './routes/_authenticated/kas'
 import { Route as AuthenticatedDraftRouteImport } from './routes/_authenticated/draft'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
@@ -66,6 +67,11 @@ const AuthenticatedPersetujuanRoute =
     path: '/persetujuan',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedLaporanRoute = AuthenticatedLaporanRouteImport.update({
+  id: '/laporan',
+  path: '/laporan',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedKasRoute = AuthenticatedKasRouteImport.update({
   id: '/kas',
   path: '/kas',
@@ -156,6 +162,7 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/draft': typeof AuthenticatedDraftRoute
   '/kas': typeof AuthenticatedKasRoute
+  '/laporan': typeof AuthenticatedLaporanRoute
   '/persetujuan': typeof AuthenticatedPersetujuanRoute
   '/riwayat': typeof AuthenticatedRiwayatRoute
   '/stok': typeof AuthenticatedStokRoute
@@ -178,6 +185,7 @@ export interface FileRoutesByTo {
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/draft': typeof AuthenticatedDraftRoute
   '/kas': typeof AuthenticatedKasRoute
+  '/laporan': typeof AuthenticatedLaporanRoute
   '/persetujuan': typeof AuthenticatedPersetujuanRoute
   '/riwayat': typeof AuthenticatedRiwayatRoute
   '/stok': typeof AuthenticatedStokRoute
@@ -202,6 +210,7 @@ export interface FileRoutesById {
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/draft': typeof AuthenticatedDraftRoute
   '/_authenticated/kas': typeof AuthenticatedKasRoute
+  '/_authenticated/laporan': typeof AuthenticatedLaporanRoute
   '/_authenticated/persetujuan': typeof AuthenticatedPersetujuanRoute
   '/_authenticated/riwayat': typeof AuthenticatedRiwayatRoute
   '/_authenticated/stok': typeof AuthenticatedStokRoute
@@ -226,6 +235,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/draft'
     | '/kas'
+    | '/laporan'
     | '/persetujuan'
     | '/riwayat'
     | '/stok'
@@ -248,6 +258,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/draft'
     | '/kas'
+    | '/laporan'
     | '/persetujuan'
     | '/riwayat'
     | '/stok'
@@ -271,6 +282,7 @@ export interface FileRouteTypes {
     | '/_authenticated/dashboard'
     | '/_authenticated/draft'
     | '/_authenticated/kas'
+    | '/_authenticated/laporan'
     | '/_authenticated/persetujuan'
     | '/_authenticated/riwayat'
     | '/_authenticated/stok'
@@ -345,6 +357,13 @@ declare module '@tanstack/react-router' {
       path: '/persetujuan'
       fullPath: '/persetujuan'
       preLoaderRoute: typeof AuthenticatedPersetujuanRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/laporan': {
+      id: '/_authenticated/laporan'
+      path: '/laporan'
+      fullPath: '/laporan'
+      preLoaderRoute: typeof AuthenticatedLaporanRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/kas': {
@@ -452,6 +471,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedDraftRoute: typeof AuthenticatedDraftRoute
   AuthenticatedKasRoute: typeof AuthenticatedKasRoute
+  AuthenticatedLaporanRoute: typeof AuthenticatedLaporanRoute
   AuthenticatedPersetujuanRoute: typeof AuthenticatedPersetujuanRoute
   AuthenticatedRiwayatRoute: typeof AuthenticatedRiwayatRoute
   AuthenticatedStokRoute: typeof AuthenticatedStokRoute
@@ -468,6 +488,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedDraftRoute: AuthenticatedDraftRoute,
   AuthenticatedKasRoute: AuthenticatedKasRoute,
+  AuthenticatedLaporanRoute: AuthenticatedLaporanRoute,
   AuthenticatedPersetujuanRoute: AuthenticatedPersetujuanRoute,
   AuthenticatedRiwayatRoute: AuthenticatedRiwayatRoute,
   AuthenticatedStokRoute: AuthenticatedStokRoute,
