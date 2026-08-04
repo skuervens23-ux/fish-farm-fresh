@@ -14,6 +14,42 @@ export type Database = {
   }
   public: {
     Tables: {
+      kas: {
+        Row: {
+          created_at: string
+          dicatat_oleh: string
+          id: string
+          jumlah: number
+          kategori: string
+          keterangan: string | null
+          tanggal: string
+          tipe: Database["public"]["Enums"]["tipe_kas"]
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          dicatat_oleh: string
+          id?: string
+          jumlah: number
+          kategori?: string
+          keterangan?: string | null
+          tanggal?: string
+          tipe: Database["public"]["Enums"]["tipe_kas"]
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          dicatat_oleh?: string
+          id?: string
+          jumlah?: number
+          kategori?: string
+          keterangan?: string | null
+          tanggal?: string
+          tipe?: Database["public"]["Enums"]["tipe_kas"]
+          updated_at?: string
+        }
+        Relationships: []
+      }
       pelanggan: {
         Row: {
           alamat: string | null
@@ -150,6 +186,27 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      pengaturan: {
+        Row: {
+          created_at: string
+          key: string
+          updated_at: string
+          value: string | null
+        }
+        Insert: {
+          created_at?: string
+          key: string
+          updated_at?: string
+          value?: string | null
+        }
+        Update: {
+          created_at?: string
+          key?: string
+          updated_at?: string
+          value?: string | null
+        }
+        Relationships: []
       }
       penjualan: {
         Row: {
@@ -487,6 +544,7 @@ export type Database = {
       status_bayar: "lunas" | "belum" | "sebagian"
       status_pengiriman: "dikirim" | "ditampung_kolam"
       status_transaksi: "draft" | "menunggu" | "disetujui" | "ditolak"
+      tipe_kas: "masuk" | "keluar"
       tipe_pembayaran: "bayar_petani" | "terima_pembeli"
     }
     CompositeTypes: {
@@ -620,6 +678,7 @@ export const Constants = {
       status_bayar: ["lunas", "belum", "sebagian"],
       status_pengiriman: ["dikirim", "ditampung_kolam"],
       status_transaksi: ["draft", "menunggu", "disetujui", "ditolak"],
+      tipe_kas: ["masuk", "keluar"],
       tipe_pembayaran: ["bayar_petani", "terima_pembeli"],
     },
   },

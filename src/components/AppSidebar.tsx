@@ -10,6 +10,11 @@ import {
   Contact,
   LogOut,
   Fish,
+  Boxes,
+  Wallet,
+  BarChart3,
+  UserCog,
+  Settings,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import {
@@ -35,18 +40,24 @@ const UTAMA: Item[] = [{ title: "Dashboard", url: "/dashboard", icon: LayoutDash
 const TRANSAKSI: Item[] = [
   { title: "Input Pembelian", url: "/pembelian/baru", icon: ShoppingCart },
   { title: "Input Penjualan", url: "/penjualan/baru", icon: Store },
+  { title: "Kas Masuk & Keluar", url: "/kas", icon: Wallet },
 ];
 
 const DATA: Item[] = [
   { title: "Riwayat Transaksi", url: "/riwayat", icon: History },
   { title: "Draft", url: "/draft", icon: FileEdit },
   { title: "Persetujuan", url: "/persetujuan", icon: CheckSquare, ownerOnly: true },
+  { title: "Stok Ikan", url: "/stok", icon: Boxes },
+  { title: "Laporan & Grafik", url: "/laporan", icon: BarChart3 },
 ];
 
 const MASTER: Item[] = [
   { title: "Data Petani", url: "/petani", icon: Users, ownerOnly: true },
   { title: "Data Pelanggan", url: "/pelanggan", icon: Contact, ownerOnly: true },
+  { title: "Pengguna & Hak Akses", url: "/pengguna", icon: UserCog, ownerOnly: true },
+  { title: "Pengaturan", url: "/pengaturan", icon: Settings },
 ];
+
 
 export function AppSidebar() {
   const { isOwner } = useUserRole();

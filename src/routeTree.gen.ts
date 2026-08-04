@@ -13,8 +13,13 @@ import { Route as McpRouteImport } from './routes/mcp'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthenticatedStokRouteImport } from './routes/_authenticated/stok'
 import { Route as AuthenticatedRiwayatRouteImport } from './routes/_authenticated/riwayat'
 import { Route as AuthenticatedPersetujuanRouteImport } from './routes/_authenticated/persetujuan'
+import { Route as AuthenticatedPenggunaRouteImport } from './routes/_authenticated/pengguna'
+import { Route as AuthenticatedPengaturanRouteImport } from './routes/_authenticated/pengaturan'
+import { Route as AuthenticatedLaporanRouteImport } from './routes/_authenticated/laporan'
+import { Route as AuthenticatedKasRouteImport } from './routes/_authenticated/kas'
 import { Route as AuthenticatedDraftRouteImport } from './routes/_authenticated/draft'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
@@ -48,6 +53,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedStokRoute = AuthenticatedStokRouteImport.update({
+  id: '/stok',
+  path: '/stok',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedRiwayatRoute = AuthenticatedRiwayatRouteImport.update({
   id: '/riwayat',
   path: '/riwayat',
@@ -59,6 +69,26 @@ const AuthenticatedPersetujuanRoute =
     path: '/persetujuan',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedPenggunaRoute = AuthenticatedPenggunaRouteImport.update({
+  id: '/pengguna',
+  path: '/pengguna',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedPengaturanRoute = AuthenticatedPengaturanRouteImport.update({
+  id: '/pengaturan',
+  path: '/pengaturan',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedLaporanRoute = AuthenticatedLaporanRouteImport.update({
+  id: '/laporan',
+  path: '/laporan',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedKasRoute = AuthenticatedKasRouteImport.update({
+  id: '/kas',
+  path: '/kas',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedDraftRoute = AuthenticatedDraftRouteImport.update({
   id: '/draft',
   path: '/draft',
@@ -143,8 +173,13 @@ export interface FileRoutesByFullPath {
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/draft': typeof AuthenticatedDraftRoute
+  '/kas': typeof AuthenticatedKasRoute
+  '/laporan': typeof AuthenticatedLaporanRoute
+  '/pengaturan': typeof AuthenticatedPengaturanRoute
+  '/pengguna': typeof AuthenticatedPenggunaRoute
   '/persetujuan': typeof AuthenticatedPersetujuanRoute
   '/riwayat': typeof AuthenticatedRiwayatRoute
+  '/stok': typeof AuthenticatedStokRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/pembelian/$id': typeof AuthenticatedPembelianIdRoute
@@ -163,8 +198,13 @@ export interface FileRoutesByTo {
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/draft': typeof AuthenticatedDraftRoute
+  '/kas': typeof AuthenticatedKasRoute
+  '/laporan': typeof AuthenticatedLaporanRoute
+  '/pengaturan': typeof AuthenticatedPengaturanRoute
+  '/pengguna': typeof AuthenticatedPenggunaRoute
   '/persetujuan': typeof AuthenticatedPersetujuanRoute
   '/riwayat': typeof AuthenticatedRiwayatRoute
+  '/stok': typeof AuthenticatedStokRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/pembelian/$id': typeof AuthenticatedPembelianIdRoute
@@ -185,8 +225,13 @@ export interface FileRoutesById {
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/draft': typeof AuthenticatedDraftRoute
+  '/_authenticated/kas': typeof AuthenticatedKasRoute
+  '/_authenticated/laporan': typeof AuthenticatedLaporanRoute
+  '/_authenticated/pengaturan': typeof AuthenticatedPengaturanRoute
+  '/_authenticated/pengguna': typeof AuthenticatedPenggunaRoute
   '/_authenticated/persetujuan': typeof AuthenticatedPersetujuanRoute
   '/_authenticated/riwayat': typeof AuthenticatedRiwayatRoute
+  '/_authenticated/stok': typeof AuthenticatedStokRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/_authenticated/pembelian/$id': typeof AuthenticatedPembelianIdRoute
@@ -207,8 +252,13 @@ export interface FileRouteTypes {
     | '/.well-known/oauth-protected-resource'
     | '/dashboard'
     | '/draft'
+    | '/kas'
+    | '/laporan'
+    | '/pengaturan'
+    | '/pengguna'
     | '/persetujuan'
     | '/riwayat'
+    | '/stok'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
     | '/pembelian/$id'
@@ -227,8 +277,13 @@ export interface FileRouteTypes {
     | '/.well-known/oauth-protected-resource'
     | '/dashboard'
     | '/draft'
+    | '/kas'
+    | '/laporan'
+    | '/pengaturan'
+    | '/pengguna'
     | '/persetujuan'
     | '/riwayat'
+    | '/stok'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
     | '/pembelian/$id'
@@ -248,8 +303,13 @@ export interface FileRouteTypes {
     | '/.well-known/oauth-protected-resource'
     | '/_authenticated/dashboard'
     | '/_authenticated/draft'
+    | '/_authenticated/kas'
+    | '/_authenticated/laporan'
+    | '/_authenticated/pengaturan'
+    | '/_authenticated/pengguna'
     | '/_authenticated/persetujuan'
     | '/_authenticated/riwayat'
+    | '/_authenticated/stok'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
     | '/_authenticated/pembelian/$id'
@@ -302,6 +362,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/stok': {
+      id: '/_authenticated/stok'
+      path: '/stok'
+      fullPath: '/stok'
+      preLoaderRoute: typeof AuthenticatedStokRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/riwayat': {
       id: '/_authenticated/riwayat'
       path: '/riwayat'
@@ -314,6 +381,34 @@ declare module '@tanstack/react-router' {
       path: '/persetujuan'
       fullPath: '/persetujuan'
       preLoaderRoute: typeof AuthenticatedPersetujuanRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/pengguna': {
+      id: '/_authenticated/pengguna'
+      path: '/pengguna'
+      fullPath: '/pengguna'
+      preLoaderRoute: typeof AuthenticatedPenggunaRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/pengaturan': {
+      id: '/_authenticated/pengaturan'
+      path: '/pengaturan'
+      fullPath: '/pengaturan'
+      preLoaderRoute: typeof AuthenticatedPengaturanRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/laporan': {
+      id: '/_authenticated/laporan'
+      path: '/laporan'
+      fullPath: '/laporan'
+      preLoaderRoute: typeof AuthenticatedLaporanRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/kas': {
+      id: '/_authenticated/kas'
+      path: '/kas'
+      fullPath: '/kas'
+      preLoaderRoute: typeof AuthenticatedKasRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/draft': {
@@ -413,8 +508,13 @@ declare module '@tanstack/react-router' {
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedDraftRoute: typeof AuthenticatedDraftRoute
+  AuthenticatedKasRoute: typeof AuthenticatedKasRoute
+  AuthenticatedLaporanRoute: typeof AuthenticatedLaporanRoute
+  AuthenticatedPengaturanRoute: typeof AuthenticatedPengaturanRoute
+  AuthenticatedPenggunaRoute: typeof AuthenticatedPenggunaRoute
   AuthenticatedPersetujuanRoute: typeof AuthenticatedPersetujuanRoute
   AuthenticatedRiwayatRoute: typeof AuthenticatedRiwayatRoute
+  AuthenticatedStokRoute: typeof AuthenticatedStokRoute
   AuthenticatedPembelianIdRoute: typeof AuthenticatedPembelianIdRoute
   AuthenticatedPembelianBaruRoute: typeof AuthenticatedPembelianBaruRoute
   AuthenticatedPenjualanIdRoute: typeof AuthenticatedPenjualanIdRoute
@@ -427,8 +527,13 @@ interface AuthenticatedRouteRouteChildren {
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedDraftRoute: AuthenticatedDraftRoute,
+  AuthenticatedKasRoute: AuthenticatedKasRoute,
+  AuthenticatedLaporanRoute: AuthenticatedLaporanRoute,
+  AuthenticatedPengaturanRoute: AuthenticatedPengaturanRoute,
+  AuthenticatedPenggunaRoute: AuthenticatedPenggunaRoute,
   AuthenticatedPersetujuanRoute: AuthenticatedPersetujuanRoute,
   AuthenticatedRiwayatRoute: AuthenticatedRiwayatRoute,
+  AuthenticatedStokRoute: AuthenticatedStokRoute,
   AuthenticatedPembelianIdRoute: AuthenticatedPembelianIdRoute,
   AuthenticatedPembelianBaruRoute: AuthenticatedPembelianBaruRoute,
   AuthenticatedPenjualanIdRoute: AuthenticatedPenjualanIdRoute,
