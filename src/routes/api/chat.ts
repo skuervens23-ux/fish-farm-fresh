@@ -126,7 +126,7 @@ Ringkasan data pengguna (tanggal hari ini ${hari}):
               percakapan_id: percakapanId,
               user_id: user.id,
               peran: "user",
-              isi: { parts: terakhir.parts },
+              isi: { parts: terakhir.parts } as unknown as never,
             });
             if (error) console.error("Gagal simpan pesan pengguna:", error.message);
             const judul = teksDari(terakhir).slice(0, 60);
@@ -150,7 +150,7 @@ Ringkasan data pengguna (tanggal hari ini ${hari}):
               percakapan_id: percakapanId,
               user_id: user.id,
               peran: "assistant",
-              isi: { parts: responseMessage.parts },
+              isi: { parts: responseMessage.parts } as unknown as never,
             });
             if (error) console.error("Gagal simpan jawaban AI:", error.message);
             await supabase
