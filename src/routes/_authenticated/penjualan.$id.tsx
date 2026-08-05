@@ -18,7 +18,8 @@ export const Route = createFileRoute("/_authenticated/penjualan/$id")({
       { title: "Detail Penjualan Ikan | Bandar Ikan" },
       {
         name: "description",
-        content: "Rincian transaksi penjualan ikan: berat, grade, total harga, bukti timbangan dan nota.",
+        content:
+          "Rincian transaksi penjualan ikan: berat, grade, total harga, bukti timbangan dan nota.",
       },
       { property: "og:title", content: "Detail Penjualan Ikan" },
       { property: "og:description", content: "Rincian transaksi penjualan ikan ke pelanggan." },
@@ -60,8 +61,7 @@ function DetailPenjualan() {
 
   const total = Number(data?.total_harga ?? 0);
   const dibayar = Number(data?.jumlah_dibayar ?? 0);
-  const bisaKirim =
-    data?.status_transaksi === "draft" || data?.status_transaksi === "ditolak";
+  const bisaKirim = data?.status_transaksi === "draft" || data?.status_transaksi === "ditolak";
 
   return (
     <AppShell title="Detail Penjualan" backTo="/riwayat">

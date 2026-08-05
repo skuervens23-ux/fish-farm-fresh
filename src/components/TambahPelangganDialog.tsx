@@ -92,7 +92,12 @@ export function TambahPelangganDialog({
             <Input id="plg-alamat" value={alamat} onChange={(e) => setAlamat(e.target.value)} />
           </div>
           <DialogFooter>
-            <Button type="button" variant="outline" onClick={() => onOpenChange(false)} disabled={saving}>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => onOpenChange(false)}
+              disabled={saving}
+            >
               Batal
             </Button>
             <Button type="submit" disabled={saving}>

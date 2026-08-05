@@ -4,11 +4,21 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
-type OAuthResult = { redirect_url?: string; redirect_to?: string; client?: { name?: string } | null };
+type OAuthResult = {
+  redirect_url?: string;
+  redirect_to?: string;
+  client?: { name?: string } | null;
+};
 type OAuthApi = {
-  getAuthorizationDetails: (id: string) => Promise<{ data: OAuthResult | null; error: { message: string } | null }>;
-  approveAuthorization: (id: string) => Promise<{ data: OAuthResult | null; error: { message: string } | null }>;
-  denyAuthorization: (id: string) => Promise<{ data: OAuthResult | null; error: { message: string } | null }>;
+  getAuthorizationDetails: (
+    id: string,
+  ) => Promise<{ data: OAuthResult | null; error: { message: string } | null }>;
+  approveAuthorization: (
+    id: string,
+  ) => Promise<{ data: OAuthResult | null; error: { message: string } | null }>;
+  denyAuthorization: (
+    id: string,
+  ) => Promise<{ data: OAuthResult | null; error: { message: string } | null }>;
 };
 
 function oauthApi(): OAuthApi {
@@ -76,8 +86,8 @@ function Consent() {
         <CardHeader>
           <CardTitle>Hubungkan {clientName}</CardTitle>
           <CardDescription>
-            {clientName} akan dapat membaca dan mencatat data Bandar Ikan atas nama akun Anda, sesuai hak
-            akses Anda.
+            {clientName} akan dapat membaca dan mencatat data Bandar Ikan atas nama akun Anda,
+            sesuai hak akses Anda.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-3">

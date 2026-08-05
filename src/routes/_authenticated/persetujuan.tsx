@@ -27,7 +27,8 @@ export const Route = createFileRoute("/_authenticated/persetujuan")({
       { title: "Persetujuan Transaksi | Bandar Ikan" },
       {
         name: "description",
-        content: "Antrian transaksi yang menunggu persetujuan admin: setujui atau tolak dengan alasan.",
+        content:
+          "Antrian transaksi yang menunggu persetujuan admin: setujui atau tolak dengan alasan.",
       },
       { property: "og:title", content: "Persetujuan Transaksi" },
       { property: "og:description", content: "Setujui atau tolak transaksi yang dikirim mandor." },

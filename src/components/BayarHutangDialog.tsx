@@ -53,9 +53,7 @@ export function BayarHutangDialog({
       <DialogContent className="max-w-[380px]">
         <DialogHeader>
           <DialogTitle>Bayar Hutang</DialogTitle>
-          <DialogDescription>
-            Sisa hutang saat ini {formatRupiah(sisa)}.
-          </DialogDescription>
+          <DialogDescription>Sisa hutang saat ini {formatRupiah(sisa)}.</DialogDescription>
         </DialogHeader>
         <div className="space-y-2">
           <Label htmlFor="bayar">Jumlah Bayar (Rp)</Label>

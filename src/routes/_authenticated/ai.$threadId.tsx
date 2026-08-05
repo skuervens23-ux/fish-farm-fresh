@@ -13,7 +13,8 @@ export const Route = createFileRoute("/_authenticated/ai/$threadId")({
       { title: "Percakapan AI | Bandar Ikan" },
       {
         name: "description",
-        content: "Percakapan dengan asisten AI bandar ikan tentang transaksi, kas, hutang, dan piutang.",
+        content:
+          "Percakapan dengan asisten AI bandar ikan tentang transaksi, kas, hutang, dan piutang.",
       },
       { property: "og:title", content: "Percakapan AI Bandar Ikan" },
       { property: "og:description", content: "Obrolan dengan asisten AI bandar ikan." },

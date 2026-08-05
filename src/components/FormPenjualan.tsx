@@ -106,9 +106,9 @@ export function FormPenjualan() {
   }
 
   const pelangganOptions = pelangganList.map((p) => ({ value: p.id, label: p.nama }));
-  const ikanOptions = Array.from(
-    new Set([...IKAN_UMUM, ...(jenisIkan ? [jenisIkan] : [])]),
-  ).map((n) => ({ value: n, label: n }));
+  const ikanOptions = Array.from(new Set([...IKAN_UMUM, ...(jenisIkan ? [jenisIkan] : [])])).map(
+    (n) => ({ value: n, label: n }),
+  );
 
   return (
     <>
@@ -202,7 +202,13 @@ export function FormPenjualan() {
           </div>
           <div className="space-y-2">
             <Label htmlFor="berat">Berat (kg) *</Label>
-            <InputJumlah id="berat" value={beratKg} onChange={setBeratKg} step={0.5} placeholder="0" />
+            <InputJumlah
+              id="berat"
+              value={beratKg}
+              onChange={setBeratKg}
+              step={0.5}
+              placeholder="0"
+            />
           </div>
         </div>
 

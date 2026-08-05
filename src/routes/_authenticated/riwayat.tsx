@@ -18,7 +18,8 @@ export const Route = createFileRoute("/_authenticated/riwayat")({
       { title: "Riwayat Transaksi | Bandar Ikan" },
       {
         name: "description",
-        content: "Lihat semua riwayat pembelian dan penjualan ikan beserta status persetujuan dan pembayaran.",
+        content:
+          "Lihat semua riwayat pembelian dan penjualan ikan beserta status persetujuan dan pembayaran.",
       },
       { property: "og:title", content: "Riwayat Transaksi Bandar Ikan" },
       { property: "og:description", content: "Riwayat lengkap pembelian dan penjualan ikan." },
@@ -62,11 +63,16 @@ export function DaftarTransaksi({
     <ul className="space-y-2">
       {rows.map((r) => (
         <li key={`${r.jenis}-${r.id}`}>
-          <Link to={r.jenis === "pembelian" ? "/pembelian/$id" : "/penjualan/$id"} params={{ id: r.id }}>
+          <Link
+            to={r.jenis === "pembelian" ? "/pembelian/$id" : "/penjualan/$id"}
+            params={{ id: r.id }}
+          >
             <Card className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 p-3 transition-colors hover:bg-accent/50">
               <div
                 className={`grid h-9 w-9 shrink-0 place-items-center rounded-full ${
-                  r.jenis === "pembelian" ? "bg-primary/15 text-primary" : "bg-success/15 text-success"
+                  r.jenis === "pembelian"
+                    ? "bg-primary/15 text-primary"
+                    : "bg-success/15 text-success"
                 }`}
               >
                 {r.jenis === "pembelian" ? (
@@ -88,7 +94,9 @@ export function DaftarTransaksi({
                 </div>
               </div>
               <div className="flex items-center gap-2">
-                <span className="text-sm font-semibold text-foreground">{formatRupiah(r.total)}</span>
+                <span className="text-sm font-semibold text-foreground">
+                  {formatRupiah(r.total)}
+                </span>
                 <ChevronRight className="h-4 w-4 shrink-0 text-muted-foreground" />
               </div>
             </Card>

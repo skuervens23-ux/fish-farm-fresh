@@ -18,7 +18,13 @@ export default defineTool({
       .enum(["belum", "sebagian", "lunas"])
       .optional()
       .describe("Filter status pembayaran."),
-    limit: z.number().int().min(1).max(200).optional().describe("Jumlah baris maksimum (default 50)."),
+    limit: z
+      .number()
+      .int()
+      .min(1)
+      .max(200)
+      .optional()
+      .describe("Jumlah baris maksimum (default 50)."),
   },
   annotations: { readOnlyHint: true, idempotentHint: true, openWorldHint: false },
   handler: async (input, ctx) => {

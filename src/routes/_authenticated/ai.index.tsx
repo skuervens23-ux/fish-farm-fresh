@@ -18,7 +18,10 @@ export const Route = createFileRoute("/_authenticated/ai/")({
           "Asisten AI bandar ikan: tanya laba harian, hutang petani, piutang pelanggan, dan ringkasan transaksi.",
       },
       { property: "og:title", content: "Tanya AI Bandar Ikan" },
-      { property: "og:description", content: "Asisten AI untuk data pembelian, penjualan, dan kas." },
+      {
+        property: "og:description",
+        content: "Asisten AI untuk data pembelian, penjualan, dan kas.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],
@@ -64,7 +67,9 @@ function DaftarAI() {
                     params={{ threadId: p.id }}
                     className="flex min-w-0 flex-1 items-center gap-3"
                   >
-                    <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-primary/12 text-primary"><MessageSquare className="h-4 w-4" /></span>
+                    <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-primary/12 text-primary">
+                      <MessageSquare className="h-4 w-4" />
+                    </span>
                     <span className="truncate text-sm text-foreground">{p.judul}</span>
                   </Link>
                   <Button

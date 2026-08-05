@@ -15,17 +15,21 @@ export const Route = createFileRoute("/auth")({
   head: () => ({
     meta: [
       { title: "Masuk — Pembelian Ikan" },
-      { name: "description", content: "Masukkan password untuk membuka aplikasi pembelian ikan hidup." },
+      {
+        name: "description",
+        content: "Masukkan password untuk membuka aplikasi pembelian ikan hidup.",
+      },
       { property: "og:title", content: "Masuk — Pembelian Ikan" },
-      { property: "og:description", content: "Masukkan password untuk membuka aplikasi pembelian ikan hidup." },
+      {
+        property: "og:description",
+        content: "Masukkan password untuk membuka aplikasi pembelian ikan hidup.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],
   }),
   validateSearch: (search: Record<string, unknown>): { next?: string } =>
-    typeof search.next === "string" && search.next.startsWith("/")
-      ? { next: search.next }
-      : {},
+    typeof search.next === "string" && search.next.startsWith("/") ? { next: search.next } : {},
   component: AuthPage,
 });
 
@@ -102,7 +106,9 @@ function AuthPage() {
             </Button>
           </form>
           <div className="mt-4 text-center text-sm text-muted-foreground">
-            <Link to="/" className="hover:underline">← Kembali</Link>
+            <Link to="/" className="hover:underline">
+              ← Kembali
+            </Link>
           </div>
         </CardContent>
       </Card>

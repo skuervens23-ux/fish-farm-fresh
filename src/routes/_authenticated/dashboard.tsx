@@ -1,13 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import {
-  ShoppingCart,
-  Store,
-  ChevronRight,
-  AlertTriangle,
-  Clock,
-  Sparkle,
-} from "lucide-react";
+import { ShoppingCart, Store, ChevronRight, AlertTriangle, Clock, Sparkle } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { AppShell } from "@/components/AppShell";
 import { Card } from "@/components/ui/card";
@@ -59,7 +52,6 @@ function Ringkas({
   );
 }
 
-
 function Dashboard() {
   const { isOwner } = useUserRole();
   const { data: rows = [], isLoading } = useTransaksi();
@@ -70,7 +62,11 @@ function Dashboard() {
     queryFn: async () => {
       const { data: u } = await supabase.auth.getUser();
       if (!u.user) return null;
-      const { data } = await supabase.from("profiles").select("nama").eq("id", u.user.id).maybeSingle();
+      const { data } = await supabase
+        .from("profiles")
+        .select("nama")
+        .eq("id", u.user.id)
+        .maybeSingle();
       return data;
     },
   });
@@ -86,8 +82,12 @@ function Dashboard() {
   const laba = jualHariIni - beliHariIni;
 
   const saldoKas = kas.reduce((s, r) => s + (r.tipe === "masuk" ? r.jumlah : -r.jumlah), 0);
-  const hutang = sisa(rows.filter((r) => r.jenis === "pembelian" && r.status_transaksi === "disetujui"));
-  const piutang = sisa(rows.filter((r) => r.jenis === "penjualan" && r.status_transaksi === "disetujui"));
+  const hutang = sisa(
+    rows.filter((r) => r.jenis === "pembelian" && r.status_transaksi === "disetujui"),
+  );
+  const piutang = sisa(
+    rows.filter((r) => r.jenis === "penjualan" && r.status_transaksi === "disetujui"),
+  );
 
   const menunggu = rows.filter((r) => r.status_transaksi === "menunggu");
   const belumLunas = rows.filter(
@@ -206,7 +206,9 @@ function Dashboard() {
                       <div className="flex items-center gap-2">
                         <div className="text-right">
                           <BadgeTransaksi status={r.status_transaksi} />
-                          <div className="text-xs text-muted-foreground">{formatRupiah(r.total)}</div>
+                          <div className="text-xs text-muted-foreground">
+                            {formatRupiah(r.total)}
+                          </div>
                         </div>
                         <ChevronRight className="h-4 w-4 shrink-0 text-muted-foreground" />
                       </div>

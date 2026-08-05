@@ -50,7 +50,7 @@ const DATA: Item[] = [
   { title: "Riwayat Transaksi", url: "/riwayat", icon: History },
   { title: "Draft", url: "/draft", icon: FileEdit },
   { title: "Persetujuan", url: "/persetujuan", icon: CheckSquare, ownerOnly: true },
-  
+
   { title: "Laporan & Grafik", url: "/laporan", icon: BarChart3 },
 ];
 
@@ -60,7 +60,6 @@ const MASTER: Item[] = [
   { title: "Pengguna & Hak Akses", url: "/pengguna", icon: UserCog, ownerOnly: true },
   { title: "Pengaturan", url: "/pengaturan", icon: Settings },
 ];
-
 
 export function AppSidebar() {
   const { isOwner } = useUserRole();

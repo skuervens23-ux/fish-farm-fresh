@@ -8,10 +8,14 @@ export const Route = createFileRoute("/_authenticated/penjualan/baru")({
       { title: "Input Penjualan Ikan | Bandar Ikan" },
       {
         name: "description",
-        content: "Catat penjualan ikan ke pelanggan lengkap dengan berat, grade, bukti timbangan dan nota.",
+        content:
+          "Catat penjualan ikan ke pelanggan lengkap dengan berat, grade, bukti timbangan dan nota.",
       },
       { property: "og:title", content: "Input Penjualan Ikan" },
-      { property: "og:description", content: "Form pencatatan penjualan ikan untuk mandor lapangan." },
+      {
+        property: "og:description",
+        content: "Form pencatatan penjualan ikan untuk mandor lapangan.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],

@@ -165,16 +165,29 @@
 @utility bg-app {
   background-color: var(--color-background);
   background-image:
-    radial-gradient(120% 80% at 0% 0%, color-mix(in oklab, var(--color-primary) 14%, transparent) 0%, transparent 55%),
-    radial-gradient(110% 70% at 100% 0%, color-mix(in oklab, var(--color-success) 10%, transparent) 0%, transparent 50%),
-    linear-gradient(180deg, color-mix(in oklab, var(--color-primary) 6%, var(--color-background)) 0%, var(--color-background) 42%);
+    radial-gradient(
+      120% 80% at 0% 0%,
+      color-mix(in oklab, var(--color-primary) 14%, transparent) 0%,
+      transparent 55%
+    ),
+    radial-gradient(
+      110% 70% at 100% 0%,
+      color-mix(in oklab, var(--color-success) 10%, transparent) 0%,
+      transparent 50%
+    ),
+    linear-gradient(
+      180deg,
+      color-mix(in oklab, var(--color-primary) 6%, var(--color-background)) 0%,
+      var(--color-background) 42%
+    );
   background-attachment: fixed;
 }
 
 @utility surface-card {
   background-color: color-mix(in oklab, var(--color-card) 88%, transparent);
   border: 1px solid color-mix(in oklab, var(--color-border) 80%, transparent);
-  box-shadow: 0 1px 2px oklch(0 0 0 / 4%), 0 8px 24px -14px color-mix(in oklab, var(--color-primary) 45%, transparent);
+  box-shadow:
+    0 1px 2px oklch(0 0 0 / 4%),
+    0 8px 24px -14px color-mix(in oklab, var(--color-primary) 45%, transparent);
   backdrop-filter: blur(10px);
 }
-

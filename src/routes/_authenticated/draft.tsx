@@ -12,7 +12,8 @@ export const Route = createFileRoute("/_authenticated/draft")({
       { title: "Draft Transaksi | Bandar Ikan" },
       {
         name: "description",
-        content: "Transaksi yang masih tersimpan sebagai draft dan belum dikirim ke admin untuk disetujui.",
+        content:
+          "Transaksi yang masih tersimpan sebagai draft dan belum dikirim ke admin untuk disetujui.",
       },
       { property: "og:title", content: "Draft Transaksi" },
       { property: "og:description", content: "Daftar transaksi draft milik Anda." },
