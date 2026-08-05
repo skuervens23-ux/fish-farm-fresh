@@ -33,7 +33,10 @@ export function FormPenjualan() {
   const navigate = useNavigate();
   const qc = useQueryClient();
 
-  const { data: stok, isLoading: stokLoading } = useStokGabungan();
+  const { data: lots = [], isLoading: lotLoading } = useLotPembelian(true);
+  const [lotId, setLotId] = useState<string | null>(null);
+  const lot = lots.find((l) => l.id === lotId) ?? null;
+
 
   const [tanggal, setTanggal] = useState(() => new Date().toISOString().slice(0, 10));
   const [pelangganId, setPelangganId] = useState<string | null>(null);
