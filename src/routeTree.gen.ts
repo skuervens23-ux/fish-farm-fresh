@@ -20,6 +20,7 @@ import { Route as AuthenticatedLaporanRouteImport } from './routes/_authenticate
 import { Route as AuthenticatedKasRouteImport } from './routes/_authenticated/kas'
 import { Route as AuthenticatedJenisIkanRouteImport } from './routes/_authenticated/jenis-ikan'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
+import { Route as AuthenticatedBiayaRouteImport } from './routes/_authenticated/biaya'
 import { Route as AuthenticatedAnalisisRouteImport } from './routes/_authenticated/analisis'
 import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
 import { Route as Char91DotmcpChar93ListToolsRouteImport } from './routes/[.mcp]/list-tools'
@@ -87,6 +88,11 @@ const AuthenticatedJenisIkanRoute = AuthenticatedJenisIkanRouteImport.update({
 const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedBiayaRoute = AuthenticatedBiayaRouteImport.update({
+  id: '/biaya',
+  path: '/biaya',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedAnalisisRoute = AuthenticatedAnalisisRouteImport.update({
@@ -177,6 +183,7 @@ export interface FileRoutesByFullPath {
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/analisis': typeof AuthenticatedAnalisisRoute
+  '/biaya': typeof AuthenticatedBiayaRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/jenis-ikan': typeof AuthenticatedJenisIkanRoute
   '/kas': typeof AuthenticatedKasRoute
@@ -203,6 +210,7 @@ export interface FileRoutesByTo {
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/analisis': typeof AuthenticatedAnalisisRoute
+  '/biaya': typeof AuthenticatedBiayaRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/jenis-ikan': typeof AuthenticatedJenisIkanRoute
   '/kas': typeof AuthenticatedKasRoute
@@ -231,6 +239,7 @@ export interface FileRoutesById {
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/_authenticated/analisis': typeof AuthenticatedAnalisisRoute
+  '/_authenticated/biaya': typeof AuthenticatedBiayaRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/jenis-ikan': typeof AuthenticatedJenisIkanRoute
   '/_authenticated/kas': typeof AuthenticatedKasRoute
@@ -259,6 +268,7 @@ export interface FileRouteTypes {
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
     | '/analisis'
+    | '/biaya'
     | '/dashboard'
     | '/jenis-ikan'
     | '/kas'
@@ -285,6 +295,7 @@ export interface FileRouteTypes {
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
     | '/analisis'
+    | '/biaya'
     | '/dashboard'
     | '/jenis-ikan'
     | '/kas'
@@ -312,6 +323,7 @@ export interface FileRouteTypes {
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
     | '/_authenticated/analisis'
+    | '/_authenticated/biaya'
     | '/_authenticated/dashboard'
     | '/_authenticated/jenis-ikan'
     | '/_authenticated/kas'
@@ -423,6 +435,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDashboardRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/biaya': {
+      id: '/_authenticated/biaya'
+      path: '/biaya'
+      fullPath: '/biaya'
+      preLoaderRoute: typeof AuthenticatedBiayaRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/analisis': {
       id: '/_authenticated/analisis'
       path: '/analisis'
@@ -526,6 +545,7 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAnalisisRoute: typeof AuthenticatedAnalisisRoute
+  AuthenticatedBiayaRoute: typeof AuthenticatedBiayaRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedJenisIkanRoute: typeof AuthenticatedJenisIkanRoute
   AuthenticatedKasRoute: typeof AuthenticatedKasRoute
@@ -545,6 +565,7 @@ interface AuthenticatedRouteRouteChildren {
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAnalisisRoute: AuthenticatedAnalisisRoute,
+  AuthenticatedBiayaRoute: AuthenticatedBiayaRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedJenisIkanRoute: AuthenticatedJenisIkanRoute,
   AuthenticatedKasRoute: AuthenticatedKasRoute,
