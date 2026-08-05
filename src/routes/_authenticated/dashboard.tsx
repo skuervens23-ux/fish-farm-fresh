@@ -97,7 +97,7 @@ function Dashboard() {
           <p className="text-sm text-muted-foreground">{tanggal}</p>
         </div>
 
-        {isLoading ? (
+        {loadingRingkas ? (
           <div className="grid grid-cols-2 gap-2.5">
             {Array.from({ length: 4 }).map((_, i) => (
               <Skeleton key={i} className="h-[72px] w-full" />
@@ -117,22 +117,23 @@ function Dashboard() {
           </div>
         )}
 
-        {(menunggu.length > 0 || belumLunas.length > 0) && (
+        {(jmlMenunggu > 0 || jmlBelumLunas > 0) && (
           <div className="space-y-1 rounded-xl border border-warning/25 bg-warning/10 px-3 py-2.5">
-            {belumLunas.length > 0 && (
+            {jmlBelumLunas > 0 && (
               <p className="flex items-center gap-1.5 text-sm text-warning">
                 <AlertTriangle className="h-4 w-4" />
-                {belumLunas.length} transaksi belum lunas
+                {jmlBelumLunas} transaksi belum lunas
               </p>
             )}
-            {menunggu.length > 0 && (
+            {jmlMenunggu > 0 && (
               <p className="flex items-center gap-1.5 text-sm text-warning">
                 <Clock className="h-4 w-4" />
-                {menunggu.length} transaksi menunggu persetujuan
+                {jmlMenunggu} transaksi menunggu persetujuan
               </p>
             )}
           </div>
         )}
+
 
         <div className="grid grid-cols-3 gap-2">
           <Button asChild variant="outline" className="h-11">
