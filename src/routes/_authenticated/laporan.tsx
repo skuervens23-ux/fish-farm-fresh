@@ -26,6 +26,15 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { formatRupiah } from "@/lib/format";
 import { useTransaksi } from "@/lib/transaksi";
 import { useKas } from "@/lib/kas";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { unduhLaporanMingguan, weekKey, weekRangeLabel } from "@/lib/laporan";
 import { useUserRole } from "@/hooks/useUserRole";
 
@@ -59,13 +68,51 @@ function LaporanPage() {
   const awalDefault = new Date(today.getFullYear(), today.getMonth(), 1).toISOString().slice(0, 10);
   const [dari, setDari] = useState(awalDefault);
   const [sampai, setSampai] = useState(today.toISOString().slice(0, 10));
+  const [fIkan, setFIkan] = useState("semua");
+  const [fSupplier, setFSupplier] = useState("semua");
+  const [fPembeli, setFPembeli] = useState("semua");
+
+  const { data: operasional = [] } = useQuery({
+    queryKey: ["biaya", "laporan", dari, sampai],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("biaya_operasional")
+        .select("tanggal, kategori, jumlah")
+        .gte("tanggal", dari)
+        .lte("tanggal", sampai);
+      if (error) throw error;
+      return data ?? [];
+    },
+  });
+  const totalOperasional = operasional.reduce((a, r) => a + Number(r.jumlah ?? 0), 0);
+
+  const opsiIkan = useMemo(
+    () => Array.from(new Set(rows.map((r) => r.jenis_ikan))).sort(),
+    [rows],
+  );
+  const opsiSupplier = useMemo(
+    () =>
+      Array.from(new Set(rows.filter((r) => r.jenis === "pembelian").map((r) => r.pihak))).sort(),
+    [rows],
+  );
+  const opsiPembeli = useMemo(
+    () =>
+      Array.from(new Set(rows.filter((r) => r.jenis === "penjualan").map((r) => r.pihak))).sort(),
+    [rows],
+  );
 
   const dipilih = useMemo(
     () =>
       rows.filter(
-        (r) => r.status_transaksi !== "draft" && r.tanggal >= dari && r.tanggal <= sampai,
+        (r) =>
+          r.status_transaksi !== "draft" &&
+          r.tanggal >= dari &&
+          r.tanggal <= sampai &&
+          (fIkan === "semua" || r.jenis_ikan === fIkan) &&
+          (fSupplier === "semua" || r.jenis !== "pembelian" || r.pihak === fSupplier) &&
+          (fPembeli === "semua" || r.jenis !== "penjualan" || r.pihak === fPembeli),
       ),
-    [rows, dari, sampai],
+    [rows, dari, sampai, fIkan, fSupplier, fPembeli],
   );
   const kasDipilih = useMemo(
     () => kas.filter((r) => r.tanggal >= dari && r.tanggal <= sampai),
@@ -223,6 +270,12 @@ function LaporanPage() {
     { label: "Hutang Petani", nilai: ringkas.hutang, warna: "text-hutang" },
     { label: "Piutang Pelanggan", nilai: ringkas.piutang, warna: "text-hutang" },
     { label: "Saldo Kas", nilai: ringkas.saldoKas, warna: "text-primary" },
+    { label: "Total Operasional", nilai: totalOperasional, warna: "text-destructive" },
+    {
+      label: "Laba Bersih",
+      nilai: ringkas.margin - totalOperasional,
+      warna: ringkas.margin - totalOperasional >= 0 ? "text-success" : "text-destructive",
+    },
   ];
 
   return (
@@ -258,6 +311,29 @@ function LaporanPage() {
           )}
         </Card>
 
+        <Card className="grid gap-3 p-4 sm:grid-cols-3">
+          <FilterSelect
+            label="Jenis Ikan"
+            value={fIkan}
+            onChange={setFIkan}
+            options={opsiIkan}
+            semuaLabel="Semua jenis ikan"
+          />
+          <FilterSelect
+            label="Supplier"
+            value={fSupplier}
+            onChange={setFSupplier}
+            options={opsiSupplier}
+            semuaLabel="Semua supplier"
+          />
+          <FilterSelect
+            label="Pembeli"
+            value={fPembeli}
+            onChange={setFPembeli}
+            options={opsiPembeli}
+            semuaLabel="Semua pembeli"
+          />
+        </Card>
 
         {isLoading ? (
           <Skeleton className="h-40 w-full" />
@@ -345,5 +421,38 @@ function LaporanPage() {
         )}
       </div>
     </AppShell>
+  );
+}
+
+function FilterSelect({
+  label,
+  value,
+  onChange,
+  options,
+  semuaLabel,
+}: {
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+  options: string[];
+  semuaLabel: string;
+}) {
+  return (
+    <div className="space-y-1.5">
+      <Label>{label}</Label>
+      <Select value={value} onValueChange={onChange}>
+        <SelectTrigger>
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="semua">{semuaLabel}</SelectItem>
+          {options.map((o) => (
+            <SelectItem key={o} value={o}>
+              {o}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+    </div>
   );
 }
