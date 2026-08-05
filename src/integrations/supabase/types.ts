@@ -306,6 +306,7 @@ export type Database = {
           kolam: string | null
           metode: Database["public"]["Enums"]["metode_pembayaran"]
           pelanggan_id: string
+          pembelian_id: string | null
           status_bayar: Database["public"]["Enums"]["status_bayar"]
           status_transaksi: Database["public"]["Enums"]["status_transaksi"]
           tanggal: string
@@ -332,6 +333,7 @@ export type Database = {
           kolam?: string | null
           metode?: Database["public"]["Enums"]["metode_pembayaran"]
           pelanggan_id: string
+          pembelian_id?: string | null
           status_bayar?: Database["public"]["Enums"]["status_bayar"]
           status_transaksi?: Database["public"]["Enums"]["status_transaksi"]
           tanggal?: string
@@ -358,6 +360,7 @@ export type Database = {
           kolam?: string | null
           metode?: Database["public"]["Enums"]["metode_pembayaran"]
           pelanggan_id?: string
+          pembelian_id?: string | null
           status_bayar?: Database["public"]["Enums"]["status_bayar"]
           status_transaksi?: Database["public"]["Enums"]["status_transaksi"]
           tanggal?: string
@@ -371,6 +374,13 @@ export type Database = {
             columns: ["pelanggan_id"]
             isOneToOne: false
             referencedRelation: "pelanggan"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "penjualan_pembelian_id_fkey"
+            columns: ["pembelian_id"]
+            isOneToOne: false
+            referencedRelation: "pembelian"
             referencedColumns: ["id"]
           },
         ]
@@ -625,6 +635,58 @@ export type Database = {
           kolam: string | null
           metode: Database["public"]["Enums"]["metode_pembayaran"]
           pelanggan_id: string
+          pembelian_id: string | null
+          status_bayar: Database["public"]["Enums"]["status_bayar"]
+          status_transaksi: Database["public"]["Enums"]["status_transaksi"]
+          tanggal: string
+          total_harga: number | null
+          ukuran: string | null
+          updated_at: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "penjualan"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      create_penjualan_dari_pembelian: {
+        Args: {
+          _berat_kg: number
+          _catatan?: string
+          _foto_nota_url?: string
+          _foto_timbangan_url?: string
+          _grade?: string
+          _harga_per_kg: number
+          _jumlah_dibayar?: number
+          _jumlah_ekor?: number
+          _kolam?: string
+          _pelanggan_id: string
+          _pembelian_id: string
+          _status_bayar?: Database["public"]["Enums"]["status_bayar"]
+          _tanggal?: string
+          _ukuran?: string
+        }
+        Returns: {
+          alasan_tolak: string | null
+          berat_kg: number
+          catatan: string | null
+          created_at: string
+          dicatat_oleh: string
+          ditinjau_oleh: string | null
+          ditinjau_pada: string | null
+          foto_nota_url: string | null
+          foto_timbangan_url: string | null
+          grade: string | null
+          harga_per_kg: number
+          id: string
+          jenis_ikan: string
+          jumlah_dibayar: number
+          jumlah_ekor: number
+          kolam: string | null
+          metode: Database["public"]["Enums"]["metode_pembayaran"]
+          pelanggan_id: string
+          pembelian_id: string | null
           status_bayar: Database["public"]["Enums"]["status_bayar"]
           status_transaksi: Database["public"]["Enums"]["status_transaksi"]
           tanggal: string
@@ -660,6 +722,25 @@ export type Database = {
           alamat: string
           id: string
           telepon: string
+        }[]
+      }
+      pembelian_tersedia: {
+        Args: { _hanya_sisa?: boolean }
+        Returns: {
+          box: number
+          faktor_box: number
+          harga_per_kg: number
+          id: string
+          jenis_ikan: string
+          jumlah_kg: number
+          kg_sisa: number
+          kg_terjual: number
+          nama_petani: string
+          petani_id: string
+          sisa_kg: number
+          status_jual: string
+          tanggal: string
+          total_harga: number
         }[]
       }
       profit_per_customer: {
