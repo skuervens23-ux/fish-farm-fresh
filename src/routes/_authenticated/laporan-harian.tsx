@@ -185,7 +185,31 @@ function LaporanHarianPage() {
       });
       lanjut();
 
-      seksi("B. DATA PENJUALAN");
+      seksi("B. BIAYA OPERASIONAL");
+      autoTable(doc, {
+        ...opsiTabel,
+        startY: y,
+        head: [["No", "Kategori", "Keterangan", "Nominal"]],
+        body: laporan.biaya.length
+          ? laporan.biaya.map((r) => [r.no, r.kategori, r.keterangan, formatRupiah(r.nominal)])
+          : [["-", "Tidak ada biaya", "", ""]],
+        foot: [["", "TOTAL OPERASIONAL", "", formatRupiah(total.biaya)]],
+        footStyles: { fillColor: [232, 238, 249], textColor: 20, fontStyle: "bold" },
+      });
+      lanjut();
+
+      seksi("C. TOTAL PENGELUARAN (PEMBELIAN + OPERASIONAL)");
+      autoTable(doc, {
+        ...opsiTabel,
+        startY: y,
+        head: [["Total Pembelian", "Total Operasional", "Total Pengeluaran"]],
+        body: [
+          [formatRupiah(total.beli), formatRupiah(total.biaya), formatRupiah(total.pengeluaran)],
+        ],
+      });
+      lanjut();
+
+      seksi("D. DATA PENJUALAN");
       autoTable(doc, {
         ...opsiTabel,
         startY: y,
@@ -205,33 +229,24 @@ function LaporanHarianPage() {
       });
       lanjut();
 
-      seksi("C. BIAYA OPERASIONAL");
+      seksi("E. RINGKASAN KEUANGAN");
       autoTable(doc, {
         ...opsiTabel,
         startY: y,
-        head: [["No", "Kategori", "Keterangan", "Nominal"]],
-        body: laporan.biaya.length
-          ? laporan.biaya.map((r) => [r.no, r.kategori, r.keterangan, formatRupiah(r.nominal)])
-          : [["-", "Tidak ada biaya", "", ""]],
-        foot: [["", "TOTAL OPERASIONAL", "", formatRupiah(total.biaya)]],
-        footStyles: { fillColor: [232, 238, 249], textColor: 20, fontStyle: "bold" },
-      });
-      lanjut();
-
-      seksi("D. RINGKASAN KEUANGAN");
-      autoTable(doc, {
-        ...opsiTabel,
-        startY: y,
-        head: [["Total Pembelian", "Total Penjualan", "Total Operasional", "Laba Bersih"]],
+        head: [
+          ["Total Pembelian", "Total Operasional", "Total Pengeluaran", "Total Penjualan", "Laba Bersih"],
+        ],
         body: [
           [
             formatRupiah(total.beli),
-            formatRupiah(total.jual),
             formatRupiah(total.biaya),
+            formatRupiah(total.pengeluaran),
+            formatRupiah(total.jual),
             formatRupiah(total.laba),
           ],
         ],
       });
+
       lanjut();
 
       seksi("E. STOK");
