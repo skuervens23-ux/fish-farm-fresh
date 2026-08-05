@@ -44,6 +44,7 @@ export function FormPembelian() {
   const [petaniId, setPetaniId] = useState<string | null>(null);
   const [jenisIkan, setJenisIkan] = useState("");
   const [jumlahKg, setJumlahKg] = useState("");
+  const [box, setBox] = useState("");
   const [hargaPerKg, setHargaPerKg] = useState("");
   const [statusBayar, setStatusBayar] = useState<StatusBayar>("lunas");
   const [jumlahDibayar, setJumlahDibayar] = useState("");
