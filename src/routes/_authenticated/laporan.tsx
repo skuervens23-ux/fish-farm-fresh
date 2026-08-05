@@ -16,6 +16,7 @@ import {
 import { toast } from "sonner";
 import { AppShell } from "@/components/AppShell";
 import { TombolEkspor } from "@/components/TombolEkspor";
+import { TombolExcelLengkap } from "@/components/TombolExcelLengkap";
 
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
