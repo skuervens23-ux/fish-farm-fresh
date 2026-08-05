@@ -170,56 +170,97 @@ function Dashboard() {
         </div>
 
         {isLoading ? (
-          <div className="grid grid-cols-2 gap-2.5 lg:grid-cols-4">
-            {Array.from({ length: 8 }).map((_, i) => (
-              <Skeleton key={i} className="h-[76px] w-full" />
-            ))}
+          <div className="space-y-2.5">
+            <Skeleton className="h-56 w-full" />
+            <Skeleton className="h-12 w-full" />
           </div>
         ) : (
-          <div className="grid grid-cols-2 gap-2.5 lg:grid-cols-4">
-            <Metrik
-              label="Omzet Hari Ini"
-              nilai={formatRupiah(s?.omzet_hari_ini ?? 0)}
-              aksen="bg-primary"
+          <>
+            <AlurLaba
+              penjualan={s?.total_penjualan ?? 0}
+              modal={s?.total_modal ?? 0}
+              biaya={s?.total_biaya ?? 0}
+              labaKotor={s?.laba_kotor ?? 0}
+              labaBersih={s?.laba_bersih ?? 0}
+              margin={s?.margin ?? 0}
+              keterangan={PRESET.find((p) => p.id === preset)?.label}
             />
-            <Metrik
-              label="Laba Hari Ini"
-              nilai={formatRupiah(s?.laba_hari_ini ?? 0)}
-              aksen="bg-success"
-              nilaiCls={(s?.laba_hari_ini ?? 0) < 0 ? "text-destructive" : "text-success"}
-            />
-            <Metrik label="Total Modal" nilai={formatRupiah(s?.total_modal ?? 0)} aksen="bg-hutang" />
-            <Metrik
-              label="Total Penjualan"
-              nilai={formatRupiah(s?.total_penjualan ?? 0)}
-              aksen="bg-primary"
-            />
-            <Metrik
-              label="Total Pengeluaran"
-              nilai={formatRupiah(s?.total_biaya ?? 0)}
-              aksen="bg-destructive"
-            />
-            <Metrik
-              label="Laba Kotor"
-              nilai={formatRupiah(s?.laba_kotor ?? 0)}
-              sub="Penjualan − Modal"
-              aksen="bg-success"
-            />
-            <Metrik
-              label="Laba Bersih"
-              nilai={formatRupiah(s?.laba_bersih ?? 0)}
-              sub="Laba kotor − biaya"
-              aksen="bg-success"
-              nilaiCls={(s?.laba_bersih ?? 0) < 0 ? "text-destructive" : "text-success"}
-            />
-            <Metrik
-              label="Margin"
-              nilai={`${(s?.margin ?? 0).toFixed(1)}%`}
-              sub="Laba bersih ÷ modal"
-              aksen="bg-warning"
-            />
-          </div>
+
+            <RincianAngka
+              judul="Lihat semua angka"
+              deskripsi="Omzet hari ini, laba hari ini, hutang, piutang, dan saldo kas"
+            >
+              <div className="grid grid-cols-2 gap-2.5 lg:grid-cols-4">
+                <Metrik
+                  label="Omzet Hari Ini"
+                  nilai={formatRupiah(s?.omzet_hari_ini ?? 0)}
+                  aksen="bg-primary"
+                />
+                <Metrik
+                  label="Laba Hari Ini"
+                  nilai={formatRupiah(s?.laba_hari_ini ?? 0)}
+                  aksen="bg-success"
+                  nilaiCls={(s?.laba_hari_ini ?? 0) < 0 ? "text-destructive" : "text-success"}
+                />
+                <Metrik
+                  label="Total Modal"
+                  nilai={formatRupiah(s?.total_modal ?? 0)}
+                  aksen="bg-hutang"
+                />
+                <Metrik
+                  label="Total Penjualan"
+                  nilai={formatRupiah(s?.total_penjualan ?? 0)}
+                  aksen="bg-primary"
+                />
+                <Metrik
+                  label="Total Pengeluaran"
+                  nilai={formatRupiah(s?.total_biaya ?? 0)}
+                  aksen="bg-destructive"
+                />
+                <Metrik
+                  label="Laba Kotor"
+                  nilai={formatRupiah(s?.laba_kotor ?? 0)}
+                  sub="Penjualan − Modal"
+                  aksen="bg-success"
+                />
+                <Metrik
+                  label="Laba Bersih"
+                  nilai={formatRupiah(s?.laba_bersih ?? 0)}
+                  sub="Laba kotor − biaya"
+                  aksen="bg-success"
+                  nilaiCls={(s?.laba_bersih ?? 0) < 0 ? "text-destructive" : "text-success"}
+                />
+                <Metrik
+                  label="Margin"
+                  nilai={`${(s?.margin ?? 0).toFixed(1)}%`}
+                  sub="Laba bersih ÷ modal"
+                  aksen="bg-warning"
+                />
+                <Metrik
+                  label="Saldo Kas"
+                  nilai={formatRupiah(s?.saldo_kas ?? 0)}
+                  aksen="bg-primary"
+                />
+                <Metrik
+                  label="Hutang ke Supplier"
+                  nilai={formatRupiah(s?.hutang ?? 0)}
+                  aksen="bg-hutang"
+                />
+                <Metrik
+                  label="Piutang Customer"
+                  nilai={formatRupiah(s?.piutang ?? 0)}
+                  aksen="bg-warning"
+                />
+                <Metrik
+                  label="Belum Lunas"
+                  nilai={`${s?.jml_belum_lunas ?? 0} transaksi`}
+                  aksen="bg-destructive"
+                />
+              </div>
+            </RincianAngka>
+          </>
         )}
+
 
         <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
           <Button asChild variant="outline" className="h-11">
