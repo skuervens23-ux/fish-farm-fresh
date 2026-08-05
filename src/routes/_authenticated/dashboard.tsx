@@ -122,17 +122,17 @@ function Dashboard() {
             <Ringkas
               label="Laba hari ini"
               nilai={formatRupiah(laba)}
-              aksen="border-success"
+              aksen="bg-success"
               nilaiCls={laba < 0 ? "text-destructive" : "text-success"}
             />
-            <Ringkas label="Kas tunai" nilai={formatRupiah(saldoKas)} aksen="border-primary" />
-            <Ringkas label="Hutang" nilai={formatRupiah(hutang)} aksen="border-hutang" />
-            <Ringkas label="Piutang" nilai={formatRupiah(piutang)} aksen="border-warning" />
+            <Ringkas label="Kas tunai" nilai={formatRupiah(saldoKas)} aksen="bg-primary" />
+            <Ringkas label="Hutang" nilai={formatRupiah(hutang)} aksen="bg-hutang" />
+            <Ringkas label="Piutang" nilai={formatRupiah(piutang)} aksen="bg-warning" />
           </div>
         )}
 
         {(menunggu.length > 0 || belumLunas.length > 0) && (
-          <div className="space-y-1 rounded-lg bg-warning/10 px-3 py-2.5">
+          <div className="space-y-1 rounded-xl border border-warning/25 bg-warning/10 px-3 py-2.5">
             {belumLunas.length > 0 && (
               <p className="flex items-center gap-1.5 text-sm text-warning">
                 <AlertTriangle className="h-4 w-4" />
@@ -172,7 +172,7 @@ function Dashboard() {
           {isLoading ? (
             <Skeleton className="h-40 w-full" />
           ) : rows.length === 0 ? (
-            <Card className="p-6 text-center text-sm text-muted-foreground">
+            <Card className="surface-card rounded-xl p-6 text-center text-sm text-muted-foreground">
               Belum ada transaksi. Mulai dari Input Pembelian.
             </Card>
           ) : (
@@ -183,7 +183,7 @@ function Dashboard() {
                     to={r.jenis === "pembelian" ? "/pembelian/$id" : "/penjualan/$id"}
                     params={{ id: r.id }}
                   >
-                    <Card className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 p-3 transition-colors hover:bg-accent/50">
+                    <Card className="surface-card grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 rounded-xl p-3 transition-colors hover:bg-accent/40">
                       <div
                         className={`grid h-9 w-9 shrink-0 place-items-center rounded-full ${
                           r.jenis === "pembelian"
