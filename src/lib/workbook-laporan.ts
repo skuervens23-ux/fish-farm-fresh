@@ -71,7 +71,17 @@ function autoLebar(ws: any, min = 10, max = 26) {
 function bar(ws: any, ref: string, warna: string) {
   ws.addConditionalFormatting({
     ref,
-    rules: [{ type: "dataBar", color: { argb: warna }, priority: 1 } as any],
+    rules: [
+      {
+        type: "dataBar",
+        priority: 1,
+        minLength: 0,
+        maxLength: 100,
+        gradient: true,
+        color: { argb: warna },
+        cfvo: [{ type: "min" }, { type: "max" }],
+      } as any,
+    ],
   });
 }
 
