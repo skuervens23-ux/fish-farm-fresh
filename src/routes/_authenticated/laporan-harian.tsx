@@ -258,7 +258,7 @@ function LaporanHarianPage() {
 
       lanjut();
 
-      seksi("E. STOK");
+      seksi("F. STOK");
       autoTable(doc, {
         ...opsiTabel,
         startY: y,
