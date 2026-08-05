@@ -41,7 +41,7 @@ function DetailPembelian() {
       const { data, error } = await supabase
         .from("pembelian")
         .select(
-          "id, tanggal, jenis_ikan, jumlah_kg, harga_per_kg, total_harga, jumlah_dibayar, status_bayar, created_at, petani:petani_id(nama, telepon)",
+          "id, tanggal, jenis_ikan, jumlah_kg, box, harga_per_kg, total_harga, jumlah_dibayar, status_bayar, created_at, petani:petani_id(nama, telepon)",
         )
         .eq("id", id)
         .maybeSingle();
