@@ -16,8 +16,8 @@ import { UploadFoto } from "./UploadFoto";
 import { toast } from "sonner";
 import { pesanError } from "@/lib/pesan-error";
 import { kesalahanJaringan, sedangOffline, tambahAntrian } from "@/lib/offline";
-import { formatKg, formatRupiah } from "@/lib/format";
-import { useStokGabungan } from "@/lib/lot-pembelian";
+import { formatKg, formatRupiah, formatTanggal } from "@/lib/format";
+import { useLotPembelian, LABEL_STATUS_JUAL, KELAS_STATUS_JUAL } from "@/lib/lot-pembelian";
 import { cn } from "@/lib/utils";
 
 const UKURAN = ["300-500 gram", "500-700 gram", "700-1000 gram", "> 1 kg"];
