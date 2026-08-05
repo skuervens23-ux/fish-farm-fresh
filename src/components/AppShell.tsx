@@ -3,7 +3,9 @@ import { Link } from "@tanstack/react-router";
 import { ArrowLeft, Moon, Sun } from "lucide-react";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
+import { IndikatorOffline } from "@/components/IndikatorOffline";
 import { useTema } from "@/lib/tema";
+
 
 export function AppShell({
   title,
