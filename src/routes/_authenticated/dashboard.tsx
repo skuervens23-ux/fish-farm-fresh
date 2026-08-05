@@ -49,12 +49,16 @@ function Ringkas({
   nilaiCls?: string;
 }) {
   return (
-    <div className={`rounded-lg border-l-[3px] bg-muted/60 p-3 ${aksen}`}>
+    <div className={`surface-card relative overflow-hidden rounded-xl p-3.5`}>
+      <span className={`absolute inset-y-0 left-0 w-[3px] ${aksen}`} aria-hidden />
       <p className="text-xs text-muted-foreground">{label}</p>
-      <p className={`text-xl font-semibold ${nilaiCls ?? "text-foreground"}`}>{nilai}</p>
+      <p className={`mt-0.5 text-xl font-semibold tracking-tight ${nilaiCls ?? "text-foreground"}`}>
+        {nilai}
+      </p>
     </div>
   );
 }
+
 
 function Dashboard() {
   const { isOwner } = useUserRole();
