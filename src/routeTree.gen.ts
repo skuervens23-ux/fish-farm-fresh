@@ -13,7 +13,6 @@ import { Route as McpRouteImport } from './routes/mcp'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as AuthenticatedStokRouteImport } from './routes/_authenticated/stok'
 import { Route as AuthenticatedRiwayatRouteImport } from './routes/_authenticated/riwayat'
 import { Route as AuthenticatedPersetujuanRouteImport } from './routes/_authenticated/persetujuan'
 import { Route as AuthenticatedPenggunaRouteImport } from './routes/_authenticated/pengguna'
@@ -52,11 +51,6 @@ const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
-} as any)
-const AuthenticatedStokRoute = AuthenticatedStokRouteImport.update({
-  id: '/stok',
-  path: '/stok',
-  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedRiwayatRoute = AuthenticatedRiwayatRouteImport.update({
   id: '/riwayat',
@@ -179,7 +173,6 @@ export interface FileRoutesByFullPath {
   '/pengguna': typeof AuthenticatedPenggunaRoute
   '/persetujuan': typeof AuthenticatedPersetujuanRoute
   '/riwayat': typeof AuthenticatedRiwayatRoute
-  '/stok': typeof AuthenticatedStokRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/pembelian/$id': typeof AuthenticatedPembelianIdRoute
@@ -204,7 +197,6 @@ export interface FileRoutesByTo {
   '/pengguna': typeof AuthenticatedPenggunaRoute
   '/persetujuan': typeof AuthenticatedPersetujuanRoute
   '/riwayat': typeof AuthenticatedRiwayatRoute
-  '/stok': typeof AuthenticatedStokRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/pembelian/$id': typeof AuthenticatedPembelianIdRoute
@@ -231,7 +223,6 @@ export interface FileRoutesById {
   '/_authenticated/pengguna': typeof AuthenticatedPenggunaRoute
   '/_authenticated/persetujuan': typeof AuthenticatedPersetujuanRoute
   '/_authenticated/riwayat': typeof AuthenticatedRiwayatRoute
-  '/_authenticated/stok': typeof AuthenticatedStokRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/_authenticated/pembelian/$id': typeof AuthenticatedPembelianIdRoute
@@ -258,7 +249,6 @@ export interface FileRouteTypes {
     | '/pengguna'
     | '/persetujuan'
     | '/riwayat'
-    | '/stok'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
     | '/pembelian/$id'
@@ -283,7 +273,6 @@ export interface FileRouteTypes {
     | '/pengguna'
     | '/persetujuan'
     | '/riwayat'
-    | '/stok'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
     | '/pembelian/$id'
@@ -309,7 +298,6 @@ export interface FileRouteTypes {
     | '/_authenticated/pengguna'
     | '/_authenticated/persetujuan'
     | '/_authenticated/riwayat'
-    | '/_authenticated/stok'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
     | '/_authenticated/pembelian/$id'
@@ -361,13 +349,6 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
-    }
-    '/_authenticated/stok': {
-      id: '/_authenticated/stok'
-      path: '/stok'
-      fullPath: '/stok'
-      preLoaderRoute: typeof AuthenticatedStokRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/riwayat': {
       id: '/_authenticated/riwayat'
@@ -514,7 +495,6 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedPenggunaRoute: typeof AuthenticatedPenggunaRoute
   AuthenticatedPersetujuanRoute: typeof AuthenticatedPersetujuanRoute
   AuthenticatedRiwayatRoute: typeof AuthenticatedRiwayatRoute
-  AuthenticatedStokRoute: typeof AuthenticatedStokRoute
   AuthenticatedPembelianIdRoute: typeof AuthenticatedPembelianIdRoute
   AuthenticatedPembelianBaruRoute: typeof AuthenticatedPembelianBaruRoute
   AuthenticatedPenjualanIdRoute: typeof AuthenticatedPenjualanIdRoute
@@ -533,7 +513,6 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedPenggunaRoute: AuthenticatedPenggunaRoute,
   AuthenticatedPersetujuanRoute: AuthenticatedPersetujuanRoute,
   AuthenticatedRiwayatRoute: AuthenticatedRiwayatRoute,
-  AuthenticatedStokRoute: AuthenticatedStokRoute,
   AuthenticatedPembelianIdRoute: AuthenticatedPembelianIdRoute,
   AuthenticatedPembelianBaruRoute: AuthenticatedPembelianBaruRoute,
   AuthenticatedPenjualanIdRoute: AuthenticatedPenjualanIdRoute,

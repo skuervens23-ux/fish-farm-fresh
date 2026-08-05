@@ -10,7 +10,6 @@ import {
   Contact,
   LogOut,
   Fish,
-  Boxes,
   Wallet,
   BarChart3,
   UserCog,
@@ -47,7 +46,7 @@ const DATA: Item[] = [
   { title: "Riwayat Transaksi", url: "/riwayat", icon: History },
   { title: "Draft", url: "/draft", icon: FileEdit },
   { title: "Persetujuan", url: "/persetujuan", icon: CheckSquare, ownerOnly: true },
-  { title: "Stok Ikan", url: "/stok", icon: Boxes },
+  
   { title: "Laporan & Grafik", url: "/laporan", icon: BarChart3 },
 ];
 
