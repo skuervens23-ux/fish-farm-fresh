@@ -505,6 +505,22 @@ export type Database = {
         }
         Returns: boolean
       }
+      kontak_pelanggan: {
+        Args: never
+        Returns: {
+          alamat: string
+          id: string
+          telepon: string
+        }[]
+      }
+      kontak_petani: {
+        Args: never
+        Returns: {
+          alamat: string
+          id: string
+          telepon: string
+        }[]
+      }
     }
     Enums: {
       app_role: "mandor" | "owner"

@@ -17,7 +17,7 @@ export default defineTool({
     const supabase = supabaseForUser(ctx);
     let query = supabase
       .from(input.tipe)
-      .select("id, nama, telepon, alamat, is_active")
+      .select("id, nama, is_active")
       .order("nama", { ascending: true })
       .limit(200);
     if (input.hanya_aktif !== false) query = query.eq("is_active", true);
