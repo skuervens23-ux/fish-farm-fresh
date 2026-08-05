@@ -416,7 +416,34 @@ function LaporanHarianPage() {
               />
             </Seksi>
 
-            <Seksi judul="B. DATA PENJUALAN">
+            <Seksi judul="B. BIAYA OPERASIONAL">
+              <Tabel
+                kolom={["No", "Kategori", "Keterangan", "Nominal"]}
+                angka={[3]}
+                rows={laporan.biaya.map((r) => [
+                  r.no,
+                  r.kategori,
+                  r.keterangan || "—",
+                  formatRupiah(r.nominal),
+                ])}
+                footer={["", "TOTAL OPERASIONAL", "", formatRupiah(total.biaya)]}
+              />
+            </Seksi>
+
+            <Seksi judul="C. TOTAL PENGELUARAN (PEMBELIAN + OPERASIONAL)">
+              <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+                <Kotak label="Total Pembelian" nilai={formatRupiah(total.beli)} />
+                <Kotak label="Total Operasional" nilai={formatRupiah(total.biaya)} />
+                <Kotak
+                  label="Total Pengeluaran"
+                  nilai={formatRupiah(total.pengeluaran)}
+                  utama
+                  warna="text-warning"
+                />
+              </div>
+            </Seksi>
+
+            <Seksi judul="D. DATA PENJUALAN">
               <Tabel
                 kolom={["No", "Pembeli", "Jenis Ikan", "Berat Terjual", "Harga Jual/Kg", "Total Penjualan"]}
                 angka={[3, 4, 5]}
@@ -432,33 +459,21 @@ function LaporanHarianPage() {
               />
             </Seksi>
 
-            <Seksi judul="C. BIAYA OPERASIONAL">
-              <Tabel
-                kolom={["No", "Kategori", "Keterangan", "Nominal"]}
-                angka={[3]}
-                rows={laporan.biaya.map((r) => [
-                  r.no,
-                  r.kategori,
-                  r.keterangan || "—",
-                  formatRupiah(r.nominal),
-                ])}
-                footer={["", "TOTAL OPERASIONAL", "", formatRupiah(total.biaya)]}
-              />
-            </Seksi>
-
-            <Seksi judul="D. RINGKASAN KEUANGAN">
-              <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+            <Seksi judul="E. RINGKASAN KEUANGAN">
+              <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
                 <Kotak label="Total Pembelian" nilai={formatRupiah(total.beli)} />
-                <Kotak label="Total Penjualan" nilai={formatRupiah(total.jual)} />
                 <Kotak label="Total Operasional" nilai={formatRupiah(total.biaya)} />
+                <Kotak label="Total Pengeluaran" nilai={formatRupiah(total.pengeluaran)} />
+                <Kotak label="Total Penjualan" nilai={formatRupiah(total.jual)} />
                 <Kotak
-                  label="Laba Bersih"
+                  label="Laba Bersih (Penjualan − Pengeluaran)"
                   nilai={formatRupiah(total.laba)}
                   utama
                   warna={total.laba >= 0 ? "text-success" : "text-destructive"}
                 />
               </div>
             </Seksi>
+
 
             <Seksi judul="E. STOK">
               <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
