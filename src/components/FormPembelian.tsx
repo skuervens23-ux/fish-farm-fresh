@@ -83,7 +83,7 @@ export function FormPembelian() {
     if (statusBayar !== "sebagian") setJumlahDibayar("");
   }, [statusBayar]);
 
-  async function simpan(mode: "draft" | "kirim") {
+  async function simpan() {
     if (saving) return;
 
     const parsed = schema.safeParse({
@@ -99,7 +99,7 @@ export function FormPembelian() {
       return toast.error(parsed.error.issues[0].message);
     }
 
-    setSaving(mode);
+    setSaving(true);
     const { error } = await supabase.rpc("create_pembelian", {
       _petani_id: parsed.data.petani_id,
       _jenis_ikan: parsed.data.jenis_ikan,
@@ -108,18 +108,18 @@ export function FormPembelian() {
       _harga_per_kg: parsed.data.harga_per_kg,
       _status_bayar: parsed.data.status_bayar,
       _jumlah_dibayar: parsed.data.jumlah_dibayar,
-      _status_transaksi: mode === "draft" ? "draft" : "menunggu",
+      _status_transaksi: "disetujui",
       _catatan: catatan || undefined,
       _foto_nota_url: fotoNota ?? undefined,
     });
-    setSaving(null);
+    setSaving(false);
 
     if (error) return toast.error(pesanError(error));
-    toast.success(mode === "draft" ? "Draft tersimpan" : "Pembelian dikirim ke admin");
+    toast.success("Pembelian tersimpan");
     qc.invalidateQueries({ queryKey: ["pembelian"] });
     qc.invalidateQueries({ queryKey: ["transaksi"] });
-    qc.invalidateQueries({ queryKey: ["menunggu-count"] });
-    navigate({ to: mode === "draft" ? "/draft" : "/riwayat" });
+    qc.invalidateQueries({ queryKey: ["analitik"] });
+    navigate({ to: "/riwayat" });
   }
 
   const petaniOptions = petaniList.map((p) => ({ value: p.id, label: p.nama }));
