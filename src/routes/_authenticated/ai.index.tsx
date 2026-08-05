@@ -49,7 +49,7 @@ function DaftarAI() {
   return (
     <AppShell title="Tanya AI">
       <div className="mx-auto w-full max-w-[760px] space-y-3 px-4 py-4">
-        <Button onClick={baru} className="w-full">
+        <Button onClick={baru} className="h-11 w-full rounded-xl">
           <Plus className="mr-2 h-4 w-4" /> Percakapan Baru
         </Button>
         {isLoading ? (
@@ -58,13 +58,13 @@ function DaftarAI() {
           <ul className="space-y-2">
             {list.map((p) => (
               <li key={p.id}>
-                <Card className="flex items-center gap-2 p-3">
+                <Card className="surface-card flex items-center gap-2 rounded-xl p-3 transition-colors hover:bg-accent/40">
                   <Link
                     to="/ai/$threadId"
                     params={{ threadId: p.id }}
                     className="flex min-w-0 flex-1 items-center gap-3"
                   >
-                    <MessageSquare className="h-4 w-4 shrink-0 text-primary" />
+                    <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-primary/12 text-primary"><MessageSquare className="h-4 w-4" /></span>
                     <span className="truncate text-sm text-foreground">{p.judul}</span>
                   </Link>
                   <Button
