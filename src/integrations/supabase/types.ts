@@ -14,6 +14,69 @@ export type Database = {
   }
   public: {
     Tables: {
+      biaya_operasional: {
+        Row: {
+          created_at: string
+          dicatat_oleh: string
+          id: string
+          jumlah: number
+          kategori: string
+          keterangan: string | null
+          tanggal: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          dicatat_oleh: string
+          id?: string
+          jumlah: number
+          kategori?: string
+          keterangan?: string | null
+          tanggal?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          dicatat_oleh?: string
+          id?: string
+          jumlah?: number
+          kategori?: string
+          keterangan?: string | null
+          tanggal?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      jenis_ikan: {
+        Row: {
+          catatan: string | null
+          created_at: string
+          created_by: string | null
+          id: string
+          is_active: boolean
+          nama: string
+          updated_at: string
+        }
+        Insert: {
+          catatan?: string | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          is_active?: boolean
+          nama: string
+          updated_at?: string
+        }
+        Update: {
+          catatan?: string | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          is_active?: boolean
+          nama?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       kas: {
         Row: {
           created_at: string
@@ -580,6 +643,63 @@ export type Database = {
           telepon: string
         }[]
       }
+      profit_per_customer: {
+        Args: { _dari?: string; _sampai?: string }
+        Returns: {
+          nama: string
+          omzet: number
+          piutang: number
+          total_kg: number
+          transaksi: number
+        }[]
+      }
+      profit_per_ikan: {
+        Args: { _dari?: string; _sampai?: string }
+        Returns: {
+          jenis_ikan: string
+          kg_beli: number
+          kg_jual: number
+          laba_kotor: number
+          margin: number
+          modal: number
+          penjualan: number
+        }[]
+      }
+      profit_per_lot: {
+        Args: { _dari?: string; _sampai?: string }
+        Returns: {
+          biaya: number
+          kg_beli: number
+          kg_jual: number
+          laba_bersih: number
+          lot: string
+          margin: number
+          modal: number
+          penjualan: number
+        }[]
+      }
+      profit_per_supplier: {
+        Args: { _dari?: string; _sampai?: string }
+        Returns: {
+          hutang: number
+          modal: number
+          nama: string
+          total_kg: number
+          transaksi: number
+        }[]
+      }
+      profit_series: {
+        Args: { _dari?: string; _grup?: string; _sampai?: string }
+        Returns: {
+          biaya: number
+          laba_bersih: number
+          laba_kotor: number
+          margin: number
+          modal: number
+          penjualan: number
+          periode: string
+        }[]
+      }
       ringkasan_dashboard: {
         Args: never
         Returns: {
@@ -591,6 +711,24 @@ export type Database = {
           laba_hari_ini: number
           piutang: number
           saldo_kas: number
+        }[]
+      }
+      ringkasan_periode: {
+        Args: { _dari?: string; _sampai?: string }
+        Returns: {
+          hutang: number
+          jml_belum_lunas: number
+          laba_bersih: number
+          laba_hari_ini: number
+          laba_kotor: number
+          margin: number
+          modal_hari_ini: number
+          omzet_hari_ini: number
+          piutang: number
+          saldo_kas: number
+          total_biaya: number
+          total_modal: number
+          total_penjualan: number
         }[]
       }
     }
