@@ -3,7 +3,9 @@ import { Link } from "@tanstack/react-router";
 import { ArrowLeft, Moon, Sun } from "lucide-react";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
+import { IndikatorOffline } from "@/components/IndikatorOffline";
 import { useTema } from "@/lib/tema";
+
 
 export function AppShell({
   title,
@@ -39,7 +41,9 @@ export function AppShell({
               </div>
               <h1 className="truncate text-base font-semibold text-foreground">{title}</h1>
               <div className="flex items-center gap-1">
+                <IndikatorOffline />
                 {actions}
+
                 <button
                   type="button"
                   onClick={ganti}

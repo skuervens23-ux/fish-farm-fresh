@@ -16,6 +16,7 @@ import { UploadFoto } from "./UploadFoto";
 import { toast } from "sonner";
 import { useJenisIkan } from "@/lib/jenis-ikan";
 import { pesanError } from "@/lib/pesan-error";
+import { kesalahanJaringan, sedangOffline, tambahAntrian } from "@/lib/offline";
 
 
 const UKURAN = ["300-500 gram", "500-700 gram", "700-1000 gram", "> 1 kg"];
@@ -84,8 +85,7 @@ export function FormPenjualan() {
       return toast.error("Jumlah dibayar harus > 0 dan < total");
     }
 
-    setSaving(true);
-    const { error } = await supabase.rpc("create_penjualan", {
+    const payload = {
       _pelanggan_id: parsed.data.pelanggan_id,
       _jenis_ikan: parsed.data.jenis_ikan,
       _berat_kg: parsed.data.berat_kg,
@@ -96,18 +96,39 @@ export function FormPenjualan() {
       _kolam: kolam || undefined,
       _status_bayar: statusBayar,
       _jumlah_dibayar: statusBayar === "sebagian" ? dibayarNum : 0,
-      _status_transaksi: "disetujui",
+      _status_transaksi: "disetujui" as const,
       _catatan: catatan || undefined,
       _foto_timbangan_url: fotoTimbangan ?? undefined,
       _foto_nota_url: fotoNota ?? undefined,
-    });
+    };
+
+    const namaPelanggan =
+      pelangganList.find((p) => p.id === parsed.data.pelanggan_id)?.nama ?? "Pelanggan";
+    const ringkas = `Penjualan ${parsed.data.jenis_ikan} — ${namaPelanggan}`;
+
+    if (sedangOffline()) {
+      tambahAntrian("penjualan", ringkas, payload);
+      toast.success("Tersimpan offline. Akan dikirim otomatis saat internet kembali.");
+      return navigate({ to: "/riwayat" });
+    }
+
+    setSaving(true);
+    const { error } = await supabase.rpc("create_penjualan", payload);
     setSaving(false);
-    if (error) return toast.error(pesanError(error));
+    if (error) {
+      if (kesalahanJaringan(error)) {
+        tambahAntrian("penjualan", ringkas, payload);
+        toast.success("Koneksi bermasalah — data disimpan offline dan akan dikirim otomatis.");
+        return navigate({ to: "/riwayat" });
+      }
+      return toast.error(pesanError(error));
+    }
     toast.success("Penjualan tersimpan");
     qc.invalidateQueries({ queryKey: ["transaksi"] });
     qc.invalidateQueries({ queryKey: ["analitik"] });
     navigate({ to: "/riwayat" });
   }
+
 
   const pelangganOptions = pelangganList.map((p) => ({ value: p.id, label: p.nama }));
   const ikanOptions = Array.from(new Set([...ikanMaster, ...(jenisIkan ? [jenisIkan] : [])])).map(
