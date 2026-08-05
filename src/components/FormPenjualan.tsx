@@ -266,20 +266,9 @@ export function FormPenjualan() {
           />
         </div>
 
-        <div className="grid grid-cols-2 gap-3">
-          <Button
-            type="button"
-            variant="outline"
-            className="h-12"
-            disabled={saving !== null}
-            onClick={() => void simpan("draft")}
-          >
-            {saving === "draft" ? "Menyimpan…" : "Simpan Draft"}
-          </Button>
-          <Button type="submit" className="h-12 text-base" disabled={saving !== null}>
-            {saving === "kirim" ? "Mengirim…" : "Kirim ke Admin"}
-          </Button>
-        </div>
+        <Button type="submit" className="h-12 w-full text-base" disabled={saving}>
+          {saving ? "Menyimpan…" : "Simpan Penjualan"}
+        </Button>
       </form>
 
       <TambahPelangganDialog
