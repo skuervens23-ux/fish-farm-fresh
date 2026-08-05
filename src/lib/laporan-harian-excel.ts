@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import type { LaporanHarian } from "@/lib/laporan-harian";
 import { tanggalIndo } from "@/lib/laporan-harian";
+import { tambahSheetBukuBesar } from "@/lib/buku-besar-excel";
 
 const BIRU = "FF0B3F96";
 const BIRU_MUDA = "FFE8EEF9";
@@ -305,7 +306,26 @@ export async function buatExcelHarian(d: LaporanHarian): Promise<Blob> {
   f.value = `Dicetak otomatis oleh ERP ${d.perusahaan} pada ${new Date().toLocaleString("id-ID")}`;
   f.font = { name: "Calibri", size: 9, italic: true, color: { argb: "FF888888" } };
 
+  tambahSheetBukuBesar(wb, {
+    perusahaan: d.perusahaan,
+    periode: tanggalIndo(d.tanggal),
+    pembelian: d.pembelian.map((p) => ({
+      tanggal: d.tanggal,
+      mitra: p.supplier,
+      kg: p.berat,
+      harga: p.harga,
+    })),
+    penjualan: d.penjualan.map((p) => ({
+      tanggal: d.tanggal,
+      mitra: p.pembeli,
+      kg: p.berat,
+      harga: p.harga,
+    })),
+    operasional: { [d.tanggal]: d.biaya.reduce((a, b) => a + b.nominal, 0) },
+  });
+
   const buf = await wb.xlsx.writeBuffer();
+
   return new Blob([buf], {
     type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
   });

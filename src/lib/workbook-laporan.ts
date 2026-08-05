@@ -1,4 +1,5 @@
 import type { DataLaporan } from "@/lib/ekspor-excel";
+import { tambahSheetBukuBesar } from "@/lib/buku-besar-excel";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
@@ -569,7 +570,26 @@ export async function buatWorkbookLaporan(d: DataLaporan): Promise<Blob> {
   wsDash.getColumn(2).width = 24;
   wsDash.views = [{ state: "frozen", ySplit: 4, showGridLines: false }];
 
+  tambahSheetBukuBesar(wb, {
+    perusahaan: "Bandar Ikan",
+    periode: `Periode ${d.dari} s/d ${d.sampai}`,
+    pembelian: d.pembelian.map((p) => ({
+      tanggal: p.tanggal,
+      mitra: p.supplier,
+      kg: p.berat,
+      harga: p.harga,
+    })),
+    penjualan: d.penjualan.map((p) => ({
+      tanggal: p.tanggal,
+      mitra: p.pembeli,
+      kg: p.berat,
+      harga: p.harga,
+    })),
+    operasional: {},
+  });
+
   const buf = await wb.xlsx.writeBuffer();
+
   return new Blob([buf], {
     type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
   });
