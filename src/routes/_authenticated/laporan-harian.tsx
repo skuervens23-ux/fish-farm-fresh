@@ -475,7 +475,7 @@ function LaporanHarianPage() {
             </Seksi>
 
 
-            <Seksi judul="E. STOK">
+            <Seksi judul="F. STOK">
               <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
                 <Kotak label="Total Berat Masuk" nilai={kg(laporan.stok.masuk)} />
                 <Kotak label="Total Berat Keluar" nilai={kg(laporan.stok.keluar)} />
