@@ -167,8 +167,55 @@ export async function buatExcelHarian(d: LaporanHarian): Promise<Blob> {
   const selTotalBeli = `H${r}`;
   r += 2;
 
-  // B. Penjualan
-  judulSeksi(ws, r++, "B. DATA PENJUALAN", L);
+  // B. Biaya operasional
+  judulSeksi(ws, r++, "B. BIAYA OPERASIONAL", L);
+  headerTabel(ws, r++, ["No", "Kategori", "Keterangan", "Nominal", "", "", "", ""]);
+  const biayaAwal = r;
+  for (const b of d.biaya) {
+    isiBaris(
+      ws,
+      r,
+      [b.no, b.kategori, b.keterangan, b.nominal, "", "", "", ""],
+      [null, null, null, RP, null, null, null, null],
+    );
+    r++;
+  }
+  const biayaAkhir = r - 1;
+  barisTotal(ws, r, "TOTAL OPERASIONAL", 3, [[4, RP]]);
+  ws.getCell(r, 4).value = { formula: rentang("D", biayaAwal, biayaAkhir) };
+  const selTotalBiaya = `D${r}`;
+  r += 2;
+
+  // C. Total pengeluaran
+  judulSeksi(ws, r++, "C. TOTAL PENGELUARAN (PEMBELIAN + OPERASIONAL)", L);
+  const pengeluaran: [string, string][] = [
+    ["Total Pembelian", selTotalBeli],
+    ["Total Operasional", selTotalBiaya],
+    ["Total Pengeluaran", `${selTotalBeli}+${selTotalBiaya}`],
+  ];
+  for (const [label, formula] of pengeluaran) {
+    ws.mergeCells(r, 1, r, 3);
+    const l = ws.getCell(r, 1);
+    l.value = label;
+    l.font = { name: "Calibri", size: 11, bold: label === "Total Pengeluaran" };
+    l.border = tepi();
+    const v = ws.getCell(r, 4);
+    v.value = { formula };
+    v.numFmt = RP;
+    v.font = { name: "Calibri", size: 11, bold: true };
+    v.alignment = { horizontal: "right" };
+    v.border = tepi();
+    if (label === "Total Pengeluaran") {
+      for (const c of [l, v])
+        c.fill = { type: "pattern", pattern: "solid", fgColor: { argb: BIRU_MUDA } };
+    }
+    r++;
+  }
+  const selPengeluaran = `D${r - 1}`;
+  r++;
+
+  // D. Penjualan
+  judulSeksi(ws, r++, "D. DATA PENJUALAN", L);
   headerTabel(ws, r++, [
     "No",
     "Pembeli",
@@ -199,33 +246,16 @@ export async function buatExcelHarian(d: LaporanHarian): Promise<Blob> {
   const selTotalJual = `F${r}`;
   r += 2;
 
-  // C. Biaya operasional
-  judulSeksi(ws, r++, "C. BIAYA OPERASIONAL", L);
-  headerTabel(ws, r++, ["No", "Kategori", "Keterangan", "Nominal", "", "", "", ""]);
-  const biayaAwal = r;
-  for (const b of d.biaya) {
-    isiBaris(
-      ws,
-      r,
-      [b.no, b.kategori, b.keterangan, b.nominal, "", "", "", ""],
-      [null, null, null, RP, null, null, null, null],
-    );
-    r++;
-  }
-  const biayaAkhir = r - 1;
-  barisTotal(ws, r, "TOTAL OPERASIONAL", 3, [[4, RP]]);
-  ws.getCell(r, 4).value = { formula: rentang("D", biayaAwal, biayaAkhir) };
-  const selTotalBiaya = `D${r}`;
-  r += 2;
-
-  // D. Ringkasan keuangan
-  judulSeksi(ws, r++, "D. RINGKASAN KEUANGAN", L);
+  // E. Ringkasan keuangan
+  judulSeksi(ws, r++, "E. RINGKASAN KEUANGAN", L);
   const ringkas: [string, string][] = [
     ["Total Pembelian", `=${selTotalBeli}`],
-    ["Total Penjualan", `=${selTotalJual}`],
     ["Total Operasional", `=${selTotalBiaya}`],
-    ["Laba Bersih", `=${selTotalJual}-${selTotalBeli}-${selTotalBiaya}`],
+    ["Total Pengeluaran", `=${selPengeluaran}`],
+    ["Total Penjualan", `=${selTotalJual}`],
+    ["Laba Bersih", `=${selTotalJual}-${selPengeluaran}`],
   ];
+
   for (const [label, formula] of ringkas) {
     ws.mergeCells(r, 1, r, 3);
     const l = ws.getCell(r, 1);
@@ -246,8 +276,8 @@ export async function buatExcelHarian(d: LaporanHarian): Promise<Blob> {
   }
   r++;
 
-  // E. Stok
-  judulSeksi(ws, r++, "E. STOK", L);
+  // F. Stok
+  judulSeksi(ws, r++, "F. STOK", L);
   const stok: [string, number, string][] = [
     ["Total Berat Masuk", d.stok.masuk, KG],
     ["Total Berat Keluar", d.stok.keluar, KG],

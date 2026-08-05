@@ -99,7 +99,16 @@ function LaporanHarianPage() {
     const jual = (laporan?.penjualan ?? []).reduce((a, r) => a + r.total, 0);
     const beratJual = (laporan?.penjualan ?? []).reduce((a, r) => a + r.berat, 0);
     const biaya = (laporan?.biaya ?? []).reduce((a, r) => a + r.nominal, 0);
-    return { beli, beratBeli, jual, beratJual, biaya, laba: jual - beli - biaya };
+    return {
+      beli,
+      beratBeli,
+      jual,
+      beratJual,
+      biaya,
+      pengeluaran: beli + biaya,
+      laba: jual - beli - biaya,
+    };
+
   }, [laporan]);
 
   async function unduhExcel() {
@@ -185,7 +194,31 @@ function LaporanHarianPage() {
       });
       lanjut();
 
-      seksi("B. DATA PENJUALAN");
+      seksi("B. BIAYA OPERASIONAL");
+      autoTable(doc, {
+        ...opsiTabel,
+        startY: y,
+        head: [["No", "Kategori", "Keterangan", "Nominal"]],
+        body: laporan.biaya.length
+          ? laporan.biaya.map((r) => [r.no, r.kategori, r.keterangan, formatRupiah(r.nominal)])
+          : [["-", "Tidak ada biaya", "", ""]],
+        foot: [["", "TOTAL OPERASIONAL", "", formatRupiah(total.biaya)]],
+        footStyles: { fillColor: [232, 238, 249], textColor: 20, fontStyle: "bold" },
+      });
+      lanjut();
+
+      seksi("C. TOTAL PENGELUARAN (PEMBELIAN + OPERASIONAL)");
+      autoTable(doc, {
+        ...opsiTabel,
+        startY: y,
+        head: [["Total Pembelian", "Total Operasional", "Total Pengeluaran"]],
+        body: [
+          [formatRupiah(total.beli), formatRupiah(total.biaya), formatRupiah(total.pengeluaran)],
+        ],
+      });
+      lanjut();
+
+      seksi("D. DATA PENJUALAN");
       autoTable(doc, {
         ...opsiTabel,
         startY: y,
@@ -205,36 +238,27 @@ function LaporanHarianPage() {
       });
       lanjut();
 
-      seksi("C. BIAYA OPERASIONAL");
+      seksi("E. RINGKASAN KEUANGAN");
       autoTable(doc, {
         ...opsiTabel,
         startY: y,
-        head: [["No", "Kategori", "Keterangan", "Nominal"]],
-        body: laporan.biaya.length
-          ? laporan.biaya.map((r) => [r.no, r.kategori, r.keterangan, formatRupiah(r.nominal)])
-          : [["-", "Tidak ada biaya", "", ""]],
-        foot: [["", "TOTAL OPERASIONAL", "", formatRupiah(total.biaya)]],
-        footStyles: { fillColor: [232, 238, 249], textColor: 20, fontStyle: "bold" },
-      });
-      lanjut();
-
-      seksi("D. RINGKASAN KEUANGAN");
-      autoTable(doc, {
-        ...opsiTabel,
-        startY: y,
-        head: [["Total Pembelian", "Total Penjualan", "Total Operasional", "Laba Bersih"]],
+        head: [
+          ["Total Pembelian", "Total Operasional", "Total Pengeluaran", "Total Penjualan", "Laba Bersih"],
+        ],
         body: [
           [
             formatRupiah(total.beli),
-            formatRupiah(total.jual),
             formatRupiah(total.biaya),
+            formatRupiah(total.pengeluaran),
+            formatRupiah(total.jual),
             formatRupiah(total.laba),
           ],
         ],
       });
+
       lanjut();
 
-      seksi("E. STOK");
+      seksi("F. STOK");
       autoTable(doc, {
         ...opsiTabel,
         startY: y,
@@ -392,7 +416,34 @@ function LaporanHarianPage() {
               />
             </Seksi>
 
-            <Seksi judul="B. DATA PENJUALAN">
+            <Seksi judul="B. BIAYA OPERASIONAL">
+              <Tabel
+                kolom={["No", "Kategori", "Keterangan", "Nominal"]}
+                angka={[3]}
+                rows={laporan.biaya.map((r) => [
+                  r.no,
+                  r.kategori,
+                  r.keterangan || "—",
+                  formatRupiah(r.nominal),
+                ])}
+                footer={["", "TOTAL OPERASIONAL", "", formatRupiah(total.biaya)]}
+              />
+            </Seksi>
+
+            <Seksi judul="C. TOTAL PENGELUARAN (PEMBELIAN + OPERASIONAL)">
+              <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+                <Kotak label="Total Pembelian" nilai={formatRupiah(total.beli)} />
+                <Kotak label="Total Operasional" nilai={formatRupiah(total.biaya)} />
+                <Kotak
+                  label="Total Pengeluaran"
+                  nilai={formatRupiah(total.pengeluaran)}
+                  utama
+                  warna="text-warning"
+                />
+              </div>
+            </Seksi>
+
+            <Seksi judul="D. DATA PENJUALAN">
               <Tabel
                 kolom={["No", "Pembeli", "Jenis Ikan", "Berat Terjual", "Harga Jual/Kg", "Total Penjualan"]}
                 angka={[3, 4, 5]}
@@ -408,27 +459,14 @@ function LaporanHarianPage() {
               />
             </Seksi>
 
-            <Seksi judul="C. BIAYA OPERASIONAL">
-              <Tabel
-                kolom={["No", "Kategori", "Keterangan", "Nominal"]}
-                angka={[3]}
-                rows={laporan.biaya.map((r) => [
-                  r.no,
-                  r.kategori,
-                  r.keterangan || "—",
-                  formatRupiah(r.nominal),
-                ])}
-                footer={["", "TOTAL OPERASIONAL", "", formatRupiah(total.biaya)]}
-              />
-            </Seksi>
-
-            <Seksi judul="D. RINGKASAN KEUANGAN">
-              <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+            <Seksi judul="E. RINGKASAN KEUANGAN">
+              <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
                 <Kotak label="Total Pembelian" nilai={formatRupiah(total.beli)} />
-                <Kotak label="Total Penjualan" nilai={formatRupiah(total.jual)} />
                 <Kotak label="Total Operasional" nilai={formatRupiah(total.biaya)} />
+                <Kotak label="Total Pengeluaran" nilai={formatRupiah(total.pengeluaran)} />
+                <Kotak label="Total Penjualan" nilai={formatRupiah(total.jual)} />
                 <Kotak
-                  label="Laba Bersih"
+                  label="Laba Bersih (Penjualan − Pengeluaran)"
                   nilai={formatRupiah(total.laba)}
                   utama
                   warna={total.laba >= 0 ? "text-success" : "text-destructive"}
@@ -436,7 +474,8 @@ function LaporanHarianPage() {
               </div>
             </Seksi>
 
-            <Seksi judul="E. STOK">
+
+            <Seksi judul="F. STOK">
               <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
                 <Kotak label="Total Berat Masuk" nilai={kg(laporan.stok.masuk)} />
                 <Kotak label="Total Berat Keluar" nilai={kg(laporan.stok.keluar)} />
