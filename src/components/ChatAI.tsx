@@ -96,7 +96,7 @@ export function ChatAI({
             </ConversationEmptyState>
           ) : (
             messages.map((m) => (
-              <Message key={m.id} from={m.role} className="!flex-row items-start gap-2.5">
+              <Message key={m.id} from={m.role} className="flex-row! items-start gap-2.5">
                 {m.role === "assistant" && (
                   <span className="mt-0.5 grid h-7 w-7 shrink-0 place-items-center rounded-full bg-primary/12 text-primary ring-1 ring-primary/15">
                     <Fish className="h-3.5 w-3.5" />
@@ -113,7 +113,7 @@ export function ChatAI({
             ))
           )}
           {status === "submitted" && (
-            <Message from="assistant" className="!flex-row items-start gap-2.5">
+            <Message from="assistant" className="flex-row! items-start gap-2.5">
               <span className="mt-0.5 grid h-7 w-7 shrink-0 place-items-center rounded-full bg-primary/12 text-primary ring-1 ring-primary/15">
                 <Fish className="h-3.5 w-3.5" />
               </span>
