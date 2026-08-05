@@ -16,6 +16,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as ApiChatRouteImport } from './routes/api/chat'
 import { Route as AuthenticatedRiwayatRouteImport } from './routes/_authenticated/riwayat'
 import { Route as AuthenticatedPengaturanRouteImport } from './routes/_authenticated/pengaturan'
+import { Route as AuthenticatedLotRouteImport } from './routes/_authenticated/lot'
 import { Route as AuthenticatedLaporanRouteImport } from './routes/_authenticated/laporan'
 import { Route as AuthenticatedKasRouteImport } from './routes/_authenticated/kas'
 import { Route as AuthenticatedJenisIkanRouteImport } from './routes/_authenticated/jenis-ikan'
@@ -68,6 +69,11 @@ const AuthenticatedRiwayatRoute = AuthenticatedRiwayatRouteImport.update({
 const AuthenticatedPengaturanRoute = AuthenticatedPengaturanRouteImport.update({
   id: '/pengaturan',
   path: '/pengaturan',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedLotRoute = AuthenticatedLotRouteImport.update({
+  id: '/lot',
+  path: '/lot',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedLaporanRoute = AuthenticatedLaporanRouteImport.update({
@@ -188,6 +194,7 @@ export interface FileRoutesByFullPath {
   '/jenis-ikan': typeof AuthenticatedJenisIkanRoute
   '/kas': typeof AuthenticatedKasRoute
   '/laporan': typeof AuthenticatedLaporanRoute
+  '/lot': typeof AuthenticatedLotRoute
   '/pengaturan': typeof AuthenticatedPengaturanRoute
   '/riwayat': typeof AuthenticatedRiwayatRoute
   '/api/chat': typeof ApiChatRoute
@@ -215,6 +222,7 @@ export interface FileRoutesByTo {
   '/jenis-ikan': typeof AuthenticatedJenisIkanRoute
   '/kas': typeof AuthenticatedKasRoute
   '/laporan': typeof AuthenticatedLaporanRoute
+  '/lot': typeof AuthenticatedLotRoute
   '/pengaturan': typeof AuthenticatedPengaturanRoute
   '/riwayat': typeof AuthenticatedRiwayatRoute
   '/api/chat': typeof ApiChatRoute
@@ -244,6 +252,7 @@ export interface FileRoutesById {
   '/_authenticated/jenis-ikan': typeof AuthenticatedJenisIkanRoute
   '/_authenticated/kas': typeof AuthenticatedKasRoute
   '/_authenticated/laporan': typeof AuthenticatedLaporanRoute
+  '/_authenticated/lot': typeof AuthenticatedLotRoute
   '/_authenticated/pengaturan': typeof AuthenticatedPengaturanRoute
   '/_authenticated/riwayat': typeof AuthenticatedRiwayatRoute
   '/api/chat': typeof ApiChatRoute
@@ -273,6 +282,7 @@ export interface FileRouteTypes {
     | '/jenis-ikan'
     | '/kas'
     | '/laporan'
+    | '/lot'
     | '/pengaturan'
     | '/riwayat'
     | '/api/chat'
@@ -300,6 +310,7 @@ export interface FileRouteTypes {
     | '/jenis-ikan'
     | '/kas'
     | '/laporan'
+    | '/lot'
     | '/pengaturan'
     | '/riwayat'
     | '/api/chat'
@@ -328,6 +339,7 @@ export interface FileRouteTypes {
     | '/_authenticated/jenis-ikan'
     | '/_authenticated/kas'
     | '/_authenticated/laporan'
+    | '/_authenticated/lot'
     | '/_authenticated/pengaturan'
     | '/_authenticated/riwayat'
     | '/api/chat'
@@ -405,6 +417,13 @@ declare module '@tanstack/react-router' {
       path: '/pengaturan'
       fullPath: '/pengaturan'
       preLoaderRoute: typeof AuthenticatedPengaturanRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/lot': {
+      id: '/_authenticated/lot'
+      path: '/lot'
+      fullPath: '/lot'
+      preLoaderRoute: typeof AuthenticatedLotRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/laporan': {
@@ -550,6 +569,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedJenisIkanRoute: typeof AuthenticatedJenisIkanRoute
   AuthenticatedKasRoute: typeof AuthenticatedKasRoute
   AuthenticatedLaporanRoute: typeof AuthenticatedLaporanRoute
+  AuthenticatedLotRoute: typeof AuthenticatedLotRoute
   AuthenticatedPengaturanRoute: typeof AuthenticatedPengaturanRoute
   AuthenticatedRiwayatRoute: typeof AuthenticatedRiwayatRoute
   AuthenticatedAiThreadIdRoute: typeof AuthenticatedAiThreadIdRoute
@@ -570,6 +590,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedJenisIkanRoute: AuthenticatedJenisIkanRoute,
   AuthenticatedKasRoute: AuthenticatedKasRoute,
   AuthenticatedLaporanRoute: AuthenticatedLaporanRoute,
+  AuthenticatedLotRoute: AuthenticatedLotRoute,
   AuthenticatedPengaturanRoute: AuthenticatedPengaturanRoute,
   AuthenticatedRiwayatRoute: AuthenticatedRiwayatRoute,
   AuthenticatedAiThreadIdRoute: AuthenticatedAiThreadIdRoute,
