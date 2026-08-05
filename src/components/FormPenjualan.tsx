@@ -16,8 +16,8 @@ import { UploadFoto } from "./UploadFoto";
 import { toast } from "sonner";
 import { pesanError } from "@/lib/pesan-error";
 import { kesalahanJaringan, sedangOffline, tambahAntrian } from "@/lib/offline";
-import { formatKg, formatRupiah } from "@/lib/format";
-import { useStokGabungan } from "@/lib/lot-pembelian";
+import { formatKg, formatRupiah, formatTanggal } from "@/lib/format";
+import { useLotPembelian, LABEL_STATUS_JUAL, KELAS_STATUS_JUAL } from "@/lib/lot-pembelian";
 import { cn } from "@/lib/utils";
 
 const UKURAN = ["300-500 gram", "500-700 gram", "700-1000 gram", "> 1 kg"];
@@ -33,7 +33,10 @@ export function FormPenjualan() {
   const navigate = useNavigate();
   const qc = useQueryClient();
 
-  const { data: stok, isLoading: stokLoading } = useStokGabungan();
+  const { data: lots = [], isLoading: lotLoading } = useLotPembelian(true);
+  const [lotId, setLotId] = useState<string | null>(null);
+  const lot = lots.find((l) => l.id === lotId) ?? null;
+
 
   const [tanggal, setTanggal] = useState(() => new Date().toISOString().slice(0, 10));
   const [pelangganId, setPelangganId] = useState<string | null>(null);
@@ -65,8 +68,8 @@ export function FormPenjualan() {
     },
   });
 
-  const sisaStok = stok?.kg_sisa ?? 0;
-  const hargaBeliRata = stok?.harga_beli_rata ?? 0;
+  const sisaStok = lot?.kg_sisa ?? 0;
+  const hargaBeliRata = lot?.harga_per_kg ?? 0;
   const beratNum = parseFloat(beratKg) || 0;
   const hargaNum = parseFloat(hargaPerKg) || 0;
   const total = useMemo(() => +(beratNum * hargaNum).toFixed(2), [beratNum, hargaNum]);
@@ -84,14 +87,16 @@ export function FormPenjualan() {
       harga_per_kg: hargaNum,
     });
     if (!parsed.success) return toast.error(parsed.error.issues[0].message);
+    if (!lot) return toast.error("Pilih lot pembelian dulu");
     if (beratNum > sisaStok + 0.001) {
-      return toast.error(`Stok tersedia hanya ${formatKg(sisaStok)}`);
+      return toast.error(`Sisa lot hanya ${formatKg(sisaStok)}`);
     }
     if (statusBayar === "sebagian" && (dibayarNum <= 0 || dibayarNum >= total)) {
       return toast.error("Jumlah dibayar harus > 0 dan < total");
     }
 
     const payload = {
+      _pembelian_id: lot.id,
       _pelanggan_id: parsed.data.pelanggan_id,
       _berat_kg: parsed.data.berat_kg,
       _harga_per_kg: parsed.data.harga_per_kg,
@@ -118,7 +123,7 @@ export function FormPenjualan() {
     }
 
     setSaving(true);
-    const { error } = await supabase.rpc("create_penjualan_gabungan", payload);
+    const { error } = await supabase.rpc("create_penjualan_dari_pembelian", payload);
     setSaving(false);
     if (error) {
       if (kesalahanJaringan(error)) {
@@ -148,29 +153,61 @@ export function FormPenjualan() {
         }}
         className="mx-auto w-full max-w-[520px] space-y-5"
       >
-        <div className="rounded-lg border border-border bg-card p-4">
-          <div className="text-xs uppercase tracking-wide text-muted-foreground">
-            Stok siap jual (gabungan semua pembelian)
-          </div>
-          <div className="mt-1 text-2xl font-bold text-foreground">
-            {stokLoading ? "…" : formatKg(sisaStok)}
-          </div>
-          <div className="mt-3 grid grid-cols-2 gap-3 text-sm">
-            <div>
-              <div className="text-xs text-muted-foreground">Harga beli rata-rata</div>
-              <div className="font-medium">{formatRupiah(hargaBeliRata)}/kg</div>
+        <div className="space-y-2">
+          <Label>Lot Pembelian *</Label>
+          {lotLoading ? (
+            <div className="rounded-lg border border-border bg-card p-4 text-sm text-muted-foreground">
+              Memuat lot…
             </div>
-            <div>
-              <div className="text-xs text-muted-foreground">Nilai modal stok</div>
-              <div className="font-medium">{formatRupiah(stok?.nilai_modal ?? 0)}</div>
+          ) : lots.length === 0 ? (
+            <div className="rounded-lg border border-border bg-card p-4 text-sm text-muted-foreground">
+              Belum ada lot pembelian yang tersisa. Input pembelian dulu.
             </div>
-          </div>
-          {stok?.jenis_ikan ? (
-            <div className="mt-3 text-xs text-muted-foreground">
-              Isi lot: {stok.jenis_ikan} · dari {stok.jumlah_lot} nota pembelian
+          ) : (
+            <div className="space-y-2">
+              {lots.map((l) => (
+                <button
+                  key={l.id}
+                  type="button"
+                  onClick={() => {
+                    setLotId(l.id);
+                    setBeratKg("");
+                  }}
+                  className={cn(
+                    "w-full rounded-lg border p-3 text-left transition",
+                    lotId === l.id
+                      ? "border-primary bg-primary/5"
+                      : "border-border bg-card hover:border-primary/50",
+                  )}
+                >
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="font-semibold text-foreground">{l.jenis_ikan}</span>
+                    <span
+                      className={cn(
+                        "rounded px-2 py-0.5 text-[11px] font-medium",
+                        KELAS_STATUS_JUAL[l.status_jual],
+                      )}
+                    >
+                      {LABEL_STATUS_JUAL[l.status_jual]}
+                    </span>
+                  </div>
+                  <div className="mt-1 text-xs text-muted-foreground">
+                    {formatTanggal(l.tanggal)} · {l.nama_petani ?? "—"} · {l.box} box
+                  </div>
+                  <div className="mt-2 flex items-center justify-between text-sm">
+                    <span>
+                      Sisa <span className="font-medium">{formatKg(l.kg_sisa)}</span>
+                    </span>
+                    <span className="text-muted-foreground">
+                      Beli {formatRupiah(l.harga_per_kg)}/kg
+                    </span>
+                  </div>
+                </button>
+              ))}
             </div>
-          ) : null}
+          )}
         </div>
+
 
         <div className="space-y-2">
           <Label htmlFor="tanggal-jual">Tanggal Penjualan *</Label>
@@ -347,9 +384,9 @@ export function FormPenjualan() {
         <Button
           type="submit"
           className="h-12 w-full text-base"
-          disabled={saving || sisaStok <= 0}
+          disabled={saving || !lot || sisaStok <= 0}
         >
-          {sisaStok <= 0 ? "Stok kosong" : saving ? "Menyimpan…" : "Simpan Penjualan"}
+          {!lot ? "Pilih lot dulu" : saving ? "Menyimpan…" : "Simpan Penjualan"}
         </Button>
       </form>
 
