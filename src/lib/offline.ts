@@ -75,7 +75,12 @@ export async function sinkronAntrian(): Promise<{ sukses: number; gagal: number 
   let gagal = 0;
   try {
     for (const item of bacaStorage()) {
-      const rpc = item.jenis === "pembelian" ? "create_pembelian" : "create_penjualan";
+      const rpc =
+        item.jenis === "pembelian"
+          ? "create_pembelian"
+          : (item.payload as Record<string, unknown>)?._pembelian_id
+            ? "create_penjualan_dari_pembelian"
+            : "create_penjualan";
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const { error } = await supabase.rpc(rpc as any, item.payload as any);
       if (error) {
