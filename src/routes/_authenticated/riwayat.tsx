@@ -30,8 +30,11 @@ export const Route = createFileRoute("/_authenticated/riwayat")({
   component: RiwayatPage,
 });
 
-const STATUS: Array<{ value: "semua" | StatusTransaksi; label: string }> = [
-  { value: "semua", label: "Semua Status" },
+const STATUS: Array<{ value: "semua" | StatusBayar; label: string }> = [
+  { value: "semua", label: "Semua" },
+  { value: "lunas", label: "Lunas" },
+  { value: "sebagian", label: "Sebagian" },
+  { value: "belum", label: "Belum Bayar" },
 ];
 
 export function DaftarTransaksi({
