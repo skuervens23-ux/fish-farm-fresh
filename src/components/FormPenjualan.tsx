@@ -62,6 +62,8 @@ export function FormPenjualan() {
     },
   });
 
+  const { data: ikanMaster = [] } = useJenisIkan();
+
   const beratNum = parseFloat(beratKg) || 0;
   const hargaNum = parseFloat(hargaPerKg) || 0;
   const total = useMemo(() => +(beratNum * hargaNum).toFixed(2), [beratNum, hargaNum]);

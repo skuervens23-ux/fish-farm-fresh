@@ -68,6 +68,8 @@ export function FormPembelian() {
     },
   });
 
+  const { data: ikanMaster = [] } = useJenisIkan();
+
   const jumlahNum = parseFloat(jumlahKg) || 0;
   const boxNum = parseFloat(box) || 0;
   const hargaNum = parseFloat(hargaPerKg) || 0;
