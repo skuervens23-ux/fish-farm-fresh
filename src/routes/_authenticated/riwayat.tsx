@@ -32,10 +32,6 @@ export const Route = createFileRoute("/_authenticated/riwayat")({
 
 const STATUS: Array<{ value: "semua" | StatusTransaksi; label: string }> = [
   { value: "semua", label: "Semua Status" },
-  { value: "draft", label: "Draft" },
-  { value: "menunggu", label: "Menunggu" },
-  { value: "disetujui", label: "Disetujui" },
-  { value: "ditolak", label: "Ditolak" },
 ];
 
 export function DaftarTransaksi({
