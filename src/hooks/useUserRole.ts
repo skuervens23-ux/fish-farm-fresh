@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
-export type AppRole = "owner" | "mandor";
+export type AppRole = "owner";
 
 export function useUserRole() {
   const query = useQuery({
@@ -15,9 +15,7 @@ export function useUserRole() {
         .eq("user_id", userData.user.id);
       if (error) throw error;
       if (!data || data.length === 0) return null;
-      // Owner beats mandor when both exist.
-      if (data.some((r) => r.role === "owner")) return "owner";
-      return (data[0].role as AppRole) ?? null;
+      return data.some((r) => r.role === "owner") ? "owner" : null;
     },
     staleTime: 5 * 60 * 1000,
   });
@@ -25,7 +23,6 @@ export function useUserRole() {
   return {
     role: query.data ?? null,
     isOwner: query.data === "owner",
-    isMandor: query.data === "mandor",
     isLoading: query.isLoading,
   };
 }

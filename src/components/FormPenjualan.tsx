@@ -33,6 +33,7 @@ export function FormPenjualan() {
   const navigate = useNavigate();
   const qc = useQueryClient();
 
+  const [tanggal, setTanggal] = useState(() => new Date().toISOString().slice(0, 10));
   const [pelangganId, setPelangganId] = useState<string | null>(null);
   const [jenisIkan, setJenisIkan] = useState("");
   const [ukuran, setUkuran] = useState("");
@@ -86,6 +87,7 @@ export function FormPenjualan() {
     }
 
     const payload = {
+      _tanggal: tanggal,
       _pelanggan_id: parsed.data.pelanggan_id,
       _jenis_ikan: parsed.data.jenis_ikan,
       _berat_kg: parsed.data.berat_kg,
@@ -126,6 +128,7 @@ export function FormPenjualan() {
     toast.success("Penjualan tersimpan");
     qc.invalidateQueries({ queryKey: ["transaksi"] });
     qc.invalidateQueries({ queryKey: ["analitik"] });
+    qc.invalidateQueries({ queryKey: ["stok"] });
     navigate({ to: "/riwayat" });
   }
 
@@ -145,7 +148,18 @@ export function FormPenjualan() {
         className="mx-auto w-full max-w-[520px] space-y-5"
       >
         <div className="space-y-2">
-          <Label>Pelanggan *</Label>
+          <Label htmlFor="tanggal-jual">Tanggal *</Label>
+          <Input
+            id="tanggal-jual"
+            type="date"
+            value={tanggal}
+            onChange={(e) => setTanggal(e.target.value)}
+            className="h-12"
+          />
+        </div>
+
+        <div className="space-y-2">
+          <Label>Pembeli *</Label>
           <SearchSelect
             options={pelangganOptions}
             value={pelangganId}

@@ -71,7 +71,7 @@ export async function ambilDataLaporan(dari: string, sampai: string): Promise<Da
     supplier: nama(r.petani),
     jenis_ikan: r.jenis_ikan,
     berat: Number(r.jumlah_kg ?? 0),
-    box: Number(r.box ?? 1),
+    box: 1,
     harga: Number(r.harga_per_kg ?? 0),
     mandor: petaNama.get(r.dicatat_oleh) || "Owner",
     keterangan: r.catatan ?? "",

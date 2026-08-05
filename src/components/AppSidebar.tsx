@@ -13,6 +13,7 @@ import {
   Sparkle,
   Receipt,
   Boxes,
+  Package,
   History,
   TrendingUp,
 } from "lucide-react";
@@ -44,11 +45,12 @@ const UTAMA: Item[] = [
 const TRANSAKSI: Item[] = [
   { title: "Pembelian", url: "/pembelian", icon: ShoppingCart },
   { title: "Penjualan", url: "/penjualan/baru", icon: Store },
-  { title: "Biaya Operasional", url: "/biaya", icon: Receipt },
+  { title: "Pengeluaran Operasional", url: "/biaya", icon: Receipt },
   { title: "Kas", url: "/kas", icon: Wallet },
 ];
 
 const DATA: Item[] = [
+  { title: "Stok Ikan", url: "/stok", icon: Package },
   { title: "Fish LOT", url: "/lot", icon: Boxes },
   { title: "Riwayat", url: "/riwayat", icon: History },
   { title: "Laporan", url: "/laporan", icon: BarChart3 },

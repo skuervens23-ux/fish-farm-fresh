@@ -20,7 +20,7 @@ import { RincianAngka } from "@/components/RincianAngka";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { formatRupiah } from "@/lib/format";
+import { formatKg, formatRupiah } from "@/lib/format";
 import {
   rentang,
   useProfitCustomer,
@@ -29,6 +29,7 @@ import {
   useProfitSeries,
   useProfitSupplier,
   useRingkasanPeriode,
+  useRingkasanHariIni,
   type RentangTanggal,
 } from "@/lib/analitik";
 
@@ -147,6 +148,7 @@ function Dashboard() {
   const r: RentangTanggal = rentang(preset);
 
   const { data: s, isLoading } = useRingkasanPeriode(r);
+  const { data: h } = useRingkasanHariIni();
   const { data: seri = [] } = useProfitSeries(r, preset === "tahun-ini" ? "bulan" : "hari");
   const { data: supplier = [] } = useProfitSupplier(r);
   const { data: customer = [] } = useProfitCustomer(r);
@@ -170,6 +172,47 @@ function Dashboard() {
             </Button>
           ))}
         </div>
+
+        <section className="space-y-2">
+          <h2 className="text-sm font-semibold text-foreground">Ringkasan Hari Ini</h2>
+          <div className="grid grid-cols-2 gap-2.5 lg:grid-cols-4">
+            <Metrik
+              label="Total Pembelian"
+              nilai={formatRupiah(h?.total_pembelian ?? 0)}
+              aksen="bg-hutang"
+            />
+            <Metrik
+              label="Total Penjualan"
+              nilai={formatRupiah(h?.total_penjualan ?? 0)}
+              aksen="bg-primary"
+            />
+            <Metrik
+              label="Total Operasional"
+              nilai={formatRupiah(h?.total_operasional ?? 0)}
+              aksen="bg-destructive"
+            />
+            <Metrik
+              label="Laba Bersih"
+              nilai={formatRupiah(h?.laba_bersih ?? 0)}
+              sub="Penjualan − Pembelian − Operasional"
+              aksen="bg-success"
+              nilaiCls={(h?.laba_bersih ?? 0) < 0 ? "text-destructive" : "text-success"}
+            />
+            <Metrik label="Total Berat Dibeli" nilai={formatKg(h?.berat_dibeli ?? 0)} aksen="bg-hutang" />
+            <Metrik label="Total Berat Terjual" nilai={formatKg(h?.berat_terjual ?? 0)} aksen="bg-primary" />
+            <Metrik
+              label="Nilai Persediaan"
+              nilai={formatRupiah(h?.nilai_persediaan ?? 0)}
+              sub="Stok tersisa"
+              aksen="bg-warning"
+            />
+            <Metrik
+              label="Nilai Modal Hari Ini"
+              nilai={formatRupiah(h?.nilai_modal ?? 0)}
+              aksen="bg-hutang"
+            />
+          </div>
+        </section>
 
         {isLoading ? (
           <div className="space-y-2.5">
@@ -288,6 +331,21 @@ function Dashboard() {
         </div>
 
         <div className="grid gap-3 lg:grid-cols-2">
+          <GrafikBox judul="Grafik Pembelian">
+            <BarChart data={chartData}>
+              <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" />
+              <XAxis dataKey="label" tick={{ fontSize: 11 }} stroke="var(--color-muted-foreground)" />
+              <YAxis
+                tickFormatter={singkat}
+                tick={{ fontSize: 11 }}
+                stroke="var(--color-muted-foreground)"
+                width={44}
+              />
+              <Tooltip formatter={(v: number) => formatRupiah(v)} />
+              <Bar dataKey="modal" fill="var(--color-hutang)" radius={[4, 4, 0, 0]} />
+            </BarChart>
+          </GrafikBox>
+
           <GrafikBox judul="Grafik Penjualan">
             <AreaChart data={chartData}>
               <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" />
@@ -309,7 +367,7 @@ function Dashboard() {
             </AreaChart>
           </GrafikBox>
 
-          <GrafikBox judul="Grafik Laba">
+          <GrafikBox judul="Grafik Laba Bersih">
             <LineChart data={chartData}>
               <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" />
               <XAxis dataKey="label" tick={{ fontSize: 11 }} stroke="var(--color-muted-foreground)" />
@@ -330,7 +388,7 @@ function Dashboard() {
             </LineChart>
           </GrafikBox>
 
-          <GrafikBox judul="Grafik Pengeluaran">
+          <GrafikBox judul="Grafik Operasional">
             <BarChart data={chartData}>
               <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" />
               <XAxis dataKey="label" tick={{ fontSize: 11 }} stroke="var(--color-muted-foreground)" />
