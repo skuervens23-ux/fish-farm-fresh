@@ -56,7 +56,7 @@ function Ringkas({
 function Dashboard() {
   const { isOwner } = useUserRole();
   const { data: rows = [], isLoading } = useTransaksi();
-  const { data: kas = [] } = useKas();
+  const { data: ringkasan, isLoading: loadingRingkas } = useRingkasan();
 
   const { data: profil } = useQuery({
     queryKey: ["profil-saya"],
@@ -72,28 +72,13 @@ function Dashboard() {
     },
   });
 
-  const today = new Date().toISOString().slice(0, 10);
-  const hariIni = rows.filter((r) => r.tanggal === today);
-  const sum = (list: typeof rows) => list.reduce((s, r) => s + r.total, 0);
-  const sisa = (list: typeof rows) =>
-    list.reduce((s, r) => s + Math.max(0, r.total - r.dibayar), 0);
+  const laba = ringkasan?.laba_hari_ini ?? 0;
+  const saldoKas = ringkasan?.saldo_kas ?? 0;
+  const hutang = ringkasan?.hutang ?? 0;
+  const piutang = ringkasan?.piutang ?? 0;
+  const jmlMenunggu = ringkasan?.jml_menunggu ?? 0;
+  const jmlBelumLunas = ringkasan?.jml_belum_lunas ?? 0;
 
-  const beliHariIni = sum(hariIni.filter((r) => r.jenis === "pembelian"));
-  const jualHariIni = sum(hariIni.filter((r) => r.jenis === "penjualan"));
-  const laba = jualHariIni - beliHariIni;
-
-  const saldoKas = kas.reduce((s, r) => s + (r.tipe === "masuk" ? r.jumlah : -r.jumlah), 0);
-  const hutang = sisa(
-    rows.filter((r) => r.jenis === "pembelian" && r.status_transaksi === "disetujui"),
-  );
-  const piutang = sisa(
-    rows.filter((r) => r.jenis === "penjualan" && r.status_transaksi === "disetujui"),
-  );
-
-  const menunggu = rows.filter((r) => r.status_transaksi === "menunggu");
-  const belumLunas = rows.filter(
-    (r) => r.status_transaksi === "disetujui" && r.status_bayar !== "lunas",
-  );
 
   const tanggal = new Date().toLocaleDateString("id-ID", {
     weekday: "long",
