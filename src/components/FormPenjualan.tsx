@@ -151,29 +151,61 @@ export function FormPenjualan() {
         }}
         className="mx-auto w-full max-w-[520px] space-y-5"
       >
-        <div className="rounded-lg border border-border bg-card p-4">
-          <div className="text-xs uppercase tracking-wide text-muted-foreground">
-            Stok siap jual (gabungan semua pembelian)
-          </div>
-          <div className="mt-1 text-2xl font-bold text-foreground">
-            {stokLoading ? "…" : formatKg(sisaStok)}
-          </div>
-          <div className="mt-3 grid grid-cols-2 gap-3 text-sm">
-            <div>
-              <div className="text-xs text-muted-foreground">Harga beli rata-rata</div>
-              <div className="font-medium">{formatRupiah(hargaBeliRata)}/kg</div>
+        <div className="space-y-2">
+          <Label>Lot Pembelian *</Label>
+          {lotLoading ? (
+            <div className="rounded-lg border border-border bg-card p-4 text-sm text-muted-foreground">
+              Memuat lot…
             </div>
-            <div>
-              <div className="text-xs text-muted-foreground">Nilai modal stok</div>
-              <div className="font-medium">{formatRupiah(stok?.nilai_modal ?? 0)}</div>
+          ) : lots.length === 0 ? (
+            <div className="rounded-lg border border-border bg-card p-4 text-sm text-muted-foreground">
+              Belum ada lot pembelian yang tersisa. Input pembelian dulu.
             </div>
-          </div>
-          {stok?.jenis_ikan ? (
-            <div className="mt-3 text-xs text-muted-foreground">
-              Isi lot: {stok.jenis_ikan} · dari {stok.jumlah_lot} nota pembelian
+          ) : (
+            <div className="space-y-2">
+              {lots.map((l) => (
+                <button
+                  key={l.id}
+                  type="button"
+                  onClick={() => {
+                    setLotId(l.id);
+                    setBeratKg("");
+                  }}
+                  className={cn(
+                    "w-full rounded-lg border p-3 text-left transition",
+                    lotId === l.id
+                      ? "border-primary bg-primary/5"
+                      : "border-border bg-card hover:border-primary/50",
+                  )}
+                >
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="font-semibold text-foreground">{l.jenis_ikan}</span>
+                    <span
+                      className={cn(
+                        "rounded px-2 py-0.5 text-[11px] font-medium",
+                        KELAS_STATUS_JUAL[l.status_jual],
+                      )}
+                    >
+                      {LABEL_STATUS_JUAL[l.status_jual]}
+                    </span>
+                  </div>
+                  <div className="mt-1 text-xs text-muted-foreground">
+                    {formatTanggal(l.tanggal)} · {l.nama_petani ?? "—"} · {l.box} box
+                  </div>
+                  <div className="mt-2 flex items-center justify-between text-sm">
+                    <span>
+                      Sisa <span className="font-medium">{formatKg(l.kg_sisa)}</span>
+                    </span>
+                    <span className="text-muted-foreground">
+                      Beli {formatRupiah(l.harga_per_kg)}/kg
+                    </span>
+                  </div>
+                </button>
+              ))}
             </div>
-          ) : null}
+          )}
         </div>
+
 
         <div className="space-y-2">
           <Label htmlFor="tanggal-jual">Tanggal Penjualan *</Label>
