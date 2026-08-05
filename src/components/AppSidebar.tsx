@@ -53,7 +53,9 @@ const DATA: Item[] = [
   { title: "Stok Ikan", url: "/stok", icon: Package },
   { title: "Fish LOT", url: "/lot", icon: Boxes },
   { title: "Riwayat", url: "/riwayat", icon: History },
+  { title: "Laporan Harian", url: "/laporan-harian", icon: Receipt },
   { title: "Laporan", url: "/laporan", icon: BarChart3 },
+
 ];
 
 const MASTER: Item[] = [
