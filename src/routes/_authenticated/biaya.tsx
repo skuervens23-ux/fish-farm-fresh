@@ -138,7 +138,7 @@ function BiayaPage() {
 
   return (
     <AppShell
-      title="Biaya Operasional"
+      title="Pengeluaran Operasional"
       actions={
         <Button size="sm" onClick={() => setOpen(true)}>
           <Plus className="mr-1 h-4 w-4" /> Tambah
@@ -147,7 +147,7 @@ function BiayaPage() {
     >
       <div className="mx-auto w-full max-w-[720px] space-y-3 px-4 py-4">
         <Card className="surface-card rounded-xl p-3.5">
-          <p className="text-xs text-muted-foreground">Total biaya bulan ini</p>
+          <p className="text-xs text-muted-foreground">Total operasional bulan ini</p>
           <p className="text-xl font-semibold text-destructive">{formatRupiah(totalBulanIni)}</p>
           <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-3">
             {perKategori.map(([k, v]) => (
@@ -210,7 +210,7 @@ function BiayaPage() {
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Tambah Biaya Operasional</DialogTitle>
+            <DialogTitle>Tambah Pengeluaran Operasional</DialogTitle>
           </DialogHeader>
           <div className="space-y-3">
             <div className="space-y-2">
