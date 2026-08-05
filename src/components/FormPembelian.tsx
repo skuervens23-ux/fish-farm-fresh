@@ -68,8 +68,12 @@ export function FormPembelian() {
   });
 
   const jumlahNum = parseFloat(jumlahKg) || 0;
+  const boxNum = parseFloat(box) || 0;
   const hargaNum = parseFloat(hargaPerKg) || 0;
-  const total = useMemo(() => +(jumlahNum * 50 * hargaNum).toFixed(2), [jumlahNum, hargaNum]);
+  const total = useMemo(
+    () => +(jumlahNum * boxNum * hargaNum).toFixed(2),
+    [jumlahNum, boxNum, hargaNum],
+  );
   const dibayarNum = parseFloat(jumlahDibayar) || 0;
   const sisa =
     statusBayar === "lunas" ? 0 : statusBayar === "belum" ? total : Math.max(0, total - dibayarNum);
