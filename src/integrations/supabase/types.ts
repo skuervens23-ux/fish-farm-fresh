@@ -300,6 +300,65 @@ export type Database = {
           },
         ]
       }
+      percakapan_ai: {
+        Row: {
+          created_at: string
+          id: string
+          judul: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          judul?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          judul?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      pesan_ai: {
+        Row: {
+          created_at: string
+          id: string
+          isi: Json
+          peran: string
+          percakapan_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          isi: Json
+          peran: string
+          percakapan_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          isi?: Json
+          peran?: string
+          percakapan_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pesan_ai_percakapan_id_fkey"
+            columns: ["percakapan_id"]
+            isOneToOne: false
+            referencedRelation: "percakapan_ai"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       petani: {
         Row: {
           alamat: string | null
