@@ -225,7 +225,8 @@ function Analisis() {
               {p.label}
             </Button>
           ))}
-          <div className="ml-auto">
+          <div className="ml-auto flex items-center gap-1.5">
+            <TombolExcelLengkap dari={r.dari} sampai={r.sampai} />
             <TombolEkspor
               judul="Analisis Profit — ERP Bandar Ikan"
               subjudul={`Periode ${r.dari} s/d ${r.sampai}`}
