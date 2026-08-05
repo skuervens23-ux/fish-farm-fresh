@@ -99,7 +99,16 @@ function LaporanHarianPage() {
     const jual = (laporan?.penjualan ?? []).reduce((a, r) => a + r.total, 0);
     const beratJual = (laporan?.penjualan ?? []).reduce((a, r) => a + r.berat, 0);
     const biaya = (laporan?.biaya ?? []).reduce((a, r) => a + r.nominal, 0);
-    return { beli, beratBeli, jual, beratJual, biaya, laba: jual - beli - biaya };
+    return {
+      beli,
+      beratBeli,
+      jual,
+      beratJual,
+      biaya,
+      pengeluaran: beli + biaya,
+      laba: jual - beli - biaya,
+    };
+
   }, [laporan]);
 
   async function unduhExcel() {
