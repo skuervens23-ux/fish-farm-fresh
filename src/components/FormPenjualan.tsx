@@ -44,7 +44,7 @@ export function FormPenjualan() {
   const [catatan, setCatatan] = useState("");
   const [fotoTimbangan, setFotoTimbangan] = useState<string | null>(null);
   const [fotoNota, setFotoNota] = useState<string | null>(null);
-  const [saving, setSaving] = useState<null | "draft" | "kirim">(null);
+  const [saving, setSaving] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [dialogDefault, setDialogDefault] = useState("");
 
