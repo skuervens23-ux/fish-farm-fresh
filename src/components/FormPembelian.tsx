@@ -14,9 +14,10 @@ import { TambahPetaniDialog } from "./TambahPetaniDialog";
 import { UploadFoto } from "./UploadFoto";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
+import { useJenisIkan } from "@/lib/jenis-ikan";
 import { pesanError } from "@/lib/pesan-error";
 
-const IKAN_UMUM = ["Nila", "Lele", "Mas", "Gurame", "Patin", "Bawal"];
+
 
 const schema = z
   .object({
@@ -123,7 +124,7 @@ export function FormPembelian() {
   }
 
   const petaniOptions = petaniList.map((p) => ({ value: p.id, label: p.nama }));
-  const ikanOptions = Array.from(new Set([...IKAN_UMUM, ...(jenisIkan ? [jenisIkan] : [])])).map(
+  const ikanOptions = Array.from(new Set([...ikanMaster, ...(jenisIkan ? [jenisIkan] : [])])).map(
     (n) => ({
       value: n,
       label: n,

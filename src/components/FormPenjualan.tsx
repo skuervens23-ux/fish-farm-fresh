@@ -14,9 +14,10 @@ import { RadioStatusBayar, type StatusBayar } from "./RadioStatusBayar";
 import { TambahPelangganDialog } from "./TambahPelangganDialog";
 import { UploadFoto } from "./UploadFoto";
 import { toast } from "sonner";
+import { useJenisIkan } from "@/lib/jenis-ikan";
 import { pesanError } from "@/lib/pesan-error";
 
-const IKAN_UMUM = ["Nila", "Lele", "Mas", "Gurame", "Patin", "Bawal"];
+
 const UKURAN = ["300-500 gram", "500-700 gram", "700-1000 gram", "> 1 kg"];
 const GRADE = ["A", "B", "C"];
 
@@ -107,7 +108,7 @@ export function FormPenjualan() {
   }
 
   const pelangganOptions = pelangganList.map((p) => ({ value: p.id, label: p.nama }));
-  const ikanOptions = Array.from(new Set([...IKAN_UMUM, ...(jenisIkan ? [jenisIkan] : [])])).map(
+  const ikanOptions = Array.from(new Set([...ikanMaster, ...(jenisIkan ? [jenisIkan] : [])])).map(
     (n) => ({ value: n, label: n }),
   );
 
