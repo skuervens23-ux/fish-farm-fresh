@@ -38,7 +38,7 @@ function DetailPenjualan() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("penjualan")
-        .select("*, pelanggan:pelanggan_id(nama, telepon)")
+        .select("*, pelanggan:pelanggan_id(nama)")
         .eq("id", id)
         .maybeSingle();
       if (error) throw error;
