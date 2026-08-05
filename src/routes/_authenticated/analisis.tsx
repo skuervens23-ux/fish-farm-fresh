@@ -18,6 +18,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { TombolEkspor } from "@/components/TombolEkspor";
+import { TombolExcelLengkap } from "@/components/TombolExcelLengkap";
 import { formatRupiah } from "@/lib/format";
 import {
   rentang,
@@ -225,7 +226,8 @@ function Analisis() {
               {p.label}
             </Button>
           ))}
-          <div className="ml-auto">
+          <div className="ml-auto flex items-center gap-1.5">
+            <TombolExcelLengkap dari={r.dari} sampai={r.sampai} />
             <TombolEkspor
               judul="Analisis Profit — ERP Bandar Ikan"
               subjudul={`Periode ${r.dari} s/d ${r.sampai}`}
