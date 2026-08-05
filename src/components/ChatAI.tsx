@@ -42,7 +42,7 @@ export function ChatAI({
     transport: new DefaultChatTransport({
       api: "/api/chat",
       body: { percakapanId },
-      headers: async () => {
+      headers: async (): Promise<Record<string, string>> => {
         const { data } = await supabase.auth.getSession();
         return data.session ? { Authorization: `Bearer ${data.session.access_token}` } : {};
       },
