@@ -9,14 +9,21 @@ import { Badge } from "@/components/ui/badge";
 import { TambahPetaniDialog } from "@/components/TambahPetaniDialog";
 import { useUserRole } from "@/hooks/useUserRole";
 import { toast } from "sonner";
+import { pesanError } from "@/lib/pesan-error";
 
 export const Route = createFileRoute("/_authenticated/petani/")({
   head: () => ({
     meta: [
       { title: "Kelola Petani — Pembelian Ikan Hidup" },
-      { name: "description", content: "Kelola data petani: tambah petani baru dan atur status aktif." },
+      {
+        name: "description",
+        content: "Kelola data petani: tambah petani baru dan atur status aktif.",
+      },
       { property: "og:title", content: "Kelola Petani" },
-      { property: "og:description", content: "Kelola data petani untuk pencatatan pembelian ikan hidup." },
+      {
+        property: "og:description",
+        content: "Kelola data petani untuk pencatatan pembelian ikan hidup.",
+      },
     ],
   }),
   component: PetaniPage,
@@ -45,10 +52,9 @@ function PetaniPage() {
     },
   });
 
-
   async function toggleActive(id: string, next: boolean) {
     const { error } = await supabase.from("petani").update({ is_active: next }).eq("id", id);
-    if (error) return toast.error(error.message);
+    if (error) return toast.error(pesanError(error));
     toast.success(next ? "Petani diaktifkan" : "Petani dinonaktifkan");
     qc.invalidateQueries({ queryKey: ["petani-all"] });
     qc.invalidateQueries({ queryKey: ["petani-active"] });
@@ -108,9 +114,7 @@ function PetaniPage() {
       <div className="mx-auto max-w-[420px] px-4 pt-4">
         {loadingList && <p className="text-sm text-muted-foreground">Memuat…</p>}
         {!loadingList && data.length === 0 && (
-          <Card className="p-6 text-center text-sm text-muted-foreground">
-            Belum ada petani.
-          </Card>
+          <Card className="p-6 text-center text-sm text-muted-foreground">Belum ada petani.</Card>
         )}
         <ul className="space-y-3">
           {data.map((p) => (
@@ -126,12 +130,8 @@ function PetaniPage() {
                         </Badge>
                       )}
                     </div>
-                    {p.telepon && (
-                      <div className="text-xs text-muted-foreground">{p.telepon}</div>
-                    )}
-                    {p.alamat && (
-                      <div className="text-xs text-muted-foreground">{p.alamat}</div>
-                    )}
+                    {p.telepon && <div className="text-xs text-muted-foreground">{p.telepon}</div>}
+                    {p.alamat && <div className="text-xs text-muted-foreground">{p.alamat}</div>}
                   </div>
                   <Button
                     variant="outline"

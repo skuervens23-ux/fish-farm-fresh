@@ -55,15 +55,23 @@ export const Route = createFileRoute("/api/chat")({
         const [beli, jual, kas] = await Promise.all([
           supabase
             .from("pembelian")
-            .select("tanggal, jenis_ikan, total_harga, jumlah_dibayar, status_transaksi, status_bayar")
+            .select(
+              "tanggal, jenis_ikan, total_harga, jumlah_dibayar, status_transaksi, status_bayar",
+            )
             .order("tanggal", { ascending: false })
             .limit(80),
           supabase
             .from("penjualan")
-            .select("tanggal, jenis_ikan, total_harga, jumlah_dibayar, status_transaksi, status_bayar")
+            .select(
+              "tanggal, jenis_ikan, total_harga, jumlah_dibayar, status_transaksi, status_bayar",
+            )
             .order("tanggal", { ascending: false })
             .limit(80),
-          supabase.from("kas").select("tanggal, tipe, kategori, jumlah").order("tanggal", { ascending: false }).limit(80),
+          supabase
+            .from("kas")
+            .select("tanggal, tipe, kategori, jumlah")
+            .order("tanggal", { ascending: false })
+            .limit(80),
         ]);
 
         const b = beli.data ?? [];

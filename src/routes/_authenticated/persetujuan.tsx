@@ -20,6 +20,7 @@ import { formatRupiah, formatTanggal } from "@/lib/format";
 import { useTransaksi, tinjauTransaksi, type Transaksi } from "@/lib/transaksi";
 import { useUserRole } from "@/hooks/useUserRole";
 import { toast } from "sonner";
+import { pesanError } from "@/lib/pesan-error";
 
 export const Route = createFileRoute("/_authenticated/persetujuan")({
   head: () => ({
@@ -27,7 +28,8 @@ export const Route = createFileRoute("/_authenticated/persetujuan")({
       { title: "Persetujuan Transaksi | Bandar Ikan" },
       {
         name: "description",
-        content: "Antrian transaksi yang menunggu persetujuan admin: setujui atau tolak dengan alasan.",
+        content:
+          "Antrian transaksi yang menunggu persetujuan admin: setujui atau tolak dengan alasan.",
       },
       { property: "og:title", content: "Persetujuan Transaksi" },
       { property: "og:description", content: "Setujui atau tolak transaksi yang dikirim mandor." },
@@ -60,7 +62,7 @@ function PersetujuanPage() {
       toast.success("Transaksi disetujui");
       refresh();
     } catch (e) {
-      toast.error(e instanceof Error ? e.message : "Gagal menyetujui");
+      toast.error(pesanError(e, "Gagal menyetujui"));
     } finally {
       setBusy(false);
     }
@@ -77,7 +79,7 @@ function PersetujuanPage() {
       setAlasan("");
       refresh();
     } catch (e) {
-      toast.error(e instanceof Error ? e.message : "Gagal menolak");
+      toast.error(pesanError(e, "Gagal menolak"));
     } finally {
       setBusy(false);
     }

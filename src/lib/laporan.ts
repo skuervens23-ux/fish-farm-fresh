@@ -1,4 +1,3 @@
-
 export type BarisLaporan = {
   tanggal: string;
   petani: string;
@@ -28,7 +27,8 @@ export function weekRangeLabel(senin: string): string {
   const start = new Date(senin + "T00:00:00");
   const end = new Date(start);
   end.setDate(end.getDate() + 6);
-  const f = (d: Date) => d.toLocaleDateString("id-ID", { day: "2-digit", month: "short", year: "numeric" });
+  const f = (d: Date) =>
+    d.toLocaleDateString("id-ID", { day: "2-digit", month: "short", year: "numeric" });
   return `${f(start)} – ${f(end)}`;
 }
 
@@ -60,7 +60,10 @@ async function buildWorkbookMingguan(XLSX: typeof import("xlsx"), rows: BarisLap
   XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(ringkasan), "Ringkasan");
 
   for (const k of keys) {
-    const items = grup.get(k)!.slice().sort((a, b) => a.tanggal.localeCompare(b.tanggal));
+    const items = grup
+      .get(k)!
+      .slice()
+      .sort((a, b) => a.tanggal.localeCompare(b.tanggal));
     const data = items.map((r) => ({
       Tanggal: r.tanggal,
       Petani: r.petani,

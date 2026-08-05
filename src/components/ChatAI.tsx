@@ -2,6 +2,7 @@ import { useEffect, useRef } from "react";
 import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport, type UIMessage } from "ai";
 import { toast } from "sonner";
+import { pesanError } from "@/lib/pesan-error";
 import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import {
@@ -47,7 +48,7 @@ export function ChatAI({
         return data.session ? { Authorization: `Bearer ${data.session.access_token}` } : {};
       },
     }),
-    onError: (error) => toast.error(error.message || "Gagal menghubungi AI"),
+    onError: (error) => toast.error(pesanError(error, "Gagal menghubungi AI")),
     onFinish: () => {
       qc.invalidateQueries({ queryKey: ["percakapan-ai"] });
       textareaRef.current?.focus();

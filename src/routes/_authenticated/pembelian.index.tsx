@@ -44,7 +44,10 @@ export const Route = createFileRoute("/_authenticated/pembelian/")({
           "Daftar pembelian ikan dari petani per hari dan per minggu, lengkap dengan status bayar dan sisa hutang.",
       },
       { property: "og:title", content: "Daftar Pembelian Ikan" },
-      { property: "og:description", content: "Rekap pembelian harian dan mingguan beserta hutang petani." },
+      {
+        property: "og:description",
+        content: "Rekap pembelian harian dan mingguan beserta hutang petani.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],
@@ -62,7 +65,9 @@ function PembelianList() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("pembelian")
-        .select("id, tanggal, jenis_ikan, jumlah_kg, harga_per_kg, total_harga, status_bayar, jumlah_dibayar, petani:petani_id(nama)")
+        .select(
+          "id, tanggal, jenis_ikan, jumlah_kg, harga_per_kg, total_harga, status_bayar, jumlah_dibayar, petani:petani_id(nama)",
+        )
         .order("tanggal", { ascending: false })
         .order("created_at", { ascending: false })
         .limit(200);
@@ -112,7 +117,6 @@ function PembelianList() {
     toast.success("Laporan mingguan diunduh");
   }
 
-
   return (
     <AppShell
       title="Pembelian"
@@ -138,9 +142,7 @@ function PembelianList() {
             </div>
             <div>
               <div className="text-xs text-muted-foreground">Total hutang</div>
-              <div className="text-base font-semibold text-hutang">
-                {formatRupiah(totalHutang)}
-              </div>
+              <div className="text-base font-semibold text-hutang">{formatRupiah(totalHutang)}</div>
             </div>
           </Card>
         )}
@@ -194,7 +196,6 @@ function PembelianList() {
           </Card>
         )}
 
-
         {data.length > 0 && (
           <Tabs defaultValue="harian" className="w-full">
             <TabsList className="grid w-full grid-cols-2">
@@ -215,12 +216,7 @@ function PembelianList() {
 
             <TabsContent value="mingguan" className="mt-4 space-y-5">
               {grupMingguan.map(([key, items]) => (
-                <GrupSection
-                  key={key}
-                  judul={labelMinggu(items)}
-                  items={items}
-                  showItemDate
-                />
+                <GrupSection key={key} judul={labelMinggu(items)} items={items} showItemDate />
               ))}
             </TabsContent>
           </Tabs>
@@ -314,7 +310,6 @@ function GrupSection({
                 </Card>
               </Link>
             </li>
-
           );
         })}
       </ul>

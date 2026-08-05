@@ -13,6 +13,7 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { toast } from "sonner";
+import { pesanError } from "@/lib/pesan-error";
 
 const schema = z.object({
   nama: z.string().trim().min(2, "Nama minimal 2 karakter").max(80),
@@ -65,7 +66,7 @@ export function TambahPetaniDialog({
       .select("id, nama")
       .single();
     setSaving(false);
-    if (error) return toast.error(error.message);
+    if (error) return toast.error(pesanError(error));
     toast.success("Petani ditambahkan");
     onCreated(data);
     onOpenChange(false);
@@ -81,18 +82,32 @@ export function TambahPetaniDialog({
         <form onSubmit={submit} className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="petani-nama">Nama *</Label>
-            <Input id="petani-nama" value={nama} onChange={(e) => setNama(e.target.value)} required />
+            <Input
+              id="petani-nama"
+              value={nama}
+              onChange={(e) => setNama(e.target.value)}
+              required
+            />
           </div>
           <div className="space-y-2">
             <Label htmlFor="petani-telepon">Telepon</Label>
-            <Input id="petani-telepon" value={telepon} onChange={(e) => setTelepon(e.target.value)} />
+            <Input
+              id="petani-telepon"
+              value={telepon}
+              onChange={(e) => setTelepon(e.target.value)}
+            />
           </div>
           <div className="space-y-2">
             <Label htmlFor="petani-alamat">Alamat</Label>
             <Input id="petani-alamat" value={alamat} onChange={(e) => setAlamat(e.target.value)} />
           </div>
           <DialogFooter>
-            <Button type="button" variant="outline" onClick={() => onOpenChange(false)} disabled={saving}>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => onOpenChange(false)}
+              disabled={saving}
+            >
               Batal
             </Button>
             <Button type="submit" disabled={saving}>

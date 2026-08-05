@@ -15,7 +15,14 @@ export type BarisKas = {
 };
 
 export const KATEGORI_MASUK = ["penjualan", "modal", "piutang", "lainnya"];
-export const KATEGORI_KELUAR = ["pembelian", "operasional", "gaji", "transport", "pakan", "lainnya"];
+export const KATEGORI_KELUAR = [
+  "pembelian",
+  "operasional",
+  "gaji",
+  "transport",
+  "pakan",
+  "lainnya",
+];
 
 export function useKas() {
   return useQuery({

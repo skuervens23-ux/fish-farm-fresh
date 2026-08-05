@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { pesanError } from "@/lib/pesan-error";
 import { ArrowDownCircle, ArrowUpCircle, Trash2 } from "lucide-react";
 import { AppShell } from "@/components/AppShell";
 import { Card } from "@/components/ui/card";
@@ -69,7 +70,7 @@ function FormKas({ tipe, onSaved }: { tipe: TipeKas; onSaved: () => void }) {
       setKeterangan("");
       onSaved();
     } catch (e) {
-      toast.error(e instanceof Error ? e.message : "Gagal menyimpan");
+      toast.error(pesanError(e, "Gagal menyimpan"));
     } finally {
       setSaving(false);
     }
@@ -152,7 +153,7 @@ function KasPage() {
       toast.success("Data kas dihapus");
       refresh();
     } catch (e) {
-      toast.error(e instanceof Error ? e.message : "Gagal menghapus");
+      toast.error(pesanError(e, "Gagal menghapus"));
     }
   }
 

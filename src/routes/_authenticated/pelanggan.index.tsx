@@ -10,6 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { TambahPelangganDialog } from "@/components/TambahPelangganDialog";
 import { useUserRole } from "@/hooks/useUserRole";
 import { toast } from "sonner";
+import { pesanError } from "@/lib/pesan-error";
 
 export const Route = createFileRoute("/_authenticated/pelanggan/")({
   head: () => ({
@@ -51,10 +52,9 @@ function PelangganPage() {
     },
   });
 
-
   async function toggleActive(id: string, next: boolean) {
     const { error } = await supabase.from("pelanggan").update({ is_active: next }).eq("id", id);
-    if (error) return toast.error(error.message);
+    if (error) return toast.error(pesanError(error));
     toast.success(next ? "Pelanggan diaktifkan" : "Pelanggan dinonaktifkan");
     qc.invalidateQueries({ queryKey: ["pelanggan-all"] });
     qc.invalidateQueries({ queryKey: ["pelanggan-active"] });
@@ -70,7 +70,11 @@ function PelangganPage() {
             <p className="mt-1 text-xs text-muted-foreground">
               Hanya owner yang dapat mengelola data pelanggan.
             </p>
-            <Button className="mt-4" variant="outline" onClick={() => navigate({ to: "/dashboard" })}>
+            <Button
+              className="mt-4"
+              variant="outline"
+              onClick={() => navigate({ to: "/dashboard" })}
+            >
               Kembali ke Dashboard
             </Button>
           </Card>
@@ -88,7 +92,9 @@ function PelangganPage() {
 
         {loadingList && <p className="text-sm text-muted-foreground">Memuat…</p>}
         {!loadingList && data.length === 0 && (
-          <Card className="p-6 text-center text-sm text-muted-foreground">Belum ada pelanggan.</Card>
+          <Card className="p-6 text-center text-sm text-muted-foreground">
+            Belum ada pelanggan.
+          </Card>
         )}
         <ul className="space-y-3">
           {data.map((p) => (
@@ -106,7 +112,11 @@ function PelangganPage() {
                   {p.telepon && <div className="text-xs text-muted-foreground">{p.telepon}</div>}
                   {p.alamat && <div className="text-xs text-muted-foreground">{p.alamat}</div>}
                 </div>
-                <Button variant="outline" size="sm" onClick={() => toggleActive(p.id, !p.is_active)}>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => toggleActive(p.id, !p.is_active)}
+                >
                   {p.is_active ? (
                     <>
                       <UserX className="mr-1 h-4 w-4" /> Nonaktifkan

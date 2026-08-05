@@ -52,7 +52,6 @@ export async function buatBackup(): Promise<FileBackup> {
   };
 }
 
-
 export function unduhBackup(backup: FileBackup) {
   const blob = new Blob([JSON.stringify(backup, null, 2)], { type: "application/json" });
   const url = URL.createObjectURL(blob);

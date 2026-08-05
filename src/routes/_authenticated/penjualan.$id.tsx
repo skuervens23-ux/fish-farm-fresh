@@ -11,6 +11,7 @@ import { FotoPreview } from "@/components/UploadFoto";
 import { formatKg, formatRupiah, formatTanggal } from "@/lib/format";
 import type { StatusBayar, StatusTransaksi } from "@/lib/status";
 import { toast } from "sonner";
+import { pesanError } from "@/lib/pesan-error";
 
 export const Route = createFileRoute("/_authenticated/penjualan/$id")({
   head: () => ({
@@ -18,7 +19,8 @@ export const Route = createFileRoute("/_authenticated/penjualan/$id")({
       { title: "Detail Penjualan Ikan | Bandar Ikan" },
       {
         name: "description",
-        content: "Rincian transaksi penjualan ikan: berat, grade, total harga, bukti timbangan dan nota.",
+        content:
+          "Rincian transaksi penjualan ikan: berat, grade, total harga, bukti timbangan dan nota.",
       },
       { property: "og:title", content: "Detail Penjualan Ikan" },
       { property: "og:description", content: "Rincian transaksi penjualan ikan ke pelanggan." },
@@ -51,7 +53,7 @@ function DetailPenjualan() {
       .from("penjualan")
       .update({ status_transaksi: "menunggu", alasan_tolak: null })
       .eq("id", id);
-    if (error) return toast.error(error.message);
+    if (error) return toast.error(pesanError(error));
     toast.success("Dikirim ke admin");
     qc.invalidateQueries({ queryKey: ["penjualan-detail", id] });
     qc.invalidateQueries({ queryKey: ["transaksi"] });
@@ -60,8 +62,7 @@ function DetailPenjualan() {
 
   const total = Number(data?.total_harga ?? 0);
   const dibayar = Number(data?.jumlah_dibayar ?? 0);
-  const bisaKirim =
-    data?.status_transaksi === "draft" || data?.status_transaksi === "ditolak";
+  const bisaKirim = data?.status_transaksi === "draft" || data?.status_transaksi === "ditolak";
 
   return (
     <AppShell title="Detail Penjualan" backTo="/riwayat">

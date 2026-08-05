@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { pesanError } from "@/lib/pesan-error";
 import { Database, Download, Save, Upload } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { AppShell } from "@/components/AppShell";
@@ -73,7 +74,7 @@ function PengaturanPage() {
       toast.success("Pengaturan disimpan");
       qc.invalidateQueries({ queryKey: ["pengaturan"] });
     } catch (e) {
-      toast.error(e instanceof Error ? e.message : "Gagal menyimpan");
+      toast.error(pesanError(e, "Gagal menyimpan"));
     } finally {
       setSaving(false);
     }
@@ -86,7 +87,7 @@ function PengaturanPage() {
       unduhBackup(data);
       toast.success("Backup berhasil diunduh");
     } catch (e) {
-      toast.error(e instanceof Error ? e.message : "Gagal membuat backup");
+      toast.error(pesanError(e, "Gagal membuat backup"));
     } finally {
       setBusyBackup(false);
     }
@@ -103,7 +104,7 @@ function PengaturanPage() {
       toast.success(`Restore selesai (${ringkas || "tidak ada data"})`);
       qc.invalidateQueries();
     } catch (e) {
-      toast.error(e instanceof Error ? e.message : "Gagal restore");
+      toast.error(pesanError(e, "Gagal restore"));
     } finally {
       setBusyBackup(false);
       if (fileRef.current) fileRef.current.value = "";

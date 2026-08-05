@@ -74,7 +74,9 @@ export function SearchSelect({
                     setQuery("");
                   }}
                 >
-                  <Check className={cn("mr-2 h-4 w-4", value === o.value ? "opacity-100" : "opacity-0")} />
+                  <Check
+                    className={cn("mr-2 h-4 w-4", value === o.value ? "opacity-100" : "opacity-0")}
+                  />
                   {o.label}
                 </CommandItem>
               ))}

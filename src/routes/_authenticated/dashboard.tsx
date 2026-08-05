@@ -1,13 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import {
-  ShoppingCart,
-  Store,
-  ChevronRight,
-  AlertTriangle,
-  Clock,
-  Sparkle,
-} from "lucide-react";
+import { ShoppingCart, Store, ChevronRight, AlertTriangle, Clock, Sparkle } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { AppShell } from "@/components/AppShell";
 import { Card } from "@/components/ui/card";
@@ -16,7 +9,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { BadgeTransaksi } from "@/components/StatusBadges";
 import { formatRupiah } from "@/lib/format";
 import { useTransaksi } from "@/lib/transaksi";
-import { useKas } from "@/lib/kas";
+import { useRingkasan } from "@/lib/ringkasan";
 import { useUserRole } from "@/hooks/useUserRole";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
@@ -59,40 +52,31 @@ function Ringkas({
   );
 }
 
-
 function Dashboard() {
   const { isOwner } = useUserRole();
   const { data: rows = [], isLoading } = useTransaksi();
-  const { data: kas = [] } = useKas();
+  const { data: ringkasan, isLoading: loadingRingkas } = useRingkasan();
 
   const { data: profil } = useQuery({
     queryKey: ["profil-saya"],
     queryFn: async () => {
       const { data: u } = await supabase.auth.getUser();
       if (!u.user) return null;
-      const { data } = await supabase.from("profiles").select("nama").eq("id", u.user.id).maybeSingle();
+      const { data } = await supabase
+        .from("profiles")
+        .select("nama")
+        .eq("id", u.user.id)
+        .maybeSingle();
       return data;
     },
   });
 
-  const today = new Date().toISOString().slice(0, 10);
-  const hariIni = rows.filter((r) => r.tanggal === today);
-  const sum = (list: typeof rows) => list.reduce((s, r) => s + r.total, 0);
-  const sisa = (list: typeof rows) =>
-    list.reduce((s, r) => s + Math.max(0, r.total - r.dibayar), 0);
-
-  const beliHariIni = sum(hariIni.filter((r) => r.jenis === "pembelian"));
-  const jualHariIni = sum(hariIni.filter((r) => r.jenis === "penjualan"));
-  const laba = jualHariIni - beliHariIni;
-
-  const saldoKas = kas.reduce((s, r) => s + (r.tipe === "masuk" ? r.jumlah : -r.jumlah), 0);
-  const hutang = sisa(rows.filter((r) => r.jenis === "pembelian" && r.status_transaksi === "disetujui"));
-  const piutang = sisa(rows.filter((r) => r.jenis === "penjualan" && r.status_transaksi === "disetujui"));
-
-  const menunggu = rows.filter((r) => r.status_transaksi === "menunggu");
-  const belumLunas = rows.filter(
-    (r) => r.status_transaksi === "disetujui" && r.status_bayar !== "lunas",
-  );
+  const laba = ringkasan?.laba_hari_ini ?? 0;
+  const saldoKas = ringkasan?.saldo_kas ?? 0;
+  const hutang = ringkasan?.hutang ?? 0;
+  const piutang = ringkasan?.piutang ?? 0;
+  const jmlMenunggu = ringkasan?.jml_menunggu ?? 0;
+  const jmlBelumLunas = ringkasan?.jml_belum_lunas ?? 0;
 
   const tanggal = new Date().toLocaleDateString("id-ID", {
     weekday: "long",
@@ -111,7 +95,7 @@ function Dashboard() {
           <p className="text-sm text-muted-foreground">{tanggal}</p>
         </div>
 
-        {isLoading ? (
+        {loadingRingkas ? (
           <div className="grid grid-cols-2 gap-2.5">
             {Array.from({ length: 4 }).map((_, i) => (
               <Skeleton key={i} className="h-[72px] w-full" />
@@ -131,18 +115,18 @@ function Dashboard() {
           </div>
         )}
 
-        {(menunggu.length > 0 || belumLunas.length > 0) && (
+        {(jmlMenunggu > 0 || jmlBelumLunas > 0) && (
           <div className="space-y-1 rounded-xl border border-warning/25 bg-warning/10 px-3 py-2.5">
-            {belumLunas.length > 0 && (
+            {jmlBelumLunas > 0 && (
               <p className="flex items-center gap-1.5 text-sm text-warning">
                 <AlertTriangle className="h-4 w-4" />
-                {belumLunas.length} transaksi belum lunas
+                {jmlBelumLunas} transaksi belum lunas
               </p>
             )}
-            {menunggu.length > 0 && (
+            {jmlMenunggu > 0 && (
               <p className="flex items-center gap-1.5 text-sm text-warning">
                 <Clock className="h-4 w-4" />
-                {menunggu.length} transaksi menunggu persetujuan
+                {jmlMenunggu} transaksi menunggu persetujuan
               </p>
             )}
           </div>
@@ -206,7 +190,9 @@ function Dashboard() {
                       <div className="flex items-center gap-2">
                         <div className="text-right">
                           <BadgeTransaksi status={r.status_transaksi} />
-                          <div className="text-xs text-muted-foreground">{formatRupiah(r.total)}</div>
+                          <div className="text-xs text-muted-foreground">
+                            {formatRupiah(r.total)}
+                          </div>
                         </div>
                         <ChevronRight className="h-4 w-4 shrink-0 text-muted-foreground" />
                       </div>

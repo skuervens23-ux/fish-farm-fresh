@@ -14,6 +14,7 @@ import { TambahPetaniDialog } from "./TambahPetaniDialog";
 import { UploadFoto } from "./UploadFoto";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
+import { pesanError } from "@/lib/pesan-error";
 
 const IKAN_UMUM = ["Nila", "Lele", "Mas", "Gurame", "Patin", "Bawal"];
 
@@ -35,7 +36,6 @@ const schema = z
     },
     { message: "Jumlah dibayar harus > 0 dan < total", path: ["jumlah_dibayar"] },
   );
-
 
 export function FormPembelian() {
   const navigate = useNavigate();
@@ -114,7 +114,7 @@ export function FormPembelian() {
     });
     setSaving(null);
 
-    if (error) return toast.error(error.message);
+    if (error) return toast.error(pesanError(error));
     toast.success(mode === "draft" ? "Draft tersimpan" : "Pembelian dikirim ke admin");
     qc.invalidateQueries({ queryKey: ["pembelian"] });
     qc.invalidateQueries({ queryKey: ["transaksi"] });
@@ -122,12 +122,13 @@ export function FormPembelian() {
     navigate({ to: mode === "draft" ? "/draft" : "/riwayat" });
   }
 
-
   const petaniOptions = petaniList.map((p) => ({ value: p.id, label: p.nama }));
-  const ikanOptions = Array.from(new Set([...IKAN_UMUM, ...(jenisIkan ? [jenisIkan] : [])])).map((n) => ({
-    value: n,
-    label: n,
-  }));
+  const ikanOptions = Array.from(new Set([...IKAN_UMUM, ...(jenisIkan ? [jenisIkan] : [])])).map(
+    (n) => ({
+      value: n,
+      label: n,
+    }),
+  );
 
   return (
     <>
@@ -169,7 +170,13 @@ export function FormPembelian() {
 
         <div className="space-y-2">
           <Label htmlFor="jumlah_kg">Berat (Kg) *</Label>
-          <InputJumlah id="jumlah_kg" value={jumlahKg} onChange={setJumlahKg} step={0.5} placeholder="0" />
+          <InputJumlah
+            id="jumlah_kg"
+            value={jumlahKg}
+            onChange={setJumlahKg}
+            step={0.5}
+            placeholder="0"
+          />
         </div>
 
         <div className="space-y-2">
@@ -201,7 +208,6 @@ export function FormPembelian() {
             placeholder="0"
           />
         </div>
-
 
         <RingkasanTotal total={total} sisa={sisa} label="Total Pembelian" />
 

@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { pesanError } from "@/lib/pesan-error";
 import { ShieldCheck, User as UserIcon } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { AppShell } from "@/components/AppShell";
@@ -92,7 +93,7 @@ function PenggunaPage() {
       qc.invalidateQueries({ queryKey: ["pengguna"] });
       qc.invalidateQueries({ queryKey: ["user-role"] });
     } catch (e) {
-      toast.error(e instanceof Error ? e.message : "Gagal mengubah peran");
+      toast.error(pesanError(e, "Gagal mengubah peran"));
     } finally {
       setBusy(null);
     }

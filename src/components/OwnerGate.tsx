@@ -35,8 +35,8 @@ export function OwnerGate({ children }: { children: React.ReactNode }) {
           </span>
           <h1 className="text-lg font-semibold text-foreground">Akses ditolak</h1>
           <p className="mt-2 text-sm text-muted-foreground">
-            Aplikasi ini hanya dapat diakses oleh pemilik (owner). Hubungi pemilik jika Anda
-            merasa seharusnya punya akses.
+            Aplikasi ini hanya dapat diakses oleh pemilik (owner). Hubungi pemilik jika Anda merasa
+            seharusnya punya akses.
           </p>
           <Button className="mt-5 w-full" onClick={keluar}>
             Keluar
