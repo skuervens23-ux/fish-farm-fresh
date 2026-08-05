@@ -12,6 +12,8 @@ import {
   YAxis,
 } from "recharts";
 import { AppShell } from "@/components/AppShell";
+import { AlurLaba } from "@/components/AlurLaba";
+import { RincianAngka } from "@/components/RincianAngka";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
@@ -234,28 +236,60 @@ function Analisis() {
         </div>
 
 
-        <div className="grid grid-cols-2 gap-2.5 lg:grid-cols-4">
-          <Card className="surface-card rounded-xl p-3.5">
-            <p className="text-xs text-muted-foreground">Total Modal</p>
-            <p className="text-lg font-semibold">{formatRupiah(s?.total_modal ?? 0)}</p>
-          </Card>
-          <Card className="surface-card rounded-xl p-3.5">
-            <p className="text-xs text-muted-foreground">Total Penjualan</p>
-            <p className="text-lg font-semibold">{formatRupiah(s?.total_penjualan ?? 0)}</p>
-          </Card>
-          <Card className="surface-card rounded-xl p-3.5">
-            <p className="text-xs text-muted-foreground">Laba Bersih</p>
-            <p
-              className={`text-lg font-semibold ${(s?.laba_bersih ?? 0) < 0 ? "text-destructive" : "text-success"}`}
-            >
-              {formatRupiah(s?.laba_bersih ?? 0)}
-            </p>
-          </Card>
-          <Card className="surface-card rounded-xl p-3.5">
-            <p className="text-xs text-muted-foreground">Margin</p>
-            <p className="text-lg font-semibold">{(s?.margin ?? 0).toFixed(1)}%</p>
-          </Card>
-        </div>
+        <AlurLaba
+          penjualan={s?.total_penjualan ?? 0}
+          modal={s?.total_modal ?? 0}
+          biaya={s?.total_biaya ?? 0}
+          labaKotor={s?.laba_kotor ?? 0}
+          labaBersih={s?.laba_bersih ?? 0}
+          margin={s?.margin ?? 0}
+          keterangan={PRESET.find((p) => p.id === preset)?.label}
+        />
+
+        <RincianAngka
+          judul="Lihat semua angka"
+          deskripsi="Modal, penjualan, biaya, laba kotor, hutang, dan piutang"
+        >
+          <div className="grid grid-cols-2 gap-2.5 lg:grid-cols-4">
+            <Card className="surface-card rounded-xl p-3.5">
+              <p className="text-xs text-muted-foreground">Total Modal</p>
+              <p className="text-lg font-semibold">{formatRupiah(s?.total_modal ?? 0)}</p>
+            </Card>
+            <Card className="surface-card rounded-xl p-3.5">
+              <p className="text-xs text-muted-foreground">Total Penjualan</p>
+              <p className="text-lg font-semibold">{formatRupiah(s?.total_penjualan ?? 0)}</p>
+            </Card>
+            <Card className="surface-card rounded-xl p-3.5">
+              <p className="text-xs text-muted-foreground">Biaya Operasional</p>
+              <p className="text-lg font-semibold">{formatRupiah(s?.total_biaya ?? 0)}</p>
+            </Card>
+            <Card className="surface-card rounded-xl p-3.5">
+              <p className="text-xs text-muted-foreground">Laba Kotor</p>
+              <p className="text-lg font-semibold">{formatRupiah(s?.laba_kotor ?? 0)}</p>
+            </Card>
+            <Card className="surface-card rounded-xl p-3.5">
+              <p className="text-xs text-muted-foreground">Laba Bersih</p>
+              <p
+                className={`text-lg font-semibold ${(s?.laba_bersih ?? 0) < 0 ? "text-destructive" : "text-success"}`}
+              >
+                {formatRupiah(s?.laba_bersih ?? 0)}
+              </p>
+            </Card>
+            <Card className="surface-card rounded-xl p-3.5">
+              <p className="text-xs text-muted-foreground">Margin</p>
+              <p className="text-lg font-semibold">{(s?.margin ?? 0).toFixed(1)}%</p>
+            </Card>
+            <Card className="surface-card rounded-xl p-3.5">
+              <p className="text-xs text-muted-foreground">Hutang ke Supplier</p>
+              <p className="text-lg font-semibold">{formatRupiah(s?.hutang ?? 0)}</p>
+            </Card>
+            <Card className="surface-card rounded-xl p-3.5">
+              <p className="text-xs text-muted-foreground">Piutang Customer</p>
+              <p className="text-lg font-semibold">{formatRupiah(s?.piutang ?? 0)}</p>
+            </Card>
+          </div>
+        </RincianAngka>
+
 
         <Card className="surface-card rounded-xl p-3.5">
           <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
