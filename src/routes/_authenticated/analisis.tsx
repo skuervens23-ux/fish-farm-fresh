@@ -12,6 +12,8 @@ import {
   YAxis,
 } from "recharts";
 import { AppShell } from "@/components/AppShell";
+import { AlurLaba } from "@/components/AlurLaba";
+import { RincianAngka } from "@/components/RincianAngka";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
