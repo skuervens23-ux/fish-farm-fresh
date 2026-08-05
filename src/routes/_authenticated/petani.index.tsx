@@ -31,14 +31,20 @@ function PetaniPage() {
   const { data = [], isLoading: loadingList } = useQuery({
     queryKey: ["petani-all"],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("petani")
-        .select("id, nama, telepon, alamat, is_active")
-        .order("nama");
-      if (error) throw error;
-      return data;
+      const [list, kontak] = await Promise.all([
+        supabase.from("petani").select("id, nama, is_active").order("nama"),
+        supabase.rpc("kontak_petani"),
+      ]);
+      if (list.error) throw list.error;
+      const map = new Map((kontak.data ?? []).map((k) => [k.id, k]));
+      return (list.data ?? []).map((p) => ({
+        ...p,
+        telepon: map.get(p.id)?.telepon ?? null,
+        alamat: map.get(p.id)?.alamat ?? null,
+      }));
     },
   });
+
 
   async function toggleActive(id: string, next: boolean) {
     const { error } = await supabase.from("petani").update({ is_active: next }).eq("id", id);
