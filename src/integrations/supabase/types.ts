@@ -18,8 +18,10 @@ export type Database = {
         Row: {
           created_at: string
           dicatat_oleh: string
+          harga_per_balok: number | null
           id: string
           jumlah: number
+          jumlah_balok: number | null
           kategori: string
           keterangan: string | null
           tanggal: string
@@ -28,8 +30,10 @@ export type Database = {
         Insert: {
           created_at?: string
           dicatat_oleh: string
+          harga_per_balok?: number | null
           id?: string
           jumlah: number
+          jumlah_balok?: number | null
           kategori?: string
           keterangan?: string | null
           tanggal?: string
@@ -38,8 +42,10 @@ export type Database = {
         Update: {
           created_at?: string
           dicatat_oleh?: string
+          harga_per_balok?: number | null
           id?: string
           jumlah?: number
+          jumlah_balok?: number | null
           kategori?: string
           keterangan?: string | null
           tanggal?: string
@@ -185,6 +191,7 @@ export type Database = {
           dicatat_oleh: string
           ditinjau_oleh: string | null
           ditinjau_pada: string | null
+          faktor_box: number
           foto_nota_url: string | null
           harga_per_kg: number
           id: string
@@ -193,6 +200,7 @@ export type Database = {
           jumlah_kg: number
           jumlah_mati: number
           petani_id: string
+          sisa_kg: number
           status_bayar: Database["public"]["Enums"]["status_bayar"]
           status_pengiriman: Database["public"]["Enums"]["status_pengiriman"]
           status_transaksi: Database["public"]["Enums"]["status_transaksi"]
@@ -207,6 +215,7 @@ export type Database = {
           dicatat_oleh: string
           ditinjau_oleh?: string | null
           ditinjau_pada?: string | null
+          faktor_box?: number
           foto_nota_url?: string | null
           harga_per_kg: number
           id?: string
@@ -215,6 +224,7 @@ export type Database = {
           jumlah_kg: number
           jumlah_mati?: number
           petani_id: string
+          sisa_kg?: number
           status_bayar: Database["public"]["Enums"]["status_bayar"]
           status_pengiriman?: Database["public"]["Enums"]["status_pengiriman"]
           status_transaksi?: Database["public"]["Enums"]["status_transaksi"]
@@ -229,6 +239,7 @@ export type Database = {
           dicatat_oleh?: string
           ditinjau_oleh?: string | null
           ditinjau_pada?: string | null
+          faktor_box?: number
           foto_nota_url?: string | null
           harga_per_kg?: number
           id?: string
@@ -237,6 +248,7 @@ export type Database = {
           jumlah_kg?: number
           jumlah_mati?: number
           petani_id?: string
+          sisa_kg?: number
           status_bayar?: Database["public"]["Enums"]["status_bayar"]
           status_pengiriman?: Database["public"]["Enums"]["status_pengiriman"]
           status_transaksi?: Database["public"]["Enums"]["status_transaksi"]
@@ -506,6 +518,7 @@ export type Database = {
           dicatat_oleh: string
           ditinjau_oleh: string | null
           ditinjau_pada: string | null
+          faktor_box: number
           foto_nota_url: string | null
           harga_per_kg: number
           id: string
@@ -514,6 +527,7 @@ export type Database = {
           jumlah_kg: number
           jumlah_mati: number
           petani_id: string
+          sisa_kg: number
           status_bayar: Database["public"]["Enums"]["status_bayar"]
           status_pengiriman: Database["public"]["Enums"]["status_pengiriman"]
           status_transaksi: Database["public"]["Enums"]["status_transaksi"]
@@ -529,14 +543,15 @@ export type Database = {
       }
       create_pembelian: {
         Args: {
-          _box?: number
+          _box: number
           _catatan?: string
+          _faktor_box: number
           _foto_nota_url?: string
           _harga_per_kg: number
           _jenis_ikan: string
-          _jumlah_dibayar: number
-          _jumlah_kg: number
+          _jumlah_dibayar?: number
           _petani_id: string
+          _sisa_kg: number
           _status_bayar: Database["public"]["Enums"]["status_bayar"]
           _status_transaksi?: Database["public"]["Enums"]["status_transaksi"]
         }
@@ -548,6 +563,7 @@ export type Database = {
           dicatat_oleh: string
           ditinjau_oleh: string | null
           ditinjau_pada: string | null
+          faktor_box: number
           foto_nota_url: string | null
           harga_per_kg: number
           id: string
@@ -556,6 +572,7 @@ export type Database = {
           jumlah_kg: number
           jumlah_mati: number
           petani_id: string
+          sisa_kg: number
           status_bayar: Database["public"]["Enums"]["status_bayar"]
           status_pengiriman: Database["public"]["Enums"]["status_pengiriman"]
           status_transaksi: Database["public"]["Enums"]["status_transaksi"]
@@ -713,6 +730,19 @@ export type Database = {
           saldo_kas: number
         }[]
       }
+      ringkasan_hari_ini: {
+        Args: { _tanggal?: string }
+        Returns: {
+          berat_dibeli: number
+          berat_terjual: number
+          laba_bersih: number
+          nilai_modal: number
+          nilai_persediaan: number
+          total_operasional: number
+          total_pembelian: number
+          total_penjualan: number
+        }[]
+      }
       ringkasan_periode: {
         Args: { _dari?: string; _sampai?: string }
         Returns: {
@@ -729,6 +759,17 @@ export type Database = {
           total_biaya: number
           total_modal: number
           total_penjualan: number
+        }[]
+      }
+      stok_ikan: {
+        Args: never
+        Returns: {
+          harga_rata: number
+          jenis_ikan: string
+          kg_keluar: number
+          kg_masuk: number
+          kg_sisa: number
+          nilai_persediaan: number
         }[]
       }
     }
