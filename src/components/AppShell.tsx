@@ -41,7 +41,9 @@ export function AppShell({
               </div>
               <h1 className="truncate text-base font-semibold text-foreground">{title}</h1>
               <div className="flex items-center gap-1">
+                <IndikatorOffline />
                 {actions}
+
                 <button
                   type="button"
                   onClick={ganti}
