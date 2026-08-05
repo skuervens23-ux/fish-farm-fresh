@@ -3,10 +3,10 @@ import { useQuery } from "@tanstack/react-query";
 import {
   ShoppingCart,
   Store,
-  Clock,
-  XCircle,
-  CheckCircle2,
   ChevronRight,
+  AlertTriangle,
+  Clock,
+  Sparkle,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { AppShell } from "@/components/AppShell";
@@ -16,6 +16,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { BadgeTransaksi } from "@/components/StatusBadges";
 import { formatRupiah } from "@/lib/format";
 import { useTransaksi } from "@/lib/transaksi";
+import { useKas } from "@/lib/kas";
 import { useUserRole } from "@/hooks/useUserRole";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
@@ -25,10 +26,10 @@ export const Route = createFileRoute("/_authenticated/dashboard")({
       {
         name: "description",
         content:
-          "Ringkasan aktivitas harian bandar ikan: pembelian, penjualan, transaksi menunggu persetujuan, dan aktivitas terbaru.",
+          "Ringkasan harian bandar ikan: laba, kas tunai, hutang petani, piutang pelanggan, dan aktivitas terbaru.",
       },
       { property: "og:title", content: "Dashboard Bandar Ikan" },
-      { property: "og:description", content: "Ringkasan aktivitas harian pembelian dan penjualan ikan." },
+      { property: "og:description", content: "Ringkasan laba, kas, hutang, dan piutang harian." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],
@@ -36,9 +37,29 @@ export const Route = createFileRoute("/_authenticated/dashboard")({
   component: Dashboard,
 });
 
+function Ringkas({
+  label,
+  nilai,
+  aksen,
+  nilaiCls,
+}: {
+  label: string;
+  nilai: string;
+  aksen: string;
+  nilaiCls?: string;
+}) {
+  return (
+    <div className={`rounded-lg border-l-[3px] bg-muted/60 p-3 ${aksen}`}>
+      <p className="text-xs text-muted-foreground">{label}</p>
+      <p className={`text-xl font-semibold ${nilaiCls ?? "text-foreground"}`}>{nilai}</p>
+    </div>
+  );
+}
+
 function Dashboard() {
   const { isOwner } = useUserRole();
   const { data: rows = [], isLoading } = useTransaksi();
+  const { data: kas = [] } = useKas();
 
   const { data: profil } = useQuery({
     queryKey: ["profil-saya"],
@@ -52,86 +73,87 @@ function Dashboard() {
 
   const today = new Date().toISOString().slice(0, 10);
   const hariIni = rows.filter((r) => r.tanggal === today);
-  const beli = hariIni.filter((r) => r.jenis === "pembelian");
-  const jual = hariIni.filter((r) => r.jenis === "penjualan");
-  const menunggu = rows.filter((r) => r.status_transaksi === "menunggu");
-  const ditolak = rows.filter((r) => r.status_transaksi === "ditolak");
-  const disetujui = rows.filter((r) => r.status_transaksi === "disetujui");
-
   const sum = (list: typeof rows) => list.reduce((s, r) => s + r.total, 0);
+  const sisa = (list: typeof rows) =>
+    list.reduce((s, r) => s + Math.max(0, r.total - r.dibayar), 0);
 
-  const kartu = [
-    {
-      label: "Pembelian Hari Ini",
-      icon: ShoppingCart,
-      count: beli.length,
-      total: sum(beli),
-      cls: "bg-primary/15 text-primary",
-    },
-    {
-      label: "Penjualan Hari Ini",
-      icon: Store,
-      count: jual.length,
-      total: sum(jual),
-      cls: "bg-success/15 text-success",
-    },
-    {
-      label: "Menunggu Persetujuan",
-      icon: Clock,
-      count: menunggu.length,
-      total: sum(menunggu),
-      cls: "bg-warning/15 text-warning",
-    },
-    {
-      label: "Ditolak",
-      icon: XCircle,
-      count: ditolak.length,
-      total: sum(ditolak),
-      cls: "bg-destructive/15 text-destructive",
-    },
-    {
-      label: "Disetujui",
-      icon: CheckCircle2,
-      count: disetujui.length,
-      total: sum(disetujui),
-      cls: "bg-success/15 text-success",
-    },
-  ];
+  const beliHariIni = sum(hariIni.filter((r) => r.jenis === "pembelian"));
+  const jualHariIni = sum(hariIni.filter((r) => r.jenis === "penjualan"));
+  const laba = jualHariIni - beliHariIni;
+
+  const saldoKas = kas.reduce((s, r) => s + (r.tipe === "masuk" ? r.jumlah : -r.jumlah), 0);
+  const hutang = sisa(rows.filter((r) => r.jenis === "pembelian" && r.status_transaksi === "disetujui"));
+  const piutang = sisa(rows.filter((r) => r.jenis === "penjualan" && r.status_transaksi === "disetujui"));
+
+  const menunggu = rows.filter((r) => r.status_transaksi === "menunggu");
+  const belumLunas = rows.filter(
+    (r) => r.status_transaksi === "disetujui" && r.status_bayar !== "lunas",
+  );
+
+  const tanggal = new Date().toLocaleDateString("id-ID", {
+    weekday: "long",
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+  });
 
   return (
     <AppShell title="Dashboard">
-      <div className="mx-auto w-full max-w-[900px] space-y-5 px-4 py-5">
+      <div className="mx-auto w-full max-w-[900px] space-y-4 px-4 py-4">
         <div>
-          <h2 className="text-lg font-semibold text-foreground">
+          <h2 className="text-base font-medium text-foreground">
             Selamat datang, {profil?.nama ?? (isOwner ? "Owner" : "Mandor")}
           </h2>
-          <p className="text-sm text-muted-foreground">Berikut ringkasan aktivitas Anda hari ini.</p>
+          <p className="text-sm text-muted-foreground">{tanggal}</p>
         </div>
 
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
-          {isLoading
-            ? Array.from({ length: 5 }).map((_, i) => <Skeleton key={i} className="h-28 w-full" />)
-            : kartu.map((k) => (
-                <Card key={k.label} className="p-4">
-                  <div className={`mb-2 grid h-9 w-9 place-items-center rounded-full ${k.cls}`}>
-                    <k.icon className="h-4 w-4" />
-                  </div>
-                  <div className="text-xs text-muted-foreground">{k.label}</div>
-                  <div className="text-2xl font-bold text-foreground">{k.count}</div>
-                  <div className="text-xs text-muted-foreground">{formatRupiah(k.total)}</div>
-                </Card>
-              ))}
-        </div>
+        {isLoading ? (
+          <div className="grid grid-cols-2 gap-2.5">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <Skeleton key={i} className="h-[72px] w-full" />
+            ))}
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 gap-2.5">
+            <Ringkas
+              label="Laba hari ini"
+              nilai={formatRupiah(laba)}
+              aksen="border-success"
+              nilaiCls={laba < 0 ? "text-destructive" : "text-success"}
+            />
+            <Ringkas label="Kas tunai" nilai={formatRupiah(saldoKas)} aksen="border-primary" />
+            <Ringkas label="Hutang" nilai={formatRupiah(hutang)} aksen="border-hutang" />
+            <Ringkas label="Piutang" nilai={formatRupiah(piutang)} aksen="border-warning" />
+          </div>
+        )}
 
-        <div className="grid grid-cols-2 gap-3">
-          <Button asChild className="h-12">
-            <Link to="/pembelian/baru">
-              <ShoppingCart className="mr-2 h-4 w-4" /> Input Pembelian
-            </Link>
+        {(menunggu.length > 0 || belumLunas.length > 0) && (
+          <div className="space-y-1 rounded-lg bg-warning/10 px-3 py-2.5">
+            {belumLunas.length > 0 && (
+              <p className="flex items-center gap-1.5 text-sm text-warning">
+                <AlertTriangle className="h-4 w-4" />
+                {belumLunas.length} transaksi belum lunas
+              </p>
+            )}
+            {menunggu.length > 0 && (
+              <p className="flex items-center gap-1.5 text-sm text-warning">
+                <Clock className="h-4 w-4" />
+                {menunggu.length} transaksi menunggu persetujuan
+              </p>
+            )}
+          </div>
+        )}
+
+        <div className="grid grid-cols-3 gap-2">
+          <Button asChild variant="outline" className="h-11">
+            <Link to="/pembelian/baru">Pembelian</Link>
           </Button>
-          <Button asChild variant="outline" className="h-12">
-            <Link to="/penjualan/baru">
-              <Store className="mr-2 h-4 w-4" /> Input Penjualan
+          <Button asChild variant="outline" className="h-11">
+            <Link to="/penjualan/baru">Penjualan</Link>
+          </Button>
+          <Button asChild className="h-11">
+            <Link to="/ai">
+              <Sparkle className="mr-1.5 h-4 w-4" /> Tanya AI
             </Link>
           </Button>
         </div>
