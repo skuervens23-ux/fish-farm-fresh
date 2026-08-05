@@ -15,6 +15,7 @@ import { AppShell } from "@/components/AppShell";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { TombolEkspor } from "@/components/TombolEkspor";
 import { formatRupiah } from "@/lib/format";
 import {
   rentang,
@@ -26,6 +27,7 @@ import {
   useRingkasanPeriode,
   type Periode,
 } from "@/lib/analitik";
+
 
 export const Route = createFileRoute("/_authenticated/analisis")({
   head: () => ({
@@ -131,6 +133,82 @@ function Analisis() {
     }),
   }));
 
+  const lembarEkspor = () => [
+    {
+      nama: "Ringkasan",
+      kolom: ["Metrik", "Nilai"],
+      rows: [
+        ["Total Modal", s?.total_modal ?? 0],
+        ["Total Penjualan", s?.total_penjualan ?? 0],
+        ["Total Biaya Operasional", s?.total_biaya ?? 0],
+        ["Laba Kotor", s?.laba_kotor ?? 0],
+        ["Laba Bersih", s?.laba_bersih ?? 0],
+        ["Margin (%)", Number((s?.margin ?? 0).toFixed(2))],
+        ["Hutang", s?.hutang ?? 0],
+        ["Piutang", s?.piutang ?? 0],
+      ] as (string | number)[][],
+    },
+    {
+      nama: "Profit per Periode",
+      kolom: ["Periode", "Modal", "Penjualan", "Biaya", "Laba Kotor", "Laba Bersih", "Margin (%)"],
+      rows: seri.map((x) => [
+        x.periode,
+        x.modal,
+        x.penjualan,
+        x.biaya,
+        x.laba_kotor,
+        x.laba_bersih,
+        Number(x.margin.toFixed(2)),
+      ]),
+    },
+    {
+      nama: "Supplier",
+      kolom: ["Supplier", "Transaksi", "Kg", "Modal", "Hutang"],
+      rows: supplier.map((x) => [x.nama, x.transaksi, x.total_kg, x.modal, x.hutang]),
+    },
+    {
+      nama: "Customer",
+      kolom: ["Customer", "Transaksi", "Kg", "Omzet", "Piutang"],
+      rows: customer.map((x) => [x.nama, x.transaksi, x.total_kg, x.omzet, x.piutang]),
+    },
+    {
+      nama: "Jenis Ikan",
+      kolom: ["Jenis Ikan", "Kg Beli", "Kg Jual", "Modal", "Penjualan", "Laba", "Margin (%)"],
+      rows: ikan.map((x) => [
+        x.jenis_ikan,
+        x.kg_beli,
+        x.kg_jual,
+        x.modal,
+        x.penjualan,
+        x.laba_kotor,
+        Number(x.margin.toFixed(2)),
+      ]),
+    },
+    {
+      nama: "LOT",
+      kolom: [
+        "LOT",
+        "Kg Beli",
+        "Kg Jual",
+        "Modal",
+        "Penjualan",
+        "Biaya",
+        "Laba Bersih",
+        "Margin (%)",
+      ],
+      rows: lot.map((x) => [
+        x.lot,
+        x.kg_beli,
+        x.kg_jual,
+        x.modal,
+        x.penjualan,
+        x.biaya,
+        x.laba_bersih,
+        Number(x.margin.toFixed(2)),
+      ]),
+    },
+  ];
+
   return (
     <AppShell title="Analisis Profit">
       <div className="mx-auto w-full max-w-[1100px] space-y-4 px-4 py-4">
@@ -145,7 +223,16 @@ function Analisis() {
               {p.label}
             </Button>
           ))}
+          <div className="ml-auto">
+            <TombolEkspor
+              judul="Analisis Profit — ERP Bandar Ikan"
+              subjudul={`Periode ${r.dari} s/d ${r.sampai}`}
+              namaFile={`Analisis-Profit-${r.dari}_sd_${r.sampai}`}
+              data={lembarEkspor}
+            />
+          </div>
         </div>
+
 
         <div className="grid grid-cols-2 gap-2.5 lg:grid-cols-4">
           <Card className="surface-card rounded-xl p-3.5">
