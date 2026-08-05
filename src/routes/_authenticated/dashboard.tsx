@@ -1,28 +1,49 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
-import { ShoppingCart, Store, ChevronRight, AlertTriangle, Clock, Sparkle } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
+import { useState } from "react";
+import {
+  Area,
+  AreaChart,
+  Bar,
+  BarChart,
+  CartesianGrid,
+  Line,
+  LineChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
+import { ShoppingCart, Store, TrendingUp, Sparkle } from "lucide-react";
 import { AppShell } from "@/components/AppShell";
-import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { BadgeTransaksi } from "@/components/StatusBadges";
 import { formatRupiah } from "@/lib/format";
-import { useTransaksi } from "@/lib/transaksi";
-import { useRingkasan } from "@/lib/ringkasan";
-import { useUserRole } from "@/hooks/useUserRole";
+import {
+  rentang,
+  useProfitCustomer,
+  useProfitIkan,
+  useProfitLot,
+  useProfitSeries,
+  useProfitSupplier,
+  useRingkasanPeriode,
+  type RentangTanggal,
+} from "@/lib/analitik";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
   head: () => ({
     meta: [
-      { title: "Dashboard Mandor | Bandar Ikan" },
+      { title: "Dashboard Owner | ERP Bandar Ikan" },
       {
         name: "description",
         content:
-          "Ringkasan harian bandar ikan: laba, kas tunai, hutang petani, piutang pelanggan, dan aktivitas terbaru.",
+          "Ringkasan omzet, modal, biaya operasional, laba kotor, laba bersih, margin, dan grafik performa usaha bandar ikan.",
       },
-      { property: "og:title", content: "Dashboard Bandar Ikan" },
-      { property: "og:description", content: "Ringkasan laba, kas, hutang, dan piutang harian." },
+      { property: "og:title", content: "Dashboard Owner — ERP Bandar Ikan" },
+      {
+        property: "og:description",
+        content: "Omzet, modal, laba bersih, margin, dan grafik performa usaha dalam satu layar.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],
@@ -30,114 +51,191 @@ export const Route = createFileRoute("/_authenticated/dashboard")({
   component: Dashboard,
 });
 
-function Ringkas({
+const PRESET = [
+  { id: "7h", label: "7 Hari" },
+  { id: "30h", label: "30 Hari" },
+  { id: "bulan-ini", label: "Bulan Ini" },
+  { id: "tahun-ini", label: "Tahun Ini" },
+] as const;
+
+export function Metrik({
   label,
   nilai,
-  aksen,
+  sub,
+  aksen = "bg-primary",
   nilaiCls,
 }: {
   label: string;
   nilai: string;
-  aksen: string;
+  sub?: string;
+  aksen?: string;
   nilaiCls?: string;
 }) {
   return (
-    <div className={`surface-card relative overflow-hidden rounded-xl p-3.5`}>
+    <div className="surface-card relative overflow-hidden rounded-xl p-3.5">
       <span className={`absolute inset-y-0 left-0 w-[3px] ${aksen}`} aria-hidden />
       <p className="text-xs text-muted-foreground">{label}</p>
       <p className={`mt-0.5 text-xl font-semibold tracking-tight ${nilaiCls ?? "text-foreground"}`}>
         {nilai}
       </p>
+      {sub && <p className="mt-0.5 text-[11px] text-muted-foreground">{sub}</p>}
     </div>
   );
 }
 
+export function GrafikBox({ judul, children }: { judul: string; children: React.ReactNode }) {
+  return (
+    <Card className="surface-card rounded-xl p-3.5">
+      <h3 className="mb-2 text-sm font-semibold text-foreground">{judul}</h3>
+      <div className="h-56 w-full">
+        <ResponsiveContainer width="100%" height="100%">
+          {children as React.ReactElement}
+        </ResponsiveContainer>
+      </div>
+    </Card>
+  );
+}
+
+const singkat = (v: number) =>
+  Math.abs(v) >= 1_000_000
+    ? `${(v / 1_000_000).toFixed(1)}jt`
+    : Math.abs(v) >= 1000
+      ? `${Math.round(v / 1000)}rb`
+      : String(v);
+
+const tglPendek = (s: string) =>
+  new Date(s).toLocaleDateString("id-ID", { day: "numeric", month: "short" });
+
+function TopList({
+  judul,
+  rows,
+}: {
+  judul: string;
+  rows: { nama: string; nilai: number; sub?: string }[];
+}) {
+  return (
+    <Card className="surface-card rounded-xl p-3.5">
+      <h3 className="mb-2 text-sm font-semibold text-foreground">{judul}</h3>
+      {rows.length === 0 ? (
+        <p className="py-4 text-center text-sm text-muted-foreground">Belum ada data.</p>
+      ) : (
+        <ul className="space-y-2">
+          {rows.slice(0, 5).map((r, i) => (
+            <li key={`${r.nama}-${i}`} className="flex items-center justify-between gap-3 text-sm">
+              <span className="flex min-w-0 items-center gap-2">
+                <span className="grid h-6 w-6 shrink-0 place-items-center rounded-full bg-primary/12 text-[11px] font-semibold text-primary">
+                  {i + 1}
+                </span>
+                <span className="truncate text-foreground">{r.nama}</span>
+              </span>
+              <span className="shrink-0 text-right">
+                <span className="block font-medium text-foreground">{formatRupiah(r.nilai)}</span>
+                {r.sub && <span className="block text-[11px] text-muted-foreground">{r.sub}</span>}
+              </span>
+            </li>
+          ))}
+        </ul>
+      )}
+    </Card>
+  );
+}
+
 function Dashboard() {
-  const { isOwner } = useUserRole();
-  const { data: rows = [], isLoading } = useTransaksi();
-  const { data: ringkasan, isLoading: loadingRingkas } = useRingkasan();
+  const [preset, setPreset] = useState<(typeof PRESET)[number]["id"]>("30h");
+  const r: RentangTanggal = rentang(preset);
 
-  const { data: profil } = useQuery({
-    queryKey: ["profil-saya"],
-    queryFn: async () => {
-      const { data: u } = await supabase.auth.getUser();
-      if (!u.user) return null;
-      const { data } = await supabase
-        .from("profiles")
-        .select("nama")
-        .eq("id", u.user.id)
-        .maybeSingle();
-      return data;
-    },
-  });
+  const { data: s, isLoading } = useRingkasanPeriode(r);
+  const { data: seri = [] } = useProfitSeries(r, preset === "tahun-ini" ? "bulan" : "hari");
+  const { data: supplier = [] } = useProfitSupplier(r);
+  const { data: customer = [] } = useProfitCustomer(r);
+  const { data: ikan = [] } = useProfitIkan(r);
+  const { data: lot = [] } = useProfitLot(r);
 
-  const laba = ringkasan?.laba_hari_ini ?? 0;
-  const saldoKas = ringkasan?.saldo_kas ?? 0;
-  const hutang = ringkasan?.hutang ?? 0;
-  const piutang = ringkasan?.piutang ?? 0;
-  const jmlMenunggu = ringkasan?.jml_menunggu ?? 0;
-  const jmlBelumLunas = ringkasan?.jml_belum_lunas ?? 0;
-
-  const tanggal = new Date().toLocaleDateString("id-ID", {
-    weekday: "long",
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-  });
+  const chartData = seri.map((d) => ({ ...d, label: tglPendek(d.periode) }));
 
   return (
     <AppShell title="Dashboard">
-      <div className="mx-auto w-full max-w-[900px] space-y-4 px-4 py-4">
-        <div>
-          <h2 className="text-base font-medium text-foreground">
-            Selamat datang, {profil?.nama ?? (isOwner ? "Owner" : "Mandor")}
-          </h2>
-          <p className="text-sm text-muted-foreground">{tanggal}</p>
+      <div className="mx-auto w-full max-w-[1100px] space-y-4 px-4 py-4">
+        <div className="flex flex-wrap items-center gap-1.5">
+          {PRESET.map((p) => (
+            <Button
+              key={p.id}
+              size="sm"
+              variant={preset === p.id ? "default" : "outline"}
+              onClick={() => setPreset(p.id)}
+            >
+              {p.label}
+            </Button>
+          ))}
         </div>
 
-        {loadingRingkas ? (
-          <div className="grid grid-cols-2 gap-2.5">
-            {Array.from({ length: 4 }).map((_, i) => (
-              <Skeleton key={i} className="h-[72px] w-full" />
+        {isLoading ? (
+          <div className="grid grid-cols-2 gap-2.5 lg:grid-cols-4">
+            {Array.from({ length: 8 }).map((_, i) => (
+              <Skeleton key={i} className="h-[76px] w-full" />
             ))}
           </div>
         ) : (
-          <div className="grid grid-cols-2 gap-2.5">
-            <Ringkas
-              label="Laba hari ini"
-              nilai={formatRupiah(laba)}
-              aksen="bg-success"
-              nilaiCls={laba < 0 ? "text-destructive" : "text-success"}
+          <div className="grid grid-cols-2 gap-2.5 lg:grid-cols-4">
+            <Metrik
+              label="Omzet Hari Ini"
+              nilai={formatRupiah(s?.omzet_hari_ini ?? 0)}
+              aksen="bg-primary"
             />
-            <Ringkas label="Kas tunai" nilai={formatRupiah(saldoKas)} aksen="bg-primary" />
-            <Ringkas label="Hutang" nilai={formatRupiah(hutang)} aksen="bg-hutang" />
-            <Ringkas label="Piutang" nilai={formatRupiah(piutang)} aksen="bg-warning" />
+            <Metrik
+              label="Laba Hari Ini"
+              nilai={formatRupiah(s?.laba_hari_ini ?? 0)}
+              aksen="bg-success"
+              nilaiCls={(s?.laba_hari_ini ?? 0) < 0 ? "text-destructive" : "text-success"}
+            />
+            <Metrik label="Total Modal" nilai={formatRupiah(s?.total_modal ?? 0)} aksen="bg-hutang" />
+            <Metrik
+              label="Total Penjualan"
+              nilai={formatRupiah(s?.total_penjualan ?? 0)}
+              aksen="bg-primary"
+            />
+            <Metrik
+              label="Total Pengeluaran"
+              nilai={formatRupiah(s?.total_biaya ?? 0)}
+              aksen="bg-destructive"
+            />
+            <Metrik
+              label="Laba Kotor"
+              nilai={formatRupiah(s?.laba_kotor ?? 0)}
+              sub="Penjualan − Modal"
+              aksen="bg-success"
+            />
+            <Metrik
+              label="Laba Bersih"
+              nilai={formatRupiah(s?.laba_bersih ?? 0)}
+              sub="Laba kotor − biaya"
+              aksen="bg-success"
+              nilaiCls={(s?.laba_bersih ?? 0) < 0 ? "text-destructive" : "text-success"}
+            />
+            <Metrik
+              label="Margin"
+              nilai={`${(s?.margin ?? 0).toFixed(1)}%`}
+              sub="Laba bersih ÷ modal"
+              aksen="bg-warning"
+            />
           </div>
         )}
 
-        {(jmlMenunggu > 0 || jmlBelumLunas > 0) && (
-          <div className="space-y-1 rounded-xl border border-warning/25 bg-warning/10 px-3 py-2.5">
-            {jmlBelumLunas > 0 && (
-              <p className="flex items-center gap-1.5 text-sm text-warning">
-                <AlertTriangle className="h-4 w-4" />
-                {jmlBelumLunas} transaksi belum lunas
-              </p>
-            )}
-            {jmlMenunggu > 0 && (
-              <p className="flex items-center gap-1.5 text-sm text-warning">
-                <Clock className="h-4 w-4" />
-                {jmlMenunggu} transaksi menunggu persetujuan
-              </p>
-            )}
-          </div>
-        )}
-
-        <div className="grid grid-cols-3 gap-2">
+        <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
           <Button asChild variant="outline" className="h-11">
-            <Link to="/pembelian/baru">Pembelian</Link>
+            <Link to="/pembelian/baru">
+              <ShoppingCart className="mr-1.5 h-4 w-4" /> Pembelian
+            </Link>
           </Button>
           <Button asChild variant="outline" className="h-11">
-            <Link to="/penjualan/baru">Penjualan</Link>
+            <Link to="/penjualan/baru">
+              <Store className="mr-1.5 h-4 w-4" /> Penjualan
+            </Link>
+          </Button>
+          <Button asChild variant="outline" className="h-11">
+            <Link to="/analisis">
+              <TrendingUp className="mr-1.5 h-4 w-4" /> Analisis
+            </Link>
           </Button>
           <Button asChild className="h-11">
             <Link to="/ai">
@@ -146,63 +244,122 @@ function Dashboard() {
           </Button>
         </div>
 
-        <section>
-          <div className="mb-2 flex items-center justify-between">
-            <h3 className="text-sm font-semibold text-foreground">Aktivitas Terbaru</h3>
-            <Link to="/riwayat" className="text-xs font-medium text-primary hover:underline">
-              Lihat Semua
-            </Link>
-          </div>
-          {isLoading ? (
-            <Skeleton className="h-40 w-full" />
-          ) : rows.length === 0 ? (
-            <Card className="surface-card rounded-xl p-6 text-center text-sm text-muted-foreground">
-              Belum ada transaksi. Mulai dari Input Pembelian.
-            </Card>
-          ) : (
-            <ul className="space-y-2">
-              {rows.slice(0, 6).map((r) => (
-                <li key={`${r.jenis}-${r.id}`}>
-                  <Link
-                    to={r.jenis === "pembelian" ? "/pembelian/$id" : "/penjualan/$id"}
-                    params={{ id: r.id }}
-                  >
-                    <Card className="surface-card grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 rounded-xl p-3 transition-colors hover:bg-accent/40">
-                      <div
-                        className={`grid h-9 w-9 shrink-0 place-items-center rounded-full ${
-                          r.jenis === "pembelian"
-                            ? "bg-primary/15 text-primary"
-                            : "bg-success/15 text-success"
-                        }`}
+        <div className="grid gap-3 lg:grid-cols-2">
+          <GrafikBox judul="Grafik Penjualan">
+            <AreaChart data={chartData}>
+              <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" />
+              <XAxis dataKey="label" tick={{ fontSize: 11 }} stroke="var(--color-muted-foreground)" />
+              <YAxis
+                tickFormatter={singkat}
+                tick={{ fontSize: 11 }}
+                stroke="var(--color-muted-foreground)"
+                width={44}
+              />
+              <Tooltip formatter={(v: number) => formatRupiah(v)} />
+              <Area
+                type="monotone"
+                dataKey="penjualan"
+                stroke="var(--color-primary)"
+                fill="var(--color-primary)"
+                fillOpacity={0.18}
+              />
+            </AreaChart>
+          </GrafikBox>
+
+          <GrafikBox judul="Grafik Laba">
+            <LineChart data={chartData}>
+              <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" />
+              <XAxis dataKey="label" tick={{ fontSize: 11 }} stroke="var(--color-muted-foreground)" />
+              <YAxis
+                tickFormatter={singkat}
+                tick={{ fontSize: 11 }}
+                stroke="var(--color-muted-foreground)"
+                width={44}
+              />
+              <Tooltip formatter={(v: number) => formatRupiah(v)} />
+              <Line
+                type="monotone"
+                dataKey="laba_bersih"
+                stroke="var(--color-success)"
+                strokeWidth={2}
+                dot={false}
+              />
+            </LineChart>
+          </GrafikBox>
+
+          <GrafikBox judul="Grafik Pengeluaran">
+            <BarChart data={chartData}>
+              <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" />
+              <XAxis dataKey="label" tick={{ fontSize: 11 }} stroke="var(--color-muted-foreground)" />
+              <YAxis
+                tickFormatter={singkat}
+                tick={{ fontSize: 11 }}
+                stroke="var(--color-muted-foreground)"
+                width={44}
+              />
+              <Tooltip formatter={(v: number) => formatRupiah(v)} />
+              <Bar dataKey="biaya" fill="var(--color-destructive)" radius={[4, 4, 0, 0]} />
+            </BarChart>
+          </GrafikBox>
+
+          <Card className="surface-card rounded-xl p-3.5">
+            <h3 className="mb-2 text-sm font-semibold text-foreground">Keuntungan per LOT</h3>
+            {lot.length === 0 ? (
+              <p className="py-4 text-center text-sm text-muted-foreground">Belum ada data.</p>
+            ) : (
+              <ul className="space-y-2">
+                {lot.slice(0, 5).map((l) => (
+                  <li key={l.lot} className="flex items-center justify-between gap-3 text-sm">
+                    <span className="text-foreground">
+                      {new Date(l.lot).toLocaleDateString("id-ID", {
+                        day: "numeric",
+                        month: "short",
+                        year: "numeric",
+                      })}
+                    </span>
+                    <span className="text-right">
+                      <span
+                        className={`block font-medium ${l.laba_bersih < 0 ? "text-destructive" : "text-success"}`}
                       >
-                        {r.jenis === "pembelian" ? (
-                          <ShoppingCart className="h-4 w-4" />
-                        ) : (
-                          <Store className="h-4 w-4" />
-                        )}
-                      </div>
-                      <div className="min-w-0">
-                        <div className="truncate text-sm font-medium text-foreground">
-                          {r.jenis === "pembelian" ? "Pembelian" : "Penjualan"} {r.jenis_ikan}
-                        </div>
-                        <div className="truncate text-xs text-muted-foreground">{r.pihak}</div>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <div className="text-right">
-                          <BadgeTransaksi status={r.status_transaksi} />
-                          <div className="text-xs text-muted-foreground">
-                            {formatRupiah(r.total)}
-                          </div>
-                        </div>
-                        <ChevronRight className="h-4 w-4 shrink-0 text-muted-foreground" />
-                      </div>
-                    </Card>
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          )}
-        </section>
+                        {formatRupiah(l.laba_bersih)}
+                      </span>
+                      <span className="block text-[11px] text-muted-foreground">
+                        margin {l.margin.toFixed(1)}%
+                      </span>
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </Card>
+        </div>
+
+        <div className="grid gap-3 lg:grid-cols-3">
+          <TopList
+            judul="Supplier Terbesar"
+            rows={supplier.map((x) => ({
+              nama: x.nama,
+              nilai: x.modal,
+              sub: `${x.transaksi} transaksi`,
+            }))}
+          />
+          <TopList
+            judul="Customer Terbesar"
+            rows={customer.map((x) => ({
+              nama: x.nama,
+              nilai: x.omzet,
+              sub: `${x.transaksi} transaksi`,
+            }))}
+          />
+          <TopList
+            judul="Jenis Ikan Terlaris"
+            rows={ikan.map((x) => ({
+              nama: x.jenis_ikan,
+              nilai: x.penjualan,
+              sub: `${x.kg_jual.toLocaleString("id-ID")} kg terjual`,
+            }))}
+          />
+        </div>
       </div>
     </AppShell>
   );
