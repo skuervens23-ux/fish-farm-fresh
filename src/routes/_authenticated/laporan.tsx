@@ -243,6 +243,7 @@ function LaporanPage() {
           </div>
           {isOwner && (
             <>
+              <TombolExcelLengkap dari={dari} sampai={sampai} />
               <TombolEkspor
                 judul="Laporan Keuangan — ERP Bandar Ikan"
                 subjudul={`Periode ${dari} s/d ${sampai}`}
