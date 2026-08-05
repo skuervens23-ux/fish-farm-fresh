@@ -116,7 +116,7 @@ export function FormPenjualan() {
       <form
         onSubmit={(e) => {
           e.preventDefault();
-          void simpan("kirim");
+          void simpan();
         }}
         className="mx-auto w-full max-w-[520px] space-y-5"
       >
