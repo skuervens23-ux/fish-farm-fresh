@@ -48,15 +48,17 @@ export const Route = createFileRoute("/_authenticated/biaya")({
   component: BiayaPage,
 });
 
-const KATEGORI = ["transport", "es", "pakan", "tenaga_kerja", "sewa", "listrik", "lainnya"];
+const KATEGORI = ["es", "muat", "konsumsi", "mobil", "tabungan", "lainnya"];
 const labelKategori = (k: string) => k.replace(/_/g, " ").replace(/^\w/, (c) => c.toUpperCase());
 
 function BiayaPage() {
   const qc = useQueryClient();
   const [open, setOpen] = useState(false);
   const [tanggal, setTanggal] = useState(() => new Date().toISOString().slice(0, 10));
-  const [kategori, setKategori] = useState("transport");
+  const [kategori, setKategori] = useState("es");
   const [jumlah, setJumlah] = useState("");
+  const [jumlahBalok, setJumlahBalok] = useState("");
+  const [hargaPerBalok, setHargaPerBalok] = useState("");
   const [keterangan, setKeterangan] = useState("");
   const [saving, setSaving] = useState(false);
 
@@ -65,7 +67,7 @@ function BiayaPage() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("biaya_operasional")
-        .select("id, tanggal, kategori, jumlah, keterangan")
+        .select("id, tanggal, kategori, jumlah, keterangan, jumlah_balok, harga_per_balok")
         .order("tanggal", { ascending: false })
         .limit(300);
       if (error) throw error;
@@ -83,7 +85,13 @@ function BiayaPage() {
   }, [rows]);
 
   async function simpan() {
-    const n = parseFloat(jumlah);
+    const isEs = kategori === "es";
+    const balok = parseFloat(jumlahBalok) || 0;
+    const hargaBalok = parseFloat(hargaPerBalok) || 0;
+    const n = isEs ? +(balok * hargaBalok).toFixed(2) : parseFloat(jumlah);
+    if (isEs && (balok <= 0 || hargaBalok <= 0)) {
+      return toast.error("Jumlah balok dan harga per balok harus lebih dari 0");
+    }
     if (!n || n <= 0) return toast.error("Jumlah biaya harus lebih dari 0");
     setSaving(true);
     const { data: u } = await supabase.auth.getUser();
@@ -91,6 +99,8 @@ function BiayaPage() {
       tanggal,
       kategori,
       jumlah: n,
+      jumlah_balok: isEs ? balok : null,
+      harga_per_balok: isEs ? hargaBalok : null,
       keterangan: keterangan || null,
       dicatat_oleh: u.user?.id as string,
     });
@@ -98,11 +108,25 @@ function BiayaPage() {
     if (error) return toast.error(pesanError(error));
     toast.success("Biaya tercatat");
     setJumlah("");
+    setJumlahBalok("");
+    setHargaPerBalok("");
     setKeterangan("");
     setOpen(false);
     qc.invalidateQueries({ queryKey: ["biaya-operasional"] });
     qc.invalidateQueries({ queryKey: ["analitik"] });
   }
+
+  const perKategori = useMemo(() => {
+    const awal = new Date();
+    awal.setDate(1);
+    const p = awal.toISOString().slice(0, 10);
+    const map = new Map<string, number>();
+    for (const k of KATEGORI) map.set(k, 0);
+    for (const r of rows.filter((x) => x.tanggal >= p)) {
+      map.set(r.kategori, (map.get(r.kategori) ?? 0) + Number(r.jumlah ?? 0));
+    }
+    return Array.from(map.entries());
+  }, [rows]);
 
   async function hapus(id: string) {
     const { error } = await supabase.from("biaya_operasional").delete().eq("id", id);
@@ -125,6 +149,14 @@ function BiayaPage() {
         <Card className="surface-card rounded-xl p-3.5">
           <p className="text-xs text-muted-foreground">Total biaya bulan ini</p>
           <p className="text-xl font-semibold text-destructive">{formatRupiah(totalBulanIni)}</p>
+          <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-3">
+            {perKategori.map(([k, v]) => (
+              <div key={k} className="rounded-lg border border-border/60 px-2.5 py-2">
+                <p className="text-[11px] text-muted-foreground">{labelKategori(k)}</p>
+                <p className="text-sm font-medium text-foreground">{formatRupiah(v)}</p>
+              </div>
+            ))}
+          </div>
         </Card>
 
         {isLoading ? (
@@ -151,6 +183,9 @@ function BiayaPage() {
                         month: "short",
                         year: "numeric",
                       })}
+                      {r.jumlah_balok
+                        ? ` • ${Number(r.jumlah_balok)} balok × ${formatRupiah(Number(r.harga_per_balok ?? 0))}`
+                        : ""}
                       {r.keterangan ? ` • ${r.keterangan}` : ""}
                     </div>
                   </div>
@@ -202,16 +237,52 @@ function BiayaPage() {
                 </SelectContent>
               </Select>
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="b-jumlah">Jumlah (Rp)</Label>
-              <Input
-                id="b-jumlah"
-                type="number"
-                inputMode="decimal"
-                value={jumlah}
-                onChange={(e) => setJumlah(e.target.value)}
-              />
-            </div>
+            {kategori === "es" ? (
+              <>
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="space-y-2">
+                    <Label htmlFor="b-balok">Jumlah Balok</Label>
+                    <Input
+                      id="b-balok"
+                      type="number"
+                      inputMode="decimal"
+                      min={0}
+                      value={jumlahBalok}
+                      onChange={(e) => setJumlahBalok(e.target.value)}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="b-harga-balok">Harga per Balok (Rp)</Label>
+                    <Input
+                      id="b-harga-balok"
+                      type="number"
+                      inputMode="decimal"
+                      min={0}
+                      value={hargaPerBalok}
+                      onChange={(e) => setHargaPerBalok(e.target.value)}
+                    />
+                  </div>
+                </div>
+                <div className="flex items-center justify-between rounded-lg border border-border/60 px-3 py-2">
+                  <span className="text-xs text-muted-foreground">Total Es (otomatis)</span>
+                  <span className="text-sm font-semibold text-foreground">
+                    {formatRupiah((parseFloat(jumlahBalok) || 0) * (parseFloat(hargaPerBalok) || 0))}
+                  </span>
+                </div>
+              </>
+            ) : (
+              <div className="space-y-2">
+                <Label htmlFor="b-jumlah">Jumlah (Rp)</Label>
+                <Input
+                  id="b-jumlah"
+                  type="number"
+                  inputMode="decimal"
+                  min={0}
+                  value={jumlah}
+                  onChange={(e) => setJumlah(e.target.value)}
+                />
+              </div>
+            )}
             <div className="space-y-2">
               <Label htmlFor="b-ket">Keterangan (opsional)</Label>
               <Input
