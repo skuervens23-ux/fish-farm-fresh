@@ -13,6 +13,7 @@ import { Route as McpRouteImport } from './routes/mcp'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ApiChatRouteImport } from './routes/api/chat'
 import { Route as AuthenticatedRiwayatRouteImport } from './routes/_authenticated/riwayat'
 import { Route as AuthenticatedPersetujuanRouteImport } from './routes/_authenticated/persetujuan'
 import { Route as AuthenticatedPenggunaRouteImport } from './routes/_authenticated/pengguna'
@@ -26,10 +27,12 @@ import { Route as Char91DotmcpChar93ListToolsRouteImport } from './routes/[.mcp]
 import { Route as AuthenticatedPetaniIndexRouteImport } from './routes/_authenticated/petani.index'
 import { Route as AuthenticatedPembelianIndexRouteImport } from './routes/_authenticated/pembelian.index'
 import { Route as AuthenticatedPelangganIndexRouteImport } from './routes/_authenticated/pelanggan.index'
+import { Route as AuthenticatedAiIndexRouteImport } from './routes/_authenticated/ai.index'
 import { Route as AuthenticatedPenjualanBaruRouteImport } from './routes/_authenticated/penjualan.baru'
 import { Route as AuthenticatedPenjualanIdRouteImport } from './routes/_authenticated/penjualan.$id'
 import { Route as AuthenticatedPembelianBaruRouteImport } from './routes/_authenticated/pembelian.baru'
 import { Route as AuthenticatedPembelianIdRouteImport } from './routes/_authenticated/pembelian.$id'
+import { Route as AuthenticatedAiThreadIdRouteImport } from './routes/_authenticated/ai.$threadId'
 import { Route as Char91DotmcpChar93InvokeToolToolRouteImport } from './routes/[.mcp]/invoke-tool/$tool'
 import { Route as DotlovableOauthConsentRouteImport } from './routes/[.]lovable.oauth.consent'
 
@@ -50,6 +53,11 @@ const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiChatRoute = ApiChatRouteImport.update({
+  id: '/api/chat',
+  path: '/api/chat',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedRiwayatRoute = AuthenticatedRiwayatRouteImport.update({
@@ -123,6 +131,11 @@ const AuthenticatedPelangganIndexRoute =
     path: '/pelanggan/',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedAiIndexRoute = AuthenticatedAiIndexRouteImport.update({
+  id: '/ai/',
+  path: '/ai/',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedPenjualanBaruRoute =
   AuthenticatedPenjualanBaruRouteImport.update({
     id: '/penjualan/baru',
@@ -147,6 +160,11 @@ const AuthenticatedPembelianIdRoute =
     path: '/pembelian/$id',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedAiThreadIdRoute = AuthenticatedAiThreadIdRouteImport.update({
+  id: '/ai/$threadId',
+  path: '/ai/$threadId',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const Char91DotmcpChar93InvokeToolToolRoute =
   Char91DotmcpChar93InvokeToolToolRouteImport.update({
     id: '/.mcp/invoke-tool/$tool',
@@ -173,12 +191,15 @@ export interface FileRoutesByFullPath {
   '/pengguna': typeof AuthenticatedPenggunaRoute
   '/persetujuan': typeof AuthenticatedPersetujuanRoute
   '/riwayat': typeof AuthenticatedRiwayatRoute
+  '/api/chat': typeof ApiChatRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
+  '/ai/$threadId': typeof AuthenticatedAiThreadIdRoute
   '/pembelian/$id': typeof AuthenticatedPembelianIdRoute
   '/pembelian/baru': typeof AuthenticatedPembelianBaruRoute
   '/penjualan/$id': typeof AuthenticatedPenjualanIdRoute
   '/penjualan/baru': typeof AuthenticatedPenjualanBaruRoute
+  '/ai/': typeof AuthenticatedAiIndexRoute
   '/pelanggan/': typeof AuthenticatedPelangganIndexRoute
   '/pembelian/': typeof AuthenticatedPembelianIndexRoute
   '/petani/': typeof AuthenticatedPetaniIndexRoute
@@ -197,12 +218,15 @@ export interface FileRoutesByTo {
   '/pengguna': typeof AuthenticatedPenggunaRoute
   '/persetujuan': typeof AuthenticatedPersetujuanRoute
   '/riwayat': typeof AuthenticatedRiwayatRoute
+  '/api/chat': typeof ApiChatRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
+  '/ai/$threadId': typeof AuthenticatedAiThreadIdRoute
   '/pembelian/$id': typeof AuthenticatedPembelianIdRoute
   '/pembelian/baru': typeof AuthenticatedPembelianBaruRoute
   '/penjualan/$id': typeof AuthenticatedPenjualanIdRoute
   '/penjualan/baru': typeof AuthenticatedPenjualanBaruRoute
+  '/ai': typeof AuthenticatedAiIndexRoute
   '/pelanggan': typeof AuthenticatedPelangganIndexRoute
   '/pembelian': typeof AuthenticatedPembelianIndexRoute
   '/petani': typeof AuthenticatedPetaniIndexRoute
@@ -223,12 +247,15 @@ export interface FileRoutesById {
   '/_authenticated/pengguna': typeof AuthenticatedPenggunaRoute
   '/_authenticated/persetujuan': typeof AuthenticatedPersetujuanRoute
   '/_authenticated/riwayat': typeof AuthenticatedRiwayatRoute
+  '/api/chat': typeof ApiChatRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
+  '/_authenticated/ai/$threadId': typeof AuthenticatedAiThreadIdRoute
   '/_authenticated/pembelian/$id': typeof AuthenticatedPembelianIdRoute
   '/_authenticated/pembelian/baru': typeof AuthenticatedPembelianBaruRoute
   '/_authenticated/penjualan/$id': typeof AuthenticatedPenjualanIdRoute
   '/_authenticated/penjualan/baru': typeof AuthenticatedPenjualanBaruRoute
+  '/_authenticated/ai/': typeof AuthenticatedAiIndexRoute
   '/_authenticated/pelanggan/': typeof AuthenticatedPelangganIndexRoute
   '/_authenticated/pembelian/': typeof AuthenticatedPembelianIndexRoute
   '/_authenticated/petani/': typeof AuthenticatedPetaniIndexRoute
@@ -249,12 +276,15 @@ export interface FileRouteTypes {
     | '/pengguna'
     | '/persetujuan'
     | '/riwayat'
+    | '/api/chat'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
+    | '/ai/$threadId'
     | '/pembelian/$id'
     | '/pembelian/baru'
     | '/penjualan/$id'
     | '/penjualan/baru'
+    | '/ai/'
     | '/pelanggan/'
     | '/pembelian/'
     | '/petani/'
@@ -273,12 +303,15 @@ export interface FileRouteTypes {
     | '/pengguna'
     | '/persetujuan'
     | '/riwayat'
+    | '/api/chat'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
+    | '/ai/$threadId'
     | '/pembelian/$id'
     | '/pembelian/baru'
     | '/penjualan/$id'
     | '/penjualan/baru'
+    | '/ai'
     | '/pelanggan'
     | '/pembelian'
     | '/petani'
@@ -298,12 +331,15 @@ export interface FileRouteTypes {
     | '/_authenticated/pengguna'
     | '/_authenticated/persetujuan'
     | '/_authenticated/riwayat'
+    | '/api/chat'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
+    | '/_authenticated/ai/$threadId'
     | '/_authenticated/pembelian/$id'
     | '/_authenticated/pembelian/baru'
     | '/_authenticated/penjualan/$id'
     | '/_authenticated/penjualan/baru'
+    | '/_authenticated/ai/'
     | '/_authenticated/pelanggan/'
     | '/_authenticated/pembelian/'
     | '/_authenticated/petani/'
@@ -316,6 +352,7 @@ export interface RootRouteChildren {
   McpRoute: typeof McpRoute
   Char91DotmcpChar93ListToolsRoute: typeof Char91DotmcpChar93ListToolsRoute
   Char91DotwellKnownChar93OauthProtectedResourceRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
+  ApiChatRoute: typeof ApiChatRoute
   DotlovableOauthConsentRoute: typeof DotlovableOauthConsentRoute
   Char91DotmcpChar93InvokeToolToolRoute: typeof Char91DotmcpChar93InvokeToolToolRoute
 }
@@ -348,6 +385,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/chat': {
+      id: '/api/chat'
+      path: '/api/chat'
+      fullPath: '/api/chat'
+      preLoaderRoute: typeof ApiChatRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/riwayat': {
@@ -441,6 +485,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedPelangganIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/ai/': {
+      id: '/_authenticated/ai/'
+      path: '/ai'
+      fullPath: '/ai/'
+      preLoaderRoute: typeof AuthenticatedAiIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/penjualan/baru': {
       id: '/_authenticated/penjualan/baru'
       path: '/penjualan/baru'
@@ -469,6 +520,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedPembelianIdRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/ai/$threadId': {
+      id: '/_authenticated/ai/$threadId'
+      path: '/ai/$threadId'
+      fullPath: '/ai/$threadId'
+      preLoaderRoute: typeof AuthenticatedAiThreadIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/.mcp/invoke-tool/$tool': {
       id: '/.mcp/invoke-tool/$tool'
       path: '/.mcp/invoke-tool/$tool'
@@ -495,10 +553,12 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedPenggunaRoute: typeof AuthenticatedPenggunaRoute
   AuthenticatedPersetujuanRoute: typeof AuthenticatedPersetujuanRoute
   AuthenticatedRiwayatRoute: typeof AuthenticatedRiwayatRoute
+  AuthenticatedAiThreadIdRoute: typeof AuthenticatedAiThreadIdRoute
   AuthenticatedPembelianIdRoute: typeof AuthenticatedPembelianIdRoute
   AuthenticatedPembelianBaruRoute: typeof AuthenticatedPembelianBaruRoute
   AuthenticatedPenjualanIdRoute: typeof AuthenticatedPenjualanIdRoute
   AuthenticatedPenjualanBaruRoute: typeof AuthenticatedPenjualanBaruRoute
+  AuthenticatedAiIndexRoute: typeof AuthenticatedAiIndexRoute
   AuthenticatedPelangganIndexRoute: typeof AuthenticatedPelangganIndexRoute
   AuthenticatedPembelianIndexRoute: typeof AuthenticatedPembelianIndexRoute
   AuthenticatedPetaniIndexRoute: typeof AuthenticatedPetaniIndexRoute
@@ -513,10 +573,12 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedPenggunaRoute: AuthenticatedPenggunaRoute,
   AuthenticatedPersetujuanRoute: AuthenticatedPersetujuanRoute,
   AuthenticatedRiwayatRoute: AuthenticatedRiwayatRoute,
+  AuthenticatedAiThreadIdRoute: AuthenticatedAiThreadIdRoute,
   AuthenticatedPembelianIdRoute: AuthenticatedPembelianIdRoute,
   AuthenticatedPembelianBaruRoute: AuthenticatedPembelianBaruRoute,
   AuthenticatedPenjualanIdRoute: AuthenticatedPenjualanIdRoute,
   AuthenticatedPenjualanBaruRoute: AuthenticatedPenjualanBaruRoute,
+  AuthenticatedAiIndexRoute: AuthenticatedAiIndexRoute,
   AuthenticatedPelangganIndexRoute: AuthenticatedPelangganIndexRoute,
   AuthenticatedPembelianIndexRoute: AuthenticatedPembelianIndexRoute,
   AuthenticatedPetaniIndexRoute: AuthenticatedPetaniIndexRoute,
@@ -533,6 +595,7 @@ const rootRouteChildren: RootRouteChildren = {
   Char91DotmcpChar93ListToolsRoute: Char91DotmcpChar93ListToolsRoute,
   Char91DotwellKnownChar93OauthProtectedResourceRoute:
     Char91DotwellKnownChar93OauthProtectedResourceRoute,
+  ApiChatRoute: ApiChatRoute,
   DotlovableOauthConsentRoute: DotlovableOauthConsentRoute,
   Char91DotmcpChar93InvokeToolToolRoute: Char91DotmcpChar93InvokeToolToolRoute,
 }

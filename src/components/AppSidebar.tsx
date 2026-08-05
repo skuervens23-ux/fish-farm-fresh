@@ -14,6 +14,7 @@ import {
   BarChart3,
   UserCog,
   Settings,
+  Sparkle,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import {
@@ -34,7 +35,10 @@ import { useUserRole } from "@/hooks/useUserRole";
 
 type Item = { title: string; url: string; icon: typeof Fish; ownerOnly?: boolean };
 
-const UTAMA: Item[] = [{ title: "Dashboard", url: "/dashboard", icon: LayoutDashboard }];
+const UTAMA: Item[] = [
+  { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
+  { title: "Tanya AI", url: "/ai", icon: Sparkle },
+];
 
 const TRANSAKSI: Item[] = [
   { title: "Input Pembelian", url: "/pembelian/baru", icon: ShoppingCart },
