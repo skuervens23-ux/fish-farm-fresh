@@ -10,7 +10,6 @@ import {
   Contact,
   LogOut,
   Fish,
-  Boxes,
   Wallet,
   BarChart3,
   UserCog,
