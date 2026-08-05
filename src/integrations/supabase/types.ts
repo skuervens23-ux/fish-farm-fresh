@@ -701,6 +701,29 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      create_penjualan_gabungan: {
+        Args: {
+          _berat_kg: number
+          _catatan?: string
+          _foto_nota_url?: string
+          _foto_timbangan_url?: string
+          _grade?: string
+          _harga_per_kg: number
+          _jumlah_dibayar?: number
+          _jumlah_ekor?: number
+          _kolam?: string
+          _pelanggan_id: string
+          _status_bayar?: Database["public"]["Enums"]["status_bayar"]
+          _tanggal?: string
+          _ukuran?: string
+        }
+        Returns: {
+          jumlah_baris: number
+          laba: number
+          total_modal: number
+          total_penjualan: number
+        }[]
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -842,6 +865,16 @@ export type Database = {
           total_biaya: number
           total_modal: number
           total_penjualan: number
+        }[]
+      }
+      stok_gabungan: {
+        Args: never
+        Returns: {
+          harga_beli_rata: number
+          jenis_ikan: string
+          jumlah_lot: number
+          kg_sisa: number
+          nilai_modal: number
         }[]
       }
       stok_ikan: {
