@@ -117,7 +117,74 @@ function LaporanPage() {
       .map(([, v]) => v);
   }, [dipilih]);
 
-  async function unduhExcel() {
+  const lembarEkspor = () => {
+    const beli = dipilih.filter((r) => r.jenis === "pembelian");
+    const jual = dipilih.filter((r) => r.jenis === "penjualan");
+    return [
+      {
+        nama: "Ringkasan",
+        kolom: ["Metrik", "Nilai"],
+        rows: [
+          ["Total Pembelian", ringkas.totalBeli],
+          ["Total Penjualan", ringkas.totalJual],
+          ["Margin", ringkas.margin],
+          ["Hutang Supplier", ringkas.hutang],
+          ["Piutang Customer", ringkas.piutang],
+          ["Kas Masuk", ringkas.kasMasuk],
+          ["Kas Keluar", ringkas.kasKeluar],
+          ["Saldo Kas", ringkas.saldoKas],
+        ] as (string | number)[][],
+      },
+      {
+        nama: "Rekap Mingguan",
+        kolom: ["Minggu", "Pembelian", "Penjualan", "Margin"],
+        rows: mingguan.map((m) => [
+          m.minggu,
+          m.pembelian,
+          m.penjualan,
+          m.penjualan - m.pembelian,
+        ]),
+      },
+      {
+        nama: "Rekap Harian",
+        kolom: ["Tanggal", "Pembelian", "Penjualan", "Margin"],
+        rows: harian.map((d) => [
+          d.tanggal,
+          d.pembelian,
+          d.penjualan,
+          d.penjualan - d.pembelian,
+        ]),
+      },
+      {
+        nama: "Pembelian",
+        kolom: ["Tanggal", "Supplier", "Jenis Ikan", "Total", "Dibayar", "Sisa", "Status"],
+        rows: beli.map((r) => [
+          r.tanggal,
+          r.pihak,
+          r.jenis_ikan,
+          r.total,
+          r.dibayar,
+          r.total - r.dibayar,
+          r.status_bayar,
+        ]),
+      },
+      {
+        nama: "Penjualan",
+        kolom: ["Tanggal", "Customer", "Jenis Ikan", "Total", "Dibayar", "Sisa", "Status"],
+        rows: jual.map((r) => [
+          r.tanggal,
+          r.pihak,
+          r.jenis_ikan,
+          r.total,
+          r.dibayar,
+          r.total - r.dibayar,
+          r.status_bayar,
+        ]),
+      },
+    ];
+  };
+
+  async function unduhMingguan() {
     try {
       const beli = dipilih.filter((r) => r.jenis === "pembelian");
       if (beli.length === 0) {
@@ -136,7 +203,7 @@ function LaporanPage() {
           status_bayar: r.status_bayar,
         })),
       );
-      toast.success("Laporan Excel diunduh");
+      toast.success("Laporan mingguan diunduh");
     } catch {
       toast.error("Gagal membuat laporan");
     }
@@ -158,7 +225,7 @@ function LaporanPage() {
   return (
     <AppShell title="Laporan & Grafik">
       <div className="mx-auto w-full max-w-[1000px] space-y-4 px-4 py-4">
-        <Card className="grid gap-3 p-4 sm:grid-cols-[1fr_1fr_auto] sm:items-end">
+        <Card className="grid gap-3 p-4 sm:grid-cols-[1fr_1fr_auto_auto] sm:items-end">
           <div className="space-y-1.5">
             <Label htmlFor="dari">Dari tanggal</Label>
             <Input id="dari" type="date" value={dari} onChange={(e) => setDari(e.target.value)} />
@@ -173,11 +240,20 @@ function LaporanPage() {
             />
           </div>
           {isOwner && (
-            <Button variant="outline" onClick={unduhExcel}>
-              <Download className="mr-1.5 h-4 w-4" /> Excel
-            </Button>
+            <>
+              <TombolEkspor
+                judul="Laporan Keuangan — ERP Bandar Ikan"
+                subjudul={`Periode ${dari} s/d ${sampai}`}
+                namaFile={`Laporan-${dari}_sd_${sampai}`}
+                data={lembarEkspor}
+              />
+              <Button variant="ghost" size="sm" onClick={unduhMingguan}>
+                <Download className="mr-1.5 h-4 w-4" /> Per Minggu
+              </Button>
+            </>
           )}
         </Card>
+
 
         {isLoading ? (
           <Skeleton className="h-40 w-full" />
