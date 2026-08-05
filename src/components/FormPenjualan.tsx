@@ -68,8 +68,8 @@ export function FormPenjualan() {
     },
   });
 
-  const sisaStok = stok?.kg_sisa ?? 0;
-  const hargaBeliRata = stok?.harga_beli_rata ?? 0;
+  const sisaStok = lot?.kg_sisa ?? 0;
+  const hargaBeliRata = lot?.harga_per_kg ?? 0;
   const beratNum = parseFloat(beratKg) || 0;
   const hargaNum = parseFloat(hargaPerKg) || 0;
   const total = useMemo(() => +(beratNum * hargaNum).toFixed(2), [beratNum, hargaNum]);
