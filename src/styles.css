@@ -191,3 +191,39 @@
     0 8px 24px -14px color-mix(in oklab, var(--color-primary) 45%, transparent);
   backdrop-filter: blur(10px);
 }
+
+@media print {
+  @page {
+    size: A4 landscape;
+    margin: 12mm;
+  }
+  body {
+    background: #fff !important;
+  }
+  body * {
+    visibility: hidden !important;
+  }
+  .lembar-cetak,
+  .lembar-cetak * {
+    visibility: visible !important;
+  }
+  .lembar-cetak {
+    position: absolute;
+    inset: 0 auto auto 0;
+    width: 100%;
+    border: 0 !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    background: #fff !important;
+    color: #000 !important;
+  }
+  .lembar-cetak table {
+    page-break-inside: auto;
+  }
+  .lembar-cetak tr {
+    page-break-inside: avoid;
+  }
+  .no-print {
+    display: none !important;
+  }
+}

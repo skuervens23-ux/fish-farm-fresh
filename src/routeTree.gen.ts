@@ -18,6 +18,7 @@ import { Route as AuthenticatedStokRouteImport } from './routes/_authenticated/s
 import { Route as AuthenticatedRiwayatRouteImport } from './routes/_authenticated/riwayat'
 import { Route as AuthenticatedPengaturanRouteImport } from './routes/_authenticated/pengaturan'
 import { Route as AuthenticatedLotRouteImport } from './routes/_authenticated/lot'
+import { Route as AuthenticatedLaporanHarianRouteImport } from './routes/_authenticated/laporan-harian'
 import { Route as AuthenticatedLaporanRouteImport } from './routes/_authenticated/laporan'
 import { Route as AuthenticatedKasRouteImport } from './routes/_authenticated/kas'
 import { Route as AuthenticatedJenisIkanRouteImport } from './routes/_authenticated/jenis-ikan'
@@ -82,6 +83,12 @@ const AuthenticatedLotRoute = AuthenticatedLotRouteImport.update({
   path: '/lot',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedLaporanHarianRoute =
+  AuthenticatedLaporanHarianRouteImport.update({
+    id: '/laporan-harian',
+    path: '/laporan-harian',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedLaporanRoute = AuthenticatedLaporanRouteImport.update({
   id: '/laporan',
   path: '/laporan',
@@ -200,6 +207,7 @@ export interface FileRoutesByFullPath {
   '/jenis-ikan': typeof AuthenticatedJenisIkanRoute
   '/kas': typeof AuthenticatedKasRoute
   '/laporan': typeof AuthenticatedLaporanRoute
+  '/laporan-harian': typeof AuthenticatedLaporanHarianRoute
   '/lot': typeof AuthenticatedLotRoute
   '/pengaturan': typeof AuthenticatedPengaturanRoute
   '/riwayat': typeof AuthenticatedRiwayatRoute
@@ -229,6 +237,7 @@ export interface FileRoutesByTo {
   '/jenis-ikan': typeof AuthenticatedJenisIkanRoute
   '/kas': typeof AuthenticatedKasRoute
   '/laporan': typeof AuthenticatedLaporanRoute
+  '/laporan-harian': typeof AuthenticatedLaporanHarianRoute
   '/lot': typeof AuthenticatedLotRoute
   '/pengaturan': typeof AuthenticatedPengaturanRoute
   '/riwayat': typeof AuthenticatedRiwayatRoute
@@ -260,6 +269,7 @@ export interface FileRoutesById {
   '/_authenticated/jenis-ikan': typeof AuthenticatedJenisIkanRoute
   '/_authenticated/kas': typeof AuthenticatedKasRoute
   '/_authenticated/laporan': typeof AuthenticatedLaporanRoute
+  '/_authenticated/laporan-harian': typeof AuthenticatedLaporanHarianRoute
   '/_authenticated/lot': typeof AuthenticatedLotRoute
   '/_authenticated/pengaturan': typeof AuthenticatedPengaturanRoute
   '/_authenticated/riwayat': typeof AuthenticatedRiwayatRoute
@@ -291,6 +301,7 @@ export interface FileRouteTypes {
     | '/jenis-ikan'
     | '/kas'
     | '/laporan'
+    | '/laporan-harian'
     | '/lot'
     | '/pengaturan'
     | '/riwayat'
@@ -320,6 +331,7 @@ export interface FileRouteTypes {
     | '/jenis-ikan'
     | '/kas'
     | '/laporan'
+    | '/laporan-harian'
     | '/lot'
     | '/pengaturan'
     | '/riwayat'
@@ -350,6 +362,7 @@ export interface FileRouteTypes {
     | '/_authenticated/jenis-ikan'
     | '/_authenticated/kas'
     | '/_authenticated/laporan'
+    | '/_authenticated/laporan-harian'
     | '/_authenticated/lot'
     | '/_authenticated/pengaturan'
     | '/_authenticated/riwayat'
@@ -443,6 +456,13 @@ declare module '@tanstack/react-router' {
       path: '/lot'
       fullPath: '/lot'
       preLoaderRoute: typeof AuthenticatedLotRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/laporan-harian': {
+      id: '/_authenticated/laporan-harian'
+      path: '/laporan-harian'
+      fullPath: '/laporan-harian'
+      preLoaderRoute: typeof AuthenticatedLaporanHarianRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/laporan': {
@@ -588,6 +608,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedJenisIkanRoute: typeof AuthenticatedJenisIkanRoute
   AuthenticatedKasRoute: typeof AuthenticatedKasRoute
   AuthenticatedLaporanRoute: typeof AuthenticatedLaporanRoute
+  AuthenticatedLaporanHarianRoute: typeof AuthenticatedLaporanHarianRoute
   AuthenticatedLotRoute: typeof AuthenticatedLotRoute
   AuthenticatedPengaturanRoute: typeof AuthenticatedPengaturanRoute
   AuthenticatedRiwayatRoute: typeof AuthenticatedRiwayatRoute
@@ -610,6 +631,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedJenisIkanRoute: AuthenticatedJenisIkanRoute,
   AuthenticatedKasRoute: AuthenticatedKasRoute,
   AuthenticatedLaporanRoute: AuthenticatedLaporanRoute,
+  AuthenticatedLaporanHarianRoute: AuthenticatedLaporanHarianRoute,
   AuthenticatedLotRoute: AuthenticatedLotRoute,
   AuthenticatedPengaturanRoute: AuthenticatedPengaturanRoute,
   AuthenticatedRiwayatRoute: AuthenticatedRiwayatRoute,

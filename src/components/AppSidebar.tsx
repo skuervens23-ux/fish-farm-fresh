@@ -53,7 +53,9 @@ const DATA: Item[] = [
   { title: "Stok Ikan", url: "/stok", icon: Package },
   { title: "Fish LOT", url: "/lot", icon: Boxes },
   { title: "Riwayat", url: "/riwayat", icon: History },
+  { title: "Laporan Harian", url: "/laporan-harian", icon: Receipt },
   { title: "Laporan", url: "/laporan", icon: BarChart3 },
+
 ];
 
 const MASTER: Item[] = [
@@ -84,7 +86,7 @@ export function AppSidebar() {
           <SidebarMenu>
             {items.map((item) => (
               <SidebarMenuItem key={item.url}>
-                <SidebarMenuButton asChild isActive={pathname.startsWith(item.url)}>
+                <SidebarMenuButton asChild isActive={pathname === item.url || pathname.startsWith(`${item.url}/`)}>
                   <Link to={item.url} onClick={() => setOpenMobile(false)}>
                     <item.icon className="h-4 w-4" />
                     <span>{item.title}</span>
