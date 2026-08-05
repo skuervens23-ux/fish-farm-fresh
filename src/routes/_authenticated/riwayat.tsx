@@ -10,7 +10,7 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { BadgeTransaksi, BadgeBayar } from "@/components/StatusBadges";
 import { formatRupiah, formatTanggal } from "@/lib/format";
 import { useTransaksi, type Transaksi } from "@/lib/transaksi";
-import type { StatusTransaksi } from "@/lib/status";
+import type { StatusBayar } from "@/lib/status";
 
 export const Route = createFileRoute("/_authenticated/riwayat")({
   head: () => ({
