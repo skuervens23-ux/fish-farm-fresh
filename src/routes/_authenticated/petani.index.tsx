@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { TambahPetaniDialog } from "@/components/TambahPetaniDialog";
 import { useUserRole } from "@/hooks/useUserRole";
 import { toast } from "sonner";
+import { pesanError } from "@/lib/pesan-error";
 
 export const Route = createFileRoute("/_authenticated/petani/")({
   head: () => ({
@@ -53,7 +54,7 @@ function PetaniPage() {
 
   async function toggleActive(id: string, next: boolean) {
     const { error } = await supabase.from("petani").update({ is_active: next }).eq("id", id);
-    if (error) return toast.error(error.message);
+    if (error) return toast.error(pesanError(error));
     toast.success(next ? "Petani diaktifkan" : "Petani dinonaktifkan");
     qc.invalidateQueries({ queryKey: ["petani-all"] });
     qc.invalidateQueries({ queryKey: ["petani-active"] });

@@ -13,6 +13,7 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { toast } from "sonner";
+import { pesanError } from "@/lib/pesan-error";
 
 const schema = z.object({
   nama: z.string().trim().min(2, "Nama minimal 2 karakter").max(80),
@@ -65,7 +66,7 @@ export function TambahPelangganDialog({
       .select("id, nama")
       .single();
     setSaving(false);
-    if (error) return toast.error(error.message);
+    if (error) return toast.error(pesanError(error));
     toast.success("Pelanggan ditambahkan");
     onCreated(data);
     onOpenChange(false);

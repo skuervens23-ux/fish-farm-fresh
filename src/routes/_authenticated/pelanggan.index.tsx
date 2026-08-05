@@ -10,6 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { TambahPelangganDialog } from "@/components/TambahPelangganDialog";
 import { useUserRole } from "@/hooks/useUserRole";
 import { toast } from "sonner";
+import { pesanError } from "@/lib/pesan-error";
 
 export const Route = createFileRoute("/_authenticated/pelanggan/")({
   head: () => ({
@@ -53,7 +54,7 @@ function PelangganPage() {
 
   async function toggleActive(id: string, next: boolean) {
     const { error } = await supabase.from("pelanggan").update({ is_active: next }).eq("id", id);
-    if (error) return toast.error(error.message);
+    if (error) return toast.error(pesanError(error));
     toast.success(next ? "Pelanggan diaktifkan" : "Pelanggan dinonaktifkan");
     qc.invalidateQueries({ queryKey: ["pelanggan-all"] });
     qc.invalidateQueries({ queryKey: ["pelanggan-active"] });

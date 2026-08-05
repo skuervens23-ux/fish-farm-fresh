@@ -3,7 +3,10 @@
  * yang mudah dipahami pengguna. Detail teknis tetap dicatat ke console
  * agar bisa ditelusuri, tapi tidak pernah ditampilkan mentah di UI.
  */
-export function pesanError(err: unknown, fallback = "Terjadi kesalahan. Silakan coba lagi."): string {
+export function pesanError(
+  err: unknown,
+  fallback = "Terjadi kesalahan. Silakan coba lagi.",
+): string {
   const raw =
     typeof err === "string"
       ? err
@@ -36,7 +39,13 @@ export function pesanError(err: unknown, fallback = "Terjadi kesalahan. Silakan 
 
   // Pesan RAISE EXCEPTION dari fungsi database sudah berbahasa Indonesia
   // dan aman ditampilkan apa adanya.
-  if (raw && /[a-z]/i.test(raw) && raw.length <= 160 && !t.includes("error:") && !t.includes("sql")) {
+  if (
+    raw &&
+    /[a-z]/i.test(raw) &&
+    raw.length <= 160 &&
+    !t.includes("error:") &&
+    !t.includes("sql")
+  ) {
     return raw;
   }
   return fallback;

@@ -4,6 +4,7 @@ import { Camera, Trash2, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import { pesanError } from "@/lib/pesan-error";
 
 export function FotoPreview({ path, alt }: { path: string; alt: string }) {
   const { data: url } = useQuery({
@@ -50,7 +51,7 @@ export function UploadFoto({
     const path = `${user.user.id}/${crypto.randomUUID()}.${ext}`;
     const { error } = await supabase.storage.from("nota").upload(path, file, { upsert: false });
     setUploading(false);
-    if (error) return toast.error(error.message);
+    if (error) return toast.error(pesanError(error));
     onChange(path);
     toast.success("Foto terunggah");
   }

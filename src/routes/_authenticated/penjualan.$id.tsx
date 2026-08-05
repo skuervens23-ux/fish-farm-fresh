@@ -11,6 +11,7 @@ import { FotoPreview } from "@/components/UploadFoto";
 import { formatKg, formatRupiah, formatTanggal } from "@/lib/format";
 import type { StatusBayar, StatusTransaksi } from "@/lib/status";
 import { toast } from "sonner";
+import { pesanError } from "@/lib/pesan-error";
 
 export const Route = createFileRoute("/_authenticated/penjualan/$id")({
   head: () => ({
@@ -52,7 +53,7 @@ function DetailPenjualan() {
       .from("penjualan")
       .update({ status_transaksi: "menunggu", alasan_tolak: null })
       .eq("id", id);
-    if (error) return toast.error(error.message);
+    if (error) return toast.error(pesanError(error));
     toast.success("Dikirim ke admin");
     qc.invalidateQueries({ queryKey: ["penjualan-detail", id] });
     qc.invalidateQueries({ queryKey: ["transaksi"] });

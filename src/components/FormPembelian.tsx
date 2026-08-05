@@ -14,6 +14,7 @@ import { TambahPetaniDialog } from "./TambahPetaniDialog";
 import { UploadFoto } from "./UploadFoto";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
+import { pesanError } from "@/lib/pesan-error";
 
 const IKAN_UMUM = ["Nila", "Lele", "Mas", "Gurame", "Patin", "Bawal"];
 
@@ -113,7 +114,7 @@ export function FormPembelian() {
     });
     setSaving(null);
 
-    if (error) return toast.error(error.message);
+    if (error) return toast.error(pesanError(error));
     toast.success(mode === "draft" ? "Draft tersimpan" : "Pembelian dikirim ke admin");
     qc.invalidateQueries({ queryKey: ["pembelian"] });
     qc.invalidateQueries({ queryKey: ["transaksi"] });

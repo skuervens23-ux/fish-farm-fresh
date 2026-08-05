@@ -14,6 +14,7 @@ import { RadioStatusBayar, type StatusBayar } from "./RadioStatusBayar";
 import { TambahPelangganDialog } from "./TambahPelangganDialog";
 import { UploadFoto } from "./UploadFoto";
 import { toast } from "sonner";
+import { pesanError } from "@/lib/pesan-error";
 
 const IKAN_UMUM = ["Nila", "Lele", "Mas", "Gurame", "Patin", "Bawal"];
 const UKURAN = ["300-500 gram", "500-700 gram", "700-1000 gram", "> 1 kg"];
@@ -98,7 +99,7 @@ export function FormPenjualan() {
       _foto_nota_url: fotoNota ?? undefined,
     });
     setSaving(null);
-    if (error) return toast.error(error.message);
+    if (error) return toast.error(pesanError(error));
     toast.success(mode === "draft" ? "Draft tersimpan" : "Penjualan dikirim ke admin");
     qc.invalidateQueries({ queryKey: ["transaksi"] });
     qc.invalidateQueries({ queryKey: ["menunggu-count"] });

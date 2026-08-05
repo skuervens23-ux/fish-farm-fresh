@@ -12,7 +12,6 @@ import { useTransaksi } from "@/lib/transaksi";
 import { useRingkasan } from "@/lib/ringkasan";
 import { useUserRole } from "@/hooks/useUserRole";
 
-
 export const Route = createFileRoute("/_authenticated/dashboard")({
   head: () => ({
     meta: [
@@ -79,7 +78,6 @@ function Dashboard() {
   const jmlMenunggu = ringkasan?.jml_menunggu ?? 0;
   const jmlBelumLunas = ringkasan?.jml_belum_lunas ?? 0;
 
-
   const tanggal = new Date().toLocaleDateString("id-ID", {
     weekday: "long",
     day: "numeric",
@@ -133,7 +131,6 @@ function Dashboard() {
             )}
           </div>
         )}
-
 
         <div className="grid grid-cols-3 gap-2">
           <Button asChild variant="outline" className="h-11">

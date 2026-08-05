@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/dialog";
 import { formatRupiah } from "@/lib/format";
 import { toast } from "sonner";
+import { pesanError } from "@/lib/pesan-error";
 
 export function BayarHutangDialog({
   open,
@@ -40,7 +41,7 @@ export function BayarHutangDialog({
       _jumlah: n,
     });
     setSaving(false);
-    if (error) return toast.error(error.message);
+    if (error) return toast.error(pesanError(error));
     toast.success("Pembayaran tercatat");
     setJumlah("");
     qc.invalidateQueries({ queryKey: ["pembelian"] });
