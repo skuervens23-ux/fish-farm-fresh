@@ -554,6 +554,7 @@ export type Database = {
           _sisa_kg: number
           _status_bayar: Database["public"]["Enums"]["status_bayar"]
           _status_transaksi?: Database["public"]["Enums"]["status_transaksi"]
+          _tanggal?: string
         }
         Returns: {
           alasan_tolak: string | null
@@ -602,6 +603,7 @@ export type Database = {
           _pelanggan_id: string
           _status_bayar?: Database["public"]["Enums"]["status_bayar"]
           _status_transaksi?: Database["public"]["Enums"]["status_transaksi"]
+          _tanggal?: string
           _ukuran?: string
         }
         Returns: {
