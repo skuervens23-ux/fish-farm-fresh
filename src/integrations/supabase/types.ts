@@ -116,6 +116,7 @@ export type Database = {
       pembelian: {
         Row: {
           alasan_tolak: string | null
+          box: number
           catatan: string | null
           created_at: string
           dicatat_oleh: string
@@ -133,10 +134,11 @@ export type Database = {
           status_pengiriman: Database["public"]["Enums"]["status_pengiriman"]
           status_transaksi: Database["public"]["Enums"]["status_transaksi"]
           tanggal: string
-          total_harga: number
+          total_harga: number | null
         }
         Insert: {
           alasan_tolak?: string | null
+          box?: number
           catatan?: string | null
           created_at?: string
           dicatat_oleh: string
@@ -154,10 +156,11 @@ export type Database = {
           status_pengiriman?: Database["public"]["Enums"]["status_pengiriman"]
           status_transaksi?: Database["public"]["Enums"]["status_transaksi"]
           tanggal?: string
-          total_harga?: number
+          total_harga?: number | null
         }
         Update: {
           alasan_tolak?: string | null
+          box?: number
           catatan?: string | null
           created_at?: string
           dicatat_oleh?: string
@@ -175,7 +178,7 @@ export type Database = {
           status_pengiriman?: Database["public"]["Enums"]["status_pengiriman"]
           status_transaksi?: Database["public"]["Enums"]["status_transaksi"]
           tanggal?: string
-          total_harga?: number
+          total_harga?: number | null
         }
         Relationships: [
           {
@@ -375,6 +378,7 @@ export type Database = {
         Args: { _jumlah: number; _pembelian_id: string }
         Returns: {
           alasan_tolak: string | null
+          box: number
           catatan: string | null
           created_at: string
           dicatat_oleh: string
@@ -392,7 +396,7 @@ export type Database = {
           status_pengiriman: Database["public"]["Enums"]["status_pengiriman"]
           status_transaksi: Database["public"]["Enums"]["status_transaksi"]
           tanggal: string
-          total_harga: number
+          total_harga: number | null
         }
         SetofOptions: {
           from: "*"
@@ -401,84 +405,48 @@ export type Database = {
           isSetofReturn: false
         }
       }
-      create_pembelian:
-        | {
-            Args: {
-              _harga_per_kg: number
-              _jenis_ikan: string
-              _jumlah_dibayar: number
-              _jumlah_kg: number
-              _petani_id: string
-              _status_bayar: Database["public"]["Enums"]["status_bayar"]
-            }
-            Returns: {
-              alasan_tolak: string | null
-              catatan: string | null
-              created_at: string
-              dicatat_oleh: string
-              ditinjau_oleh: string | null
-              ditinjau_pada: string | null
-              foto_nota_url: string | null
-              harga_per_kg: number
-              id: string
-              jenis_ikan: string
-              jumlah_dibayar: number
-              jumlah_kg: number
-              jumlah_mati: number
-              petani_id: string
-              status_bayar: Database["public"]["Enums"]["status_bayar"]
-              status_pengiriman: Database["public"]["Enums"]["status_pengiriman"]
-              status_transaksi: Database["public"]["Enums"]["status_transaksi"]
-              tanggal: string
-              total_harga: number
-            }
-            SetofOptions: {
-              from: "*"
-              to: "pembelian"
-              isOneToOne: true
-              isSetofReturn: false
-            }
-          }
-        | {
-            Args: {
-              _catatan?: string
-              _foto_nota_url?: string
-              _harga_per_kg: number
-              _jenis_ikan: string
-              _jumlah_dibayar: number
-              _jumlah_kg: number
-              _petani_id: string
-              _status_bayar: Database["public"]["Enums"]["status_bayar"]
-              _status_transaksi?: Database["public"]["Enums"]["status_transaksi"]
-            }
-            Returns: {
-              alasan_tolak: string | null
-              catatan: string | null
-              created_at: string
-              dicatat_oleh: string
-              ditinjau_oleh: string | null
-              ditinjau_pada: string | null
-              foto_nota_url: string | null
-              harga_per_kg: number
-              id: string
-              jenis_ikan: string
-              jumlah_dibayar: number
-              jumlah_kg: number
-              jumlah_mati: number
-              petani_id: string
-              status_bayar: Database["public"]["Enums"]["status_bayar"]
-              status_pengiriman: Database["public"]["Enums"]["status_pengiriman"]
-              status_transaksi: Database["public"]["Enums"]["status_transaksi"]
-              tanggal: string
-              total_harga: number
-            }
-            SetofOptions: {
-              from: "*"
-              to: "pembelian"
-              isOneToOne: true
-              isSetofReturn: false
-            }
-          }
+      create_pembelian: {
+        Args: {
+          _box?: number
+          _catatan?: string
+          _foto_nota_url?: string
+          _harga_per_kg: number
+          _jenis_ikan: string
+          _jumlah_dibayar: number
+          _jumlah_kg: number
+          _petani_id: string
+          _status_bayar: Database["public"]["Enums"]["status_bayar"]
+          _status_transaksi?: Database["public"]["Enums"]["status_transaksi"]
+        }
+        Returns: {
+          alasan_tolak: string | null
+          box: number
+          catatan: string | null
+          created_at: string
+          dicatat_oleh: string
+          ditinjau_oleh: string | null
+          ditinjau_pada: string | null
+          foto_nota_url: string | null
+          harga_per_kg: number
+          id: string
+          jenis_ikan: string
+          jumlah_dibayar: number
+          jumlah_kg: number
+          jumlah_mati: number
+          petani_id: string
+          status_bayar: Database["public"]["Enums"]["status_bayar"]
+          status_pengiriman: Database["public"]["Enums"]["status_pengiriman"]
+          status_transaksi: Database["public"]["Enums"]["status_transaksi"]
+          tanggal: string
+          total_harga: number | null
+        }
+        SetofOptions: {
+          from: "*"
+          to: "pembelian"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
       create_penjualan: {
         Args: {
           _berat_kg: number
