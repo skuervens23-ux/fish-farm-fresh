@@ -16,6 +16,7 @@ import { UploadFoto } from "./UploadFoto";
 import { toast } from "sonner";
 import { useJenisIkan } from "@/lib/jenis-ikan";
 import { pesanError } from "@/lib/pesan-error";
+import { kesalahanJaringan, sedangOffline, tambahAntrian } from "@/lib/offline";
 
 
 const UKURAN = ["300-500 gram", "500-700 gram", "700-1000 gram", "> 1 kg"];

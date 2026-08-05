@@ -144,3 +144,19 @@ export function useAntrianOffline() {
 
   return { online, items, jumlah: items.length, menyinkron, sinkron, refresh };
 }
+
+/** Deteksi error yang disebabkan koneksi, bukan validasi bisnis. */
+export function kesalahanJaringan(error: unknown): boolean {
+  const msg = (
+    typeof error === "string" ? error : ((error as { message?: string })?.message ?? "")
+  ).toLowerCase();
+  return (
+    sedangOffline() ||
+    msg.includes("failed to fetch") ||
+    msg.includes("networkerror") ||
+    msg.includes("network request failed") ||
+    msg.includes("load failed") ||
+    msg.includes("timeout") ||
+    msg.includes("fetch failed")
+  );
+}
