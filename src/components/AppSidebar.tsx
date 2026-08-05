@@ -86,7 +86,7 @@ export function AppSidebar() {
           <SidebarMenu>
             {items.map((item) => (
               <SidebarMenuItem key={item.url}>
-                <SidebarMenuButton asChild isActive={pathname.startsWith(item.url)}>
+                <SidebarMenuButton asChild isActive={pathname === item.url || pathname.startsWith(`${item.url}/`)}>
                   <Link to={item.url} onClick={() => setOpenMobile(false)}>
                     <item.icon className="h-4 w-4" />
                     <span>{item.title}</span>
