@@ -203,7 +203,7 @@ export function FormPembelian() {
         </div>
 
 
-        <RingkasanTotal total={total} sisa={sisa} />
+        <RingkasanTotal total={total} sisa={sisa} label="Total Pembelian" />
 
         <div className="space-y-2">
           <Label>Status Pembayaran *</Label>
