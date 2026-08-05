@@ -87,14 +87,16 @@ export function FormPenjualan() {
       harga_per_kg: hargaNum,
     });
     if (!parsed.success) return toast.error(parsed.error.issues[0].message);
+    if (!lot) return toast.error("Pilih lot pembelian dulu");
     if (beratNum > sisaStok + 0.001) {
-      return toast.error(`Stok tersedia hanya ${formatKg(sisaStok)}`);
+      return toast.error(`Sisa lot hanya ${formatKg(sisaStok)}`);
     }
     if (statusBayar === "sebagian" && (dibayarNum <= 0 || dibayarNum >= total)) {
       return toast.error("Jumlah dibayar harus > 0 dan < total");
     }
 
     const payload = {
+      _pembelian_id: lot.id,
       _pelanggan_id: parsed.data.pelanggan_id,
       _berat_kg: parsed.data.berat_kg,
       _harga_per_kg: parsed.data.harga_per_kg,
@@ -121,7 +123,7 @@ export function FormPenjualan() {
     }
 
     setSaving(true);
-    const { error } = await supabase.rpc("create_penjualan_gabungan", payload);
+    const { error } = await supabase.rpc("create_penjualan_dari_pembelian", payload);
     setSaving(false);
     if (error) {
       if (kesalahanJaringan(error)) {
