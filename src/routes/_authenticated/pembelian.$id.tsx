@@ -105,9 +105,10 @@ function DetailPembelian() {
                 <StatusBadge status={data.status_bayar} />
               </div>
               <div className="grid grid-cols-2 gap-3 text-sm">
-                <Baris label="Jumlah" value={formatKg(Number(data.jumlah_kg))} />
-                <Baris label="Harga / kg" value={formatRupiah(Number(data.harga_per_kg))} />
-                <Baris label="Total harga" value={formatRupiah(total)} />
+                <Baris label="Berat" value={formatKg(Number(data.jumlah_kg))} />
+                <Baris label="Box" value={String(Number(data.box ?? 0))} />
+                <Baris label="Harga / box" value={formatRupiah(Number(data.harga_per_kg))} />
+                <Baris label="Total pembelian" value={formatRupiah(total)} />
                 <Baris label="Sudah dibayar" value={formatRupiah(dibayar)} />
               </div>
               {sisa > 0 && (
