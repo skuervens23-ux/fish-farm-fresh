@@ -9,8 +9,9 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { BadgeTransaksi } from "@/components/StatusBadges";
 import { formatRupiah } from "@/lib/format";
 import { useTransaksi } from "@/lib/transaksi";
-import { useKas } from "@/lib/kas";
+import { useRingkasan } from "@/lib/ringkasan";
 import { useUserRole } from "@/hooks/useUserRole";
+
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
   head: () => ({
