@@ -237,3 +237,69 @@ export function useProfitLot(r: RentangTanggal) {
     staleTime: 30_000,
   });
 }
+
+export type BarisStok = {
+  jenis_ikan: string;
+  kg_masuk: number;
+  kg_keluar: number;
+  kg_sisa: number;
+  harga_rata: number;
+  nilai_persediaan: number;
+};
+
+/** Stok berjalan per jenis ikan (pembelian menambah, penjualan mengurangi). */
+export function useStokIkan() {
+  return useQuery({
+    queryKey: ["stok", "ikan"],
+    queryFn: async (): Promise<BarisStok[]> => {
+      const { data, error } = await supabase.rpc("stok_ikan");
+      if (error) throw error;
+      return (data ?? []).map((r: Record<string, unknown>) => ({
+        jenis_ikan: String(r["jenis_ikan"] ?? "-"),
+        kg_masuk: num(r["kg_masuk"]),
+        kg_keluar: num(r["kg_keluar"]),
+        kg_sisa: num(r["kg_sisa"]),
+        harga_rata: num(r["harga_rata"]),
+        nilai_persediaan: num(r["nilai_persediaan"]),
+      }));
+    },
+    staleTime: 30_000,
+  });
+}
+
+export type RingkasanHariIni = {
+  total_pembelian: number;
+  total_penjualan: number;
+  total_operasional: number;
+  laba_bersih: number;
+  berat_dibeli: number;
+  berat_terjual: number;
+  nilai_persediaan: number;
+  nilai_modal: number;
+};
+
+/** Ringkasan real-time hari ini: Laba Bersih = Penjualan − Pembelian − Operasional. */
+export function useRingkasanHariIni(tanggal?: string) {
+  return useQuery({
+    queryKey: ["analitik", "hari-ini", tanggal ?? "today"],
+    queryFn: async (): Promise<RingkasanHariIni> => {
+      const { data, error } = await supabase.rpc(
+        "ringkasan_hari_ini",
+        tanggal ? { _tanggal: tanggal } : {},
+      );
+      if (error) throw error;
+      const row = (Array.isArray(data) ? data[0] : null) as Record<string, unknown> | null;
+      return {
+        total_pembelian: num(row?.["total_pembelian"]),
+        total_penjualan: num(row?.["total_penjualan"]),
+        total_operasional: num(row?.["total_operasional"]),
+        laba_bersih: num(row?.["laba_bersih"]),
+        berat_dibeli: num(row?.["berat_dibeli"]),
+        berat_terjual: num(row?.["berat_terjual"]),
+        nilai_persediaan: num(row?.["nilai_persediaan"]),
+        nilai_modal: num(row?.["nilai_modal"]),
+      };
+    },
+    staleTime: 15_000,
+  });
+}
