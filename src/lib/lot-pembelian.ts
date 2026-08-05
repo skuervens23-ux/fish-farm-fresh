@@ -56,3 +56,30 @@ export const KELAS_STATUS_JUAL: Record<LotPembelian["status_jual"], string> = {
   sebagian: "bg-warning/15 text-warning",
   terjual: "bg-success/15 text-success",
 };
+
+export type StokGabungan = {
+  kg_sisa: number;
+  nilai_modal: number;
+  harga_beli_rata: number;
+  jumlah_lot: number;
+  jenis_ikan: string;
+};
+
+/** Seluruh sisa pembelian digabung menjadi satu lot. */
+export function useStokGabungan() {
+  return useQuery({
+    queryKey: ["stok-gabungan"],
+    queryFn: async (): Promise<StokGabungan> => {
+      const { data, error } = await supabase.rpc("stok_gabungan");
+      if (error) throw error;
+      const r = data?.[0];
+      return {
+        kg_sisa: Number(r?.kg_sisa ?? 0),
+        nilai_modal: Number(r?.nilai_modal ?? 0),
+        harga_beli_rata: Number(r?.harga_beli_rata ?? 0),
+        jumlah_lot: Number(r?.jumlah_lot ?? 0),
+        jenis_ikan: r?.jenis_ikan ?? "",
+      };
+    },
+  });
+}
