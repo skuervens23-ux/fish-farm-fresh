@@ -6,14 +6,20 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { toast } from "sonner";
+
+/** Akun tunggal pemilik aplikasi — pengguna cukup memasukkan password. */
+const OWNER_EMAIL = "skuervens23@gmail.com";
 
 export const Route = createFileRoute("/auth")({
   head: () => ({
     meta: [
       { title: "Masuk — Pembelian Ikan" },
-      { name: "description", content: "Masuk atau daftar untuk mengelola pembelian ikan hidup dari petani." },
+      { name: "description", content: "Masukkan password untuk membuka aplikasi pembelian ikan hidup." },
+      { property: "og:title", content: "Masuk — Pembelian Ikan" },
+      { property: "og:description", content: "Masukkan password untuk membuka aplikasi pembelian ikan hidup." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
     ],
   }),
   validateSearch: (search: Record<string, unknown>): { next?: string } =>
@@ -23,14 +29,12 @@ export const Route = createFileRoute("/auth")({
   component: AuthPage,
 });
 
-const emailSchema = z.string().trim().email("Email tidak valid").max(255);
 const passwordSchema = z.string().min(6, "Password minimal 6 karakter").max(72);
-const namaSchema = z.string().trim().min(2, "Nama minimal 2 karakter").max(80);
 
 function AuthPage() {
   const navigate = useNavigate();
   const { next } = Route.useSearch();
-  const tujuan = next ?? "/pembelian";
+  const [loading, setLoading] = useState(false);
 
   function lanjut() {
     if (next) {
@@ -39,7 +43,6 @@ function AuthPage() {
     }
     navigate({ to: "/pembelian", replace: true });
   }
-  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
@@ -52,10 +55,7 @@ function AuthPage() {
 
   function translateAuthError(msg: string): string {
     const m = msg.toLowerCase();
-    if (m.includes("invalid login")) return "Email atau password salah.";
-    if (m.includes("email not confirmed")) return "Email belum dikonfirmasi. Silakan daftar ulang atau hubungi admin.";
-    if (m.includes("user already registered") || m.includes("already registered")) return "Email sudah terdaftar. Silakan masuk.";
-    if (m.includes("weak_password") || m.includes("weak password") || m.includes("pwned")) return "Password terlalu lemah. Gunakan kombinasi huruf, angka, dan simbol.";
+    if (m.includes("invalid login")) return "Password salah.";
     if (m.includes("rate limit")) return "Terlalu banyak percobaan. Coba lagi beberapa saat.";
     if (m.includes("network")) return "Koneksi bermasalah. Periksa internet Anda.";
     return msg;
@@ -64,13 +64,11 @@ function AuthPage() {
   async function handleLogin(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const form = new FormData(e.currentTarget);
-    const emailR = emailSchema.safeParse(form.get("email"));
     const passR = passwordSchema.safeParse(form.get("password"));
-    if (!emailR.success) return toast.error(emailR.error.issues[0].message);
     if (!passR.success) return toast.error(passR.error.issues[0].message);
     setLoading(true);
     const { error } = await supabase.auth.signInWithPassword({
-      email: emailR.data,
+      email: OWNER_EMAIL,
       password: passR.data,
     });
     setLoading(false);
@@ -79,92 +77,30 @@ function AuthPage() {
     lanjut();
   }
 
-  async function handleSignup(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    const form = new FormData(e.currentTarget);
-    const emailR = emailSchema.safeParse(form.get("email"));
-    const passR = passwordSchema.safeParse(form.get("password"));
-    const namaR = namaSchema.safeParse(form.get("nama"));
-    if (!namaR.success) return toast.error(namaR.error.issues[0].message);
-    if (!emailR.success) return toast.error(emailR.error.issues[0].message);
-    if (!passR.success) return toast.error(passR.error.issues[0].message);
-    setLoading(true);
-    const { data, error } = await supabase.auth.signUp({
-      email: emailR.data,
-      password: passR.data,
-      options: {
-        emailRedirectTo: `${window.location.origin}${tujuan}`,
-        data: { nama: namaR.data },
-      },
-    });
-    if (error) {
-      setLoading(false);
-      return toast.error(translateAuthError(error.message));
-    }
-    // Auto-confirm aktif → langsung ada session. Jika belum, coba sign-in otomatis.
-    if (!data.session) {
-      const { error: signInErr } = await supabase.auth.signInWithPassword({
-        email: emailR.data,
-        password: passR.data,
-      });
-      if (signInErr) {
-        setLoading(false);
-        return toast.error(translateAuthError(signInErr.message));
-      }
-    }
-    setLoading(false);
-    toast.success("Akun dibuat. Selamat datang!");
-    lanjut();
-  }
-
   return (
-    <div className="flex min-h-screen items-center justify-center bg-muted/40 p-4">
-      <Card className="w-full max-w-[420px]">
+    <div className="bg-app flex min-h-screen items-center justify-center p-4">
+      <Card className="surface-card w-full max-w-[420px]">
         <CardHeader>
           <CardTitle>Pembelian Ikan</CardTitle>
-          <CardDescription>Masuk untuk mencatat pembelian dari petani.</CardDescription>
+          <CardDescription>Masukkan password untuk membuka aplikasi.</CardDescription>
         </CardHeader>
         <CardContent>
-          <Tabs defaultValue="login">
-            <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="login">Masuk</TabsTrigger>
-              <TabsTrigger value="signup">Daftar</TabsTrigger>
-            </TabsList>
-            <TabsContent value="login">
-              <form onSubmit={handleLogin} className="space-y-4 pt-4">
-                <div className="space-y-2">
-                  <Label htmlFor="login-email">Email</Label>
-                  <Input id="login-email" name="email" type="email" required autoComplete="email" />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="login-password">Password</Label>
-                  <Input id="login-password" name="password" type="password" required autoComplete="current-password" />
-                </div>
-                <Button type="submit" className="h-12 w-full" disabled={loading}>
-                  {loading ? "Memproses…" : "Masuk"}
-                </Button>
-              </form>
-            </TabsContent>
-            <TabsContent value="signup">
-              <form onSubmit={handleSignup} className="space-y-4 pt-4">
-                <div className="space-y-2">
-                  <Label htmlFor="signup-nama">Nama</Label>
-                  <Input id="signup-nama" name="nama" required />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="signup-email">Email</Label>
-                  <Input id="signup-email" name="email" type="email" required autoComplete="email" />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="signup-password">Password</Label>
-                  <Input id="signup-password" name="password" type="password" required autoComplete="new-password" minLength={6} />
-                </div>
-                <Button type="submit" className="h-12 w-full" disabled={loading}>
-                  {loading ? "Memproses…" : "Daftar"}
-                </Button>
-              </form>
-            </TabsContent>
-          </Tabs>
+          <form onSubmit={handleLogin} className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="login-password">Password</Label>
+              <Input
+                id="login-password"
+                name="password"
+                type="password"
+                required
+                autoFocus
+                autoComplete="current-password"
+              />
+            </div>
+            <Button type="submit" className="h-12 w-full" disabled={loading}>
+              {loading ? "Memproses…" : "Masuk"}
+            </Button>
+          </form>
           <div className="mt-4 text-center text-sm text-muted-foreground">
             <Link to="/" className="hover:underline">← Kembali</Link>
           </div>
