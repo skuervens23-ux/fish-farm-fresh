@@ -21,19 +21,21 @@ const schema = z
   .object({
     petani_id: z.string().uuid("Pilih petani"),
     jenis_ikan: z.string().trim().min(2, "Jenis ikan minimal 2 karakter").max(60),
-    jumlah_kg: z.number().positive("Jumlah kg harus > 0"),
-    harga_per_kg: z.number().positive("Harga per kg harus > 0"),
+    jumlah_kg: z.number().positive("Berat (kg) harus > 0"),
+    box: z.number().positive("Box harus > 0"),
+    harga_per_kg: z.number().positive("Harga per box harus > 0"),
     status_bayar: z.enum(["lunas", "belum", "sebagian"]),
     jumlah_dibayar: z.number().min(0),
   })
   .refine(
     (d) => {
       if (d.status_bayar !== "sebagian") return true;
-      const total = +(d.jumlah_kg * 50 * d.harga_per_kg).toFixed(2);
+      const total = +(d.jumlah_kg * d.box * d.harga_per_kg).toFixed(2);
       return d.jumlah_dibayar > 0 && d.jumlah_dibayar < total;
     },
     { message: "Jumlah dibayar harus > 0 dan < total", path: ["jumlah_dibayar"] },
   );
+
 
 export function FormPembelian() {
   const navigate = useNavigate();
