@@ -3,20 +3,21 @@ import {
   LayoutDashboard,
   ShoppingCart,
   Store,
-  History,
-  FileEdit,
-  CheckSquare,
   Users,
   Contact,
   LogOut,
   Fish,
   Wallet,
   BarChart3,
-  UserCog,
   Settings,
   Sparkle,
+  Receipt,
+  Boxes,
+  History,
+  TrendingUp,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { useQueryClient } from "@tanstack/react-query";
 import {
   Sidebar,
   SidebarContent,
@@ -31,58 +32,55 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import { Badge } from "@/components/ui/badge";
-import { useUserRole } from "@/hooks/useUserRole";
 
-type Item = { title: string; url: string; icon: typeof Fish; ownerOnly?: boolean };
+type Item = { title: string; url: string; icon: typeof Fish };
 
 const UTAMA: Item[] = [
   { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
+  { title: "Analisis Profit", url: "/analisis", icon: TrendingUp },
   { title: "Tanya AI", url: "/ai", icon: Sparkle },
 ];
 
 const TRANSAKSI: Item[] = [
-  { title: "Input Pembelian", url: "/pembelian/baru", icon: ShoppingCart },
-  { title: "Input Penjualan", url: "/penjualan/baru", icon: Store },
-  { title: "Kas Masuk & Keluar", url: "/kas", icon: Wallet },
+  { title: "Pembelian", url: "/pembelian", icon: ShoppingCart },
+  { title: "Penjualan", url: "/penjualan/baru", icon: Store },
+  { title: "Biaya Operasional", url: "/biaya", icon: Receipt },
+  { title: "Kas", url: "/kas", icon: Wallet },
 ];
 
 const DATA: Item[] = [
-  { title: "Riwayat Transaksi", url: "/riwayat", icon: History },
-  { title: "Draft", url: "/draft", icon: FileEdit },
-  { title: "Persetujuan", url: "/persetujuan", icon: CheckSquare, ownerOnly: true },
-
-  { title: "Laporan & Grafik", url: "/laporan", icon: BarChart3 },
+  { title: "Fish LOT", url: "/lot", icon: Boxes },
+  { title: "Riwayat", url: "/riwayat", icon: History },
+  { title: "Laporan", url: "/laporan", icon: BarChart3 },
 ];
 
 const MASTER: Item[] = [
-  { title: "Data Petani", url: "/petani", icon: Users, ownerOnly: true },
-  { title: "Data Pelanggan", url: "/pelanggan", icon: Contact, ownerOnly: true },
-  { title: "Pengguna & Hak Akses", url: "/pengguna", icon: UserCog, ownerOnly: true },
+  { title: "Supplier", url: "/petani", icon: Users },
+  { title: "Customer", url: "/pelanggan", icon: Contact },
+  { title: "Jenis Ikan", url: "/jenis-ikan", icon: Fish },
   { title: "Pengaturan", url: "/pengaturan", icon: Settings },
 ];
 
 export function AppSidebar() {
-  const { isOwner } = useUserRole();
   const { setOpenMobile } = useSidebar();
   const navigate = useNavigate();
+  const qc = useQueryClient();
   const pathname = useRouterState({ select: (r) => r.location.pathname });
 
-  const visible = (items: Item[]) => items.filter((i) => !i.ownerOnly || isOwner);
-
   async function signOut() {
+    await qc.cancelQueries();
+    qc.clear();
     await supabase.auth.signOut();
     navigate({ to: "/auth", replace: true });
   }
 
   function renderGroup(label: string, items: Item[]) {
-    const list = visible(items);
-    if (list.length === 0) return null;
     return (
       <SidebarGroup>
         <SidebarGroupLabel>{label}</SidebarGroupLabel>
         <SidebarGroupContent>
           <SidebarMenu>
-            {list.map((item) => (
+            {items.map((item) => (
               <SidebarMenuItem key={item.url}>
                 <SidebarMenuButton asChild isActive={pathname.startsWith(item.url)}>
                   <Link to={item.url} onClick={() => setOpenMobile(false)}>
@@ -107,27 +105,22 @@ export function AppSidebar() {
           </div>
           <div className="min-w-0">
             <div className="truncate text-sm font-bold text-foreground">Bandar Ikan</div>
-            <div className="truncate text-[11px] text-muted-foreground">
-              Sistem Manajemen Perikanan
-            </div>
+            <div className="truncate text-[11px] text-muted-foreground">ERP Owner</div>
           </div>
         </div>
       </SidebarHeader>
 
       <SidebarContent>
-        {renderGroup("Menu", UTAMA)}
-        {renderGroup("Input Transaksi", TRANSAKSI)}
+        {renderGroup("Utama", UTAMA)}
+        {renderGroup("Transaksi", TRANSAKSI)}
         {renderGroup("Data", DATA)}
         {renderGroup("Master", MASTER)}
       </SidebarContent>
 
       <SidebarFooter>
-        <div className="flex items-center justify-between gap-2 px-2 pb-2">
-          <Badge
-            variant="secondary"
-            className={isOwner ? "bg-primary/15 text-primary" : "bg-muted text-muted-foreground"}
-          >
-            {isOwner ? "Owner" : "Mandor"}
+        <div className="px-2 pb-2">
+          <Badge variant="secondary" className="bg-primary/15 text-primary">
+            Owner
           </Badge>
         </div>
         <SidebarMenu>

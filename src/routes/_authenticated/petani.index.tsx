@@ -14,12 +14,12 @@ import { pesanError } from "@/lib/pesan-error";
 export const Route = createFileRoute("/_authenticated/petani/")({
   head: () => ({
     meta: [
-      { title: "Kelola Petani — Pembelian Ikan Hidup" },
+      { title: "Kelola Supplier — Pembelian Ikan Hidup" },
       {
         name: "description",
         content: "Kelola data petani: tambah petani baru dan atur status aktif.",
       },
-      { property: "og:title", content: "Kelola Petani" },
+      { property: "og:title", content: "Kelola Supplier" },
       {
         property: "og:description",
         content: "Kelola data petani untuk pencatatan pembelian ikan hidup.",
@@ -80,7 +80,7 @@ function PetaniPage() {
             >
               <ArrowLeft className="h-5 w-5" />
             </button>
-            <h1 className="text-lg font-semibold text-foreground">Kelola Petani</h1>
+            <h1 className="text-lg font-semibold text-foreground">Kelola Supplier</h1>
           </div>
         </header>
         <div className="mx-auto max-w-[420px] px-4 pt-8">
@@ -107,7 +107,7 @@ function PetaniPage() {
           >
             <ArrowLeft className="h-5 w-5" />
           </Link>
-          <h1 className="text-lg font-semibold text-foreground">Kelola Petani</h1>
+          <h1 className="text-lg font-semibold text-foreground">Kelola Supplier</h1>
         </div>
       </header>
 
@@ -159,7 +159,7 @@ function PetaniPage() {
         <div className="mx-auto max-w-[420px]">
           <Button className="h-12 w-full text-base" onClick={() => setDialogOpen(true)}>
             <Plus className="mr-2 h-4 w-4" />
-            Tambah Petani
+            Tambah Supplier
           </Button>
         </div>
       </div>

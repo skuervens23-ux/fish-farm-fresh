@@ -14,9 +14,10 @@ import { TambahPetaniDialog } from "./TambahPetaniDialog";
 import { UploadFoto } from "./UploadFoto";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
+import { useJenisIkan } from "@/lib/jenis-ikan";
 import { pesanError } from "@/lib/pesan-error";
 
-const IKAN_UMUM = ["Nila", "Lele", "Mas", "Gurame", "Patin", "Bawal"];
+
 
 const schema = z
   .object({
@@ -50,7 +51,7 @@ export function FormPembelian() {
   const [jumlahDibayar, setJumlahDibayar] = useState("");
   const [catatan, setCatatan] = useState("");
   const [fotoNota, setFotoNota] = useState<string | null>(null);
-  const [saving, setSaving] = useState<null | "draft" | "kirim">(null);
+  const [saving, setSaving] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [dialogDefault, setDialogDefault] = useState("");
 
@@ -66,6 +67,8 @@ export function FormPembelian() {
       return data;
     },
   });
+
+  const { data: ikanMaster = [] } = useJenisIkan();
 
   const jumlahNum = parseFloat(jumlahKg) || 0;
   const boxNum = parseFloat(box) || 0;
@@ -83,7 +86,7 @@ export function FormPembelian() {
     if (statusBayar !== "sebagian") setJumlahDibayar("");
   }, [statusBayar]);
 
-  async function simpan(mode: "draft" | "kirim") {
+  async function simpan() {
     if (saving) return;
 
     const parsed = schema.safeParse({
@@ -99,7 +102,7 @@ export function FormPembelian() {
       return toast.error(parsed.error.issues[0].message);
     }
 
-    setSaving(mode);
+    setSaving(true);
     const { error } = await supabase.rpc("create_pembelian", {
       _petani_id: parsed.data.petani_id,
       _jenis_ikan: parsed.data.jenis_ikan,
@@ -108,22 +111,22 @@ export function FormPembelian() {
       _harga_per_kg: parsed.data.harga_per_kg,
       _status_bayar: parsed.data.status_bayar,
       _jumlah_dibayar: parsed.data.jumlah_dibayar,
-      _status_transaksi: mode === "draft" ? "draft" : "menunggu",
+      _status_transaksi: "disetujui",
       _catatan: catatan || undefined,
       _foto_nota_url: fotoNota ?? undefined,
     });
-    setSaving(null);
+    setSaving(false);
 
     if (error) return toast.error(pesanError(error));
-    toast.success(mode === "draft" ? "Draft tersimpan" : "Pembelian dikirim ke admin");
+    toast.success("Pembelian tersimpan");
     qc.invalidateQueries({ queryKey: ["pembelian"] });
     qc.invalidateQueries({ queryKey: ["transaksi"] });
-    qc.invalidateQueries({ queryKey: ["menunggu-count"] });
-    navigate({ to: mode === "draft" ? "/draft" : "/riwayat" });
+    qc.invalidateQueries({ queryKey: ["analitik"] });
+    navigate({ to: "/riwayat" });
   }
 
   const petaniOptions = petaniList.map((p) => ({ value: p.id, label: p.nama }));
-  const ikanOptions = Array.from(new Set([...IKAN_UMUM, ...(jenisIkan ? [jenisIkan] : [])])).map(
+  const ikanOptions = Array.from(new Set([...ikanMaster, ...(jenisIkan ? [jenisIkan] : [])])).map(
     (n) => ({
       value: n,
       label: n,
@@ -135,7 +138,7 @@ export function FormPembelian() {
       <form
         onSubmit={(e) => {
           e.preventDefault();
-          void simpan("kirim");
+          void simpan();
         }}
         className="mx-auto w-full max-w-[520px] space-y-5"
       >
@@ -246,20 +249,9 @@ export function FormPembelian() {
           />
         </div>
 
-        <div className="grid grid-cols-2 gap-3">
-          <Button
-            type="button"
-            variant="outline"
-            className="h-12"
-            disabled={saving !== null}
-            onClick={() => void simpan("draft")}
-          >
-            {saving === "draft" ? "Menyimpan…" : "Simpan Draft"}
-          </Button>
-          <Button type="submit" className="h-12 text-base" disabled={saving !== null}>
-            {saving === "kirim" ? "Mengirim…" : "Kirim ke Admin"}
-          </Button>
-        </div>
+        <Button type="submit" className="h-12 w-full text-base" disabled={saving}>
+          {saving ? "Menyimpan…" : "Simpan Pembelian"}
+        </Button>
       </form>
 
       <TambahPetaniDialog

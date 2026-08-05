@@ -15,13 +15,14 @@ import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ApiChatRouteImport } from './routes/api/chat'
 import { Route as AuthenticatedRiwayatRouteImport } from './routes/_authenticated/riwayat'
-import { Route as AuthenticatedPersetujuanRouteImport } from './routes/_authenticated/persetujuan'
-import { Route as AuthenticatedPenggunaRouteImport } from './routes/_authenticated/pengguna'
 import { Route as AuthenticatedPengaturanRouteImport } from './routes/_authenticated/pengaturan'
+import { Route as AuthenticatedLotRouteImport } from './routes/_authenticated/lot'
 import { Route as AuthenticatedLaporanRouteImport } from './routes/_authenticated/laporan'
 import { Route as AuthenticatedKasRouteImport } from './routes/_authenticated/kas'
-import { Route as AuthenticatedDraftRouteImport } from './routes/_authenticated/draft'
+import { Route as AuthenticatedJenisIkanRouteImport } from './routes/_authenticated/jenis-ikan'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
+import { Route as AuthenticatedBiayaRouteImport } from './routes/_authenticated/biaya'
+import { Route as AuthenticatedAnalisisRouteImport } from './routes/_authenticated/analisis'
 import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
 import { Route as Char91DotmcpChar93ListToolsRouteImport } from './routes/[.mcp]/list-tools'
 import { Route as AuthenticatedPetaniIndexRouteImport } from './routes/_authenticated/petani.index'
@@ -65,20 +66,14 @@ const AuthenticatedRiwayatRoute = AuthenticatedRiwayatRouteImport.update({
   path: '/riwayat',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const AuthenticatedPersetujuanRoute =
-  AuthenticatedPersetujuanRouteImport.update({
-    id: '/persetujuan',
-    path: '/persetujuan',
-    getParentRoute: () => AuthenticatedRouteRoute,
-  } as any)
-const AuthenticatedPenggunaRoute = AuthenticatedPenggunaRouteImport.update({
-  id: '/pengguna',
-  path: '/pengguna',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
 const AuthenticatedPengaturanRoute = AuthenticatedPengaturanRouteImport.update({
   id: '/pengaturan',
   path: '/pengaturan',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedLotRoute = AuthenticatedLotRouteImport.update({
+  id: '/lot',
+  path: '/lot',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedLaporanRoute = AuthenticatedLaporanRouteImport.update({
@@ -91,14 +86,24 @@ const AuthenticatedKasRoute = AuthenticatedKasRouteImport.update({
   path: '/kas',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const AuthenticatedDraftRoute = AuthenticatedDraftRouteImport.update({
-  id: '/draft',
-  path: '/draft',
+const AuthenticatedJenisIkanRoute = AuthenticatedJenisIkanRouteImport.update({
+  id: '/jenis-ikan',
+  path: '/jenis-ikan',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedBiayaRoute = AuthenticatedBiayaRouteImport.update({
+  id: '/biaya',
+  path: '/biaya',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedAnalisisRoute = AuthenticatedAnalisisRouteImport.update({
+  id: '/analisis',
+  path: '/analisis',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const Char91DotwellKnownChar93OauthProtectedResourceRoute =
@@ -183,13 +188,14 @@ export interface FileRoutesByFullPath {
   '/mcp': typeof McpRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
+  '/analisis': typeof AuthenticatedAnalisisRoute
+  '/biaya': typeof AuthenticatedBiayaRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
-  '/draft': typeof AuthenticatedDraftRoute
+  '/jenis-ikan': typeof AuthenticatedJenisIkanRoute
   '/kas': typeof AuthenticatedKasRoute
   '/laporan': typeof AuthenticatedLaporanRoute
+  '/lot': typeof AuthenticatedLotRoute
   '/pengaturan': typeof AuthenticatedPengaturanRoute
-  '/pengguna': typeof AuthenticatedPenggunaRoute
-  '/persetujuan': typeof AuthenticatedPersetujuanRoute
   '/riwayat': typeof AuthenticatedRiwayatRoute
   '/api/chat': typeof ApiChatRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
@@ -210,13 +216,14 @@ export interface FileRoutesByTo {
   '/mcp': typeof McpRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
+  '/analisis': typeof AuthenticatedAnalisisRoute
+  '/biaya': typeof AuthenticatedBiayaRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
-  '/draft': typeof AuthenticatedDraftRoute
+  '/jenis-ikan': typeof AuthenticatedJenisIkanRoute
   '/kas': typeof AuthenticatedKasRoute
   '/laporan': typeof AuthenticatedLaporanRoute
+  '/lot': typeof AuthenticatedLotRoute
   '/pengaturan': typeof AuthenticatedPengaturanRoute
-  '/pengguna': typeof AuthenticatedPenggunaRoute
-  '/persetujuan': typeof AuthenticatedPersetujuanRoute
   '/riwayat': typeof AuthenticatedRiwayatRoute
   '/api/chat': typeof ApiChatRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
@@ -239,13 +246,14 @@ export interface FileRoutesById {
   '/mcp': typeof McpRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
+  '/_authenticated/analisis': typeof AuthenticatedAnalisisRoute
+  '/_authenticated/biaya': typeof AuthenticatedBiayaRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
-  '/_authenticated/draft': typeof AuthenticatedDraftRoute
+  '/_authenticated/jenis-ikan': typeof AuthenticatedJenisIkanRoute
   '/_authenticated/kas': typeof AuthenticatedKasRoute
   '/_authenticated/laporan': typeof AuthenticatedLaporanRoute
+  '/_authenticated/lot': typeof AuthenticatedLotRoute
   '/_authenticated/pengaturan': typeof AuthenticatedPengaturanRoute
-  '/_authenticated/pengguna': typeof AuthenticatedPenggunaRoute
-  '/_authenticated/persetujuan': typeof AuthenticatedPersetujuanRoute
   '/_authenticated/riwayat': typeof AuthenticatedRiwayatRoute
   '/api/chat': typeof ApiChatRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
@@ -268,13 +276,14 @@ export interface FileRouteTypes {
     | '/mcp'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
+    | '/analisis'
+    | '/biaya'
     | '/dashboard'
-    | '/draft'
+    | '/jenis-ikan'
     | '/kas'
     | '/laporan'
+    | '/lot'
     | '/pengaturan'
-    | '/pengguna'
-    | '/persetujuan'
     | '/riwayat'
     | '/api/chat'
     | '/.lovable/oauth/consent'
@@ -295,13 +304,14 @@ export interface FileRouteTypes {
     | '/mcp'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
+    | '/analisis'
+    | '/biaya'
     | '/dashboard'
-    | '/draft'
+    | '/jenis-ikan'
     | '/kas'
     | '/laporan'
+    | '/lot'
     | '/pengaturan'
-    | '/pengguna'
-    | '/persetujuan'
     | '/riwayat'
     | '/api/chat'
     | '/.lovable/oauth/consent'
@@ -323,13 +333,14 @@ export interface FileRouteTypes {
     | '/mcp'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
+    | '/_authenticated/analisis'
+    | '/_authenticated/biaya'
     | '/_authenticated/dashboard'
-    | '/_authenticated/draft'
+    | '/_authenticated/jenis-ikan'
     | '/_authenticated/kas'
     | '/_authenticated/laporan'
+    | '/_authenticated/lot'
     | '/_authenticated/pengaturan'
-    | '/_authenticated/pengguna'
-    | '/_authenticated/persetujuan'
     | '/_authenticated/riwayat'
     | '/api/chat'
     | '/.lovable/oauth/consent'
@@ -401,25 +412,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedRiwayatRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/persetujuan': {
-      id: '/_authenticated/persetujuan'
-      path: '/persetujuan'
-      fullPath: '/persetujuan'
-      preLoaderRoute: typeof AuthenticatedPersetujuanRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/pengguna': {
-      id: '/_authenticated/pengguna'
-      path: '/pengguna'
-      fullPath: '/pengguna'
-      preLoaderRoute: typeof AuthenticatedPenggunaRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
     '/_authenticated/pengaturan': {
       id: '/_authenticated/pengaturan'
       path: '/pengaturan'
       fullPath: '/pengaturan'
       preLoaderRoute: typeof AuthenticatedPengaturanRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/lot': {
+      id: '/_authenticated/lot'
+      path: '/lot'
+      fullPath: '/lot'
+      preLoaderRoute: typeof AuthenticatedLotRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/laporan': {
@@ -436,11 +440,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedKasRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/draft': {
-      id: '/_authenticated/draft'
-      path: '/draft'
-      fullPath: '/draft'
-      preLoaderRoute: typeof AuthenticatedDraftRouteImport
+    '/_authenticated/jenis-ikan': {
+      id: '/_authenticated/jenis-ikan'
+      path: '/jenis-ikan'
+      fullPath: '/jenis-ikan'
+      preLoaderRoute: typeof AuthenticatedJenisIkanRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/dashboard': {
@@ -448,6 +452,20 @@ declare module '@tanstack/react-router' {
       path: '/dashboard'
       fullPath: '/dashboard'
       preLoaderRoute: typeof AuthenticatedDashboardRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/biaya': {
+      id: '/_authenticated/biaya'
+      path: '/biaya'
+      fullPath: '/biaya'
+      preLoaderRoute: typeof AuthenticatedBiayaRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/analisis': {
+      id: '/_authenticated/analisis'
+      path: '/analisis'
+      fullPath: '/analisis'
+      preLoaderRoute: typeof AuthenticatedAnalisisRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/.well-known/oauth-protected-resource': {
@@ -545,13 +563,14 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedRouteRouteChildren {
+  AuthenticatedAnalisisRoute: typeof AuthenticatedAnalisisRoute
+  AuthenticatedBiayaRoute: typeof AuthenticatedBiayaRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
-  AuthenticatedDraftRoute: typeof AuthenticatedDraftRoute
+  AuthenticatedJenisIkanRoute: typeof AuthenticatedJenisIkanRoute
   AuthenticatedKasRoute: typeof AuthenticatedKasRoute
   AuthenticatedLaporanRoute: typeof AuthenticatedLaporanRoute
+  AuthenticatedLotRoute: typeof AuthenticatedLotRoute
   AuthenticatedPengaturanRoute: typeof AuthenticatedPengaturanRoute
-  AuthenticatedPenggunaRoute: typeof AuthenticatedPenggunaRoute
-  AuthenticatedPersetujuanRoute: typeof AuthenticatedPersetujuanRoute
   AuthenticatedRiwayatRoute: typeof AuthenticatedRiwayatRoute
   AuthenticatedAiThreadIdRoute: typeof AuthenticatedAiThreadIdRoute
   AuthenticatedPembelianIdRoute: typeof AuthenticatedPembelianIdRoute
@@ -565,13 +584,14 @@ interface AuthenticatedRouteRouteChildren {
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedAnalisisRoute: AuthenticatedAnalisisRoute,
+  AuthenticatedBiayaRoute: AuthenticatedBiayaRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
-  AuthenticatedDraftRoute: AuthenticatedDraftRoute,
+  AuthenticatedJenisIkanRoute: AuthenticatedJenisIkanRoute,
   AuthenticatedKasRoute: AuthenticatedKasRoute,
   AuthenticatedLaporanRoute: AuthenticatedLaporanRoute,
+  AuthenticatedLotRoute: AuthenticatedLotRoute,
   AuthenticatedPengaturanRoute: AuthenticatedPengaturanRoute,
-  AuthenticatedPenggunaRoute: AuthenticatedPenggunaRoute,
-  AuthenticatedPersetujuanRoute: AuthenticatedPersetujuanRoute,
   AuthenticatedRiwayatRoute: AuthenticatedRiwayatRoute,
   AuthenticatedAiThreadIdRoute: AuthenticatedAiThreadIdRoute,
   AuthenticatedPembelianIdRoute: AuthenticatedPembelianIdRoute,

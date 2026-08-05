@@ -14,9 +14,10 @@ import { RadioStatusBayar, type StatusBayar } from "./RadioStatusBayar";
 import { TambahPelangganDialog } from "./TambahPelangganDialog";
 import { UploadFoto } from "./UploadFoto";
 import { toast } from "sonner";
+import { useJenisIkan } from "@/lib/jenis-ikan";
 import { pesanError } from "@/lib/pesan-error";
 
-const IKAN_UMUM = ["Nila", "Lele", "Mas", "Gurame", "Patin", "Bawal"];
+
 const UKURAN = ["300-500 gram", "500-700 gram", "700-1000 gram", "> 1 kg"];
 const GRADE = ["A", "B", "C"];
 
@@ -44,7 +45,7 @@ export function FormPenjualan() {
   const [catatan, setCatatan] = useState("");
   const [fotoTimbangan, setFotoTimbangan] = useState<string | null>(null);
   const [fotoNota, setFotoNota] = useState<string | null>(null);
-  const [saving, setSaving] = useState<null | "draft" | "kirim">(null);
+  const [saving, setSaving] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [dialogDefault, setDialogDefault] = useState("");
 
@@ -61,6 +62,8 @@ export function FormPenjualan() {
     },
   });
 
+  const { data: ikanMaster = [] } = useJenisIkan();
+
   const beratNum = parseFloat(beratKg) || 0;
   const hargaNum = parseFloat(hargaPerKg) || 0;
   const total = useMemo(() => +(beratNum * hargaNum).toFixed(2), [beratNum, hargaNum]);
@@ -68,7 +71,7 @@ export function FormPenjualan() {
   const sisa =
     statusBayar === "lunas" ? 0 : statusBayar === "belum" ? total : Math.max(0, total - dibayarNum);
 
-  async function simpan(mode: "draft" | "kirim") {
+  async function simpan() {
     if (saving) return;
     const parsed = schema.safeParse({
       pelanggan_id: pelangganId ?? "",
@@ -81,7 +84,7 @@ export function FormPenjualan() {
       return toast.error("Jumlah dibayar harus > 0 dan < total");
     }
 
-    setSaving(mode);
+    setSaving(true);
     const { error } = await supabase.rpc("create_penjualan", {
       _pelanggan_id: parsed.data.pelanggan_id,
       _jenis_ikan: parsed.data.jenis_ikan,
@@ -93,21 +96,21 @@ export function FormPenjualan() {
       _kolam: kolam || undefined,
       _status_bayar: statusBayar,
       _jumlah_dibayar: statusBayar === "sebagian" ? dibayarNum : 0,
-      _status_transaksi: mode === "draft" ? "draft" : "menunggu",
+      _status_transaksi: "disetujui",
       _catatan: catatan || undefined,
       _foto_timbangan_url: fotoTimbangan ?? undefined,
       _foto_nota_url: fotoNota ?? undefined,
     });
-    setSaving(null);
+    setSaving(false);
     if (error) return toast.error(pesanError(error));
-    toast.success(mode === "draft" ? "Draft tersimpan" : "Penjualan dikirim ke admin");
+    toast.success("Penjualan tersimpan");
     qc.invalidateQueries({ queryKey: ["transaksi"] });
-    qc.invalidateQueries({ queryKey: ["menunggu-count"] });
-    navigate({ to: mode === "draft" ? "/draft" : "/riwayat" });
+    qc.invalidateQueries({ queryKey: ["analitik"] });
+    navigate({ to: "/riwayat" });
   }
 
   const pelangganOptions = pelangganList.map((p) => ({ value: p.id, label: p.nama }));
-  const ikanOptions = Array.from(new Set([...IKAN_UMUM, ...(jenisIkan ? [jenisIkan] : [])])).map(
+  const ikanOptions = Array.from(new Set([...ikanMaster, ...(jenisIkan ? [jenisIkan] : [])])).map(
     (n) => ({ value: n, label: n }),
   );
 
@@ -116,7 +119,7 @@ export function FormPenjualan() {
       <form
         onSubmit={(e) => {
           e.preventDefault();
-          void simpan("kirim");
+          void simpan();
         }}
         className="mx-auto w-full max-w-[520px] space-y-5"
       >
@@ -266,20 +269,9 @@ export function FormPenjualan() {
           />
         </div>
 
-        <div className="grid grid-cols-2 gap-3">
-          <Button
-            type="button"
-            variant="outline"
-            className="h-12"
-            disabled={saving !== null}
-            onClick={() => void simpan("draft")}
-          >
-            {saving === "draft" ? "Menyimpan…" : "Simpan Draft"}
-          </Button>
-          <Button type="submit" className="h-12 text-base" disabled={saving !== null}>
-            {saving === "kirim" ? "Mengirim…" : "Kirim ke Admin"}
-          </Button>
-        </div>
+        <Button type="submit" className="h-12 w-full text-base" disabled={saving}>
+          {saving ? "Menyimpan…" : "Simpan Penjualan"}
+        </Button>
       </form>
 
       <TambahPelangganDialog

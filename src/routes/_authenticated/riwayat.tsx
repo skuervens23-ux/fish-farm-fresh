@@ -10,7 +10,7 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { BadgeTransaksi, BadgeBayar } from "@/components/StatusBadges";
 import { formatRupiah, formatTanggal } from "@/lib/format";
 import { useTransaksi, type Transaksi } from "@/lib/transaksi";
-import type { StatusTransaksi } from "@/lib/status";
+import type { StatusBayar } from "@/lib/status";
 
 export const Route = createFileRoute("/_authenticated/riwayat")({
   head: () => ({
@@ -30,12 +30,11 @@ export const Route = createFileRoute("/_authenticated/riwayat")({
   component: RiwayatPage,
 });
 
-const STATUS: Array<{ value: "semua" | StatusTransaksi; label: string }> = [
-  { value: "semua", label: "Semua Status" },
-  { value: "draft", label: "Draft" },
-  { value: "menunggu", label: "Menunggu" },
-  { value: "disetujui", label: "Disetujui" },
-  { value: "ditolak", label: "Ditolak" },
+const STATUS: Array<{ value: "semua" | StatusBayar; label: string }> = [
+  { value: "semua", label: "Semua" },
+  { value: "lunas", label: "Lunas" },
+  { value: "sebagian", label: "Sebagian" },
+  { value: "belum", label: "Belum Bayar" },
 ];
 
 export function DaftarTransaksi({
@@ -110,14 +109,14 @@ export function DaftarTransaksi({
 function RiwayatPage() {
   const { data: rows = [], isLoading } = useTransaksi();
   const [tab, setTab] = useState<"semua" | "pembelian" | "penjualan">("semua");
-  const [status, setStatus] = useState<"semua" | StatusTransaksi>("semua");
+  const [status, setStatus] = useState<"semua" | StatusBayar>("semua");
   const [q, setQ] = useState("");
 
   const filtered = useMemo(() => {
     const key = q.trim().toLowerCase();
     return rows.filter((r) => {
       if (tab !== "semua" && r.jenis !== tab) return false;
-      if (status !== "semua" && r.status_transaksi !== status) return false;
+      if (status !== "semua" && r.status_bayar !== status) return false;
       if (!key) return true;
       return r.pihak.toLowerCase().includes(key) || r.jenis_ikan.toLowerCase().includes(key);
     });
