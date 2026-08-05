@@ -102,8 +102,7 @@ export function FormPembelian() {
       return toast.error(parsed.error.issues[0].message);
     }
 
-    setSaving(true);
-    const { error } = await supabase.rpc("create_pembelian", {
+    const payload = {
       _petani_id: parsed.data.petani_id,
       _jenis_ikan: parsed.data.jenis_ikan,
       _jumlah_kg: parsed.data.jumlah_kg,
@@ -111,19 +110,38 @@ export function FormPembelian() {
       _harga_per_kg: parsed.data.harga_per_kg,
       _status_bayar: parsed.data.status_bayar,
       _jumlah_dibayar: parsed.data.jumlah_dibayar,
-      _status_transaksi: "disetujui",
+      _status_transaksi: "disetujui" as const,
       _catatan: catatan || undefined,
       _foto_nota_url: fotoNota ?? undefined,
-    });
+    };
+
+    const namaPetani = petaniList.find((p) => p.id === parsed.data.petani_id)?.nama ?? "Petani";
+
+    if (sedangOffline()) {
+      tambahAntrian("pembelian", `Pembelian ${parsed.data.jenis_ikan} — ${namaPetani}`, payload);
+      toast.success("Tersimpan offline. Akan dikirim otomatis saat internet kembali.");
+      return navigate({ to: "/riwayat" });
+    }
+
+    setSaving(true);
+    const { error } = await supabase.rpc("create_pembelian", payload);
     setSaving(false);
 
-    if (error) return toast.error(pesanError(error));
+    if (error) {
+      if (kesalahanJaringan(error)) {
+        tambahAntrian("pembelian", `Pembelian ${parsed.data.jenis_ikan} — ${namaPetani}`, payload);
+        toast.success("Koneksi bermasalah — data disimpan offline dan akan dikirim otomatis.");
+        return navigate({ to: "/riwayat" });
+      }
+      return toast.error(pesanError(error));
+    }
     toast.success("Pembelian tersimpan");
     qc.invalidateQueries({ queryKey: ["pembelian"] });
     qc.invalidateQueries({ queryKey: ["transaksi"] });
     qc.invalidateQueries({ queryKey: ["analitik"] });
     navigate({ to: "/riwayat" });
   }
+
 
   const petaniOptions = petaniList.map((p) => ({ value: p.id, label: p.nama }));
   const ikanOptions = Array.from(new Set([...ikanMaster, ...(jenisIkan ? [jenisIkan] : [])])).map(
