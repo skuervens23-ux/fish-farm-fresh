@@ -276,8 +276,8 @@ export async function buatExcelHarian(d: LaporanHarian): Promise<Blob> {
   }
   r++;
 
-  // E. Stok
-  judulSeksi(ws, r++, "E. STOK", L);
+  // F. Stok
+  judulSeksi(ws, r++, "F. STOK", L);
   const stok: [string, number, string][] = [
     ["Total Berat Masuk", d.stok.masuk, KG],
     ["Total Berat Keluar", d.stok.keluar, KG],
