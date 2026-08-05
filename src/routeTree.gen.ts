@@ -14,6 +14,7 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ApiChatRouteImport } from './routes/api/chat'
+import { Route as AuthenticatedStokRouteImport } from './routes/_authenticated/stok'
 import { Route as AuthenticatedRiwayatRouteImport } from './routes/_authenticated/riwayat'
 import { Route as AuthenticatedPengaturanRouteImport } from './routes/_authenticated/pengaturan'
 import { Route as AuthenticatedLotRouteImport } from './routes/_authenticated/lot'
@@ -60,6 +61,11 @@ const ApiChatRoute = ApiChatRouteImport.update({
   id: '/api/chat',
   path: '/api/chat',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedStokRoute = AuthenticatedStokRouteImport.update({
+  id: '/stok',
+  path: '/stok',
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedRiwayatRoute = AuthenticatedRiwayatRouteImport.update({
   id: '/riwayat',
@@ -197,6 +203,7 @@ export interface FileRoutesByFullPath {
   '/lot': typeof AuthenticatedLotRoute
   '/pengaturan': typeof AuthenticatedPengaturanRoute
   '/riwayat': typeof AuthenticatedRiwayatRoute
+  '/stok': typeof AuthenticatedStokRoute
   '/api/chat': typeof ApiChatRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
@@ -225,6 +232,7 @@ export interface FileRoutesByTo {
   '/lot': typeof AuthenticatedLotRoute
   '/pengaturan': typeof AuthenticatedPengaturanRoute
   '/riwayat': typeof AuthenticatedRiwayatRoute
+  '/stok': typeof AuthenticatedStokRoute
   '/api/chat': typeof ApiChatRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
@@ -255,6 +263,7 @@ export interface FileRoutesById {
   '/_authenticated/lot': typeof AuthenticatedLotRoute
   '/_authenticated/pengaturan': typeof AuthenticatedPengaturanRoute
   '/_authenticated/riwayat': typeof AuthenticatedRiwayatRoute
+  '/_authenticated/stok': typeof AuthenticatedStokRoute
   '/api/chat': typeof ApiChatRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
@@ -285,6 +294,7 @@ export interface FileRouteTypes {
     | '/lot'
     | '/pengaturan'
     | '/riwayat'
+    | '/stok'
     | '/api/chat'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
@@ -313,6 +323,7 @@ export interface FileRouteTypes {
     | '/lot'
     | '/pengaturan'
     | '/riwayat'
+    | '/stok'
     | '/api/chat'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
@@ -342,6 +353,7 @@ export interface FileRouteTypes {
     | '/_authenticated/lot'
     | '/_authenticated/pengaturan'
     | '/_authenticated/riwayat'
+    | '/_authenticated/stok'
     | '/api/chat'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
@@ -404,6 +416,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/api/chat'
       preLoaderRoute: typeof ApiChatRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/stok': {
+      id: '/_authenticated/stok'
+      path: '/stok'
+      fullPath: '/stok'
+      preLoaderRoute: typeof AuthenticatedStokRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/riwayat': {
       id: '/_authenticated/riwayat'
@@ -572,6 +591,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedLotRoute: typeof AuthenticatedLotRoute
   AuthenticatedPengaturanRoute: typeof AuthenticatedPengaturanRoute
   AuthenticatedRiwayatRoute: typeof AuthenticatedRiwayatRoute
+  AuthenticatedStokRoute: typeof AuthenticatedStokRoute
   AuthenticatedAiThreadIdRoute: typeof AuthenticatedAiThreadIdRoute
   AuthenticatedPembelianIdRoute: typeof AuthenticatedPembelianIdRoute
   AuthenticatedPembelianBaruRoute: typeof AuthenticatedPembelianBaruRoute
@@ -593,6 +613,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedLotRoute: AuthenticatedLotRoute,
   AuthenticatedPengaturanRoute: AuthenticatedPengaturanRoute,
   AuthenticatedRiwayatRoute: AuthenticatedRiwayatRoute,
+  AuthenticatedStokRoute: AuthenticatedStokRoute,
   AuthenticatedAiThreadIdRoute: AuthenticatedAiThreadIdRoute,
   AuthenticatedPembelianIdRoute: AuthenticatedPembelianIdRoute,
   AuthenticatedPembelianBaruRoute: AuthenticatedPembelianBaruRoute,
