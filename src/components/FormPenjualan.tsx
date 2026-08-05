@@ -384,9 +384,9 @@ export function FormPenjualan() {
         <Button
           type="submit"
           className="h-12 w-full text-base"
-          disabled={saving || sisaStok <= 0}
+          disabled={saving || !lot || sisaStok <= 0}
         >
-          {sisaStok <= 0 ? "Stok kosong" : saving ? "Menyimpan…" : "Simpan Penjualan"}
+          {!lot ? "Pilih lot dulu" : saving ? "Menyimpan…" : "Simpan Penjualan"}
         </Button>
       </form>
 
