@@ -21,19 +21,21 @@ const schema = z
   .object({
     petani_id: z.string().uuid("Pilih petani"),
     jenis_ikan: z.string().trim().min(2, "Jenis ikan minimal 2 karakter").max(60),
-    jumlah_kg: z.number().positive("Jumlah kg harus > 0"),
-    harga_per_kg: z.number().positive("Harga per kg harus > 0"),
+    jumlah_kg: z.number().positive("Berat (kg) harus > 0"),
+    box: z.number().positive("Box harus > 0"),
+    harga_per_kg: z.number().positive("Harga per box harus > 0"),
     status_bayar: z.enum(["lunas", "belum", "sebagian"]),
     jumlah_dibayar: z.number().min(0),
   })
   .refine(
     (d) => {
       if (d.status_bayar !== "sebagian") return true;
-      const total = +(d.jumlah_kg * 50 * d.harga_per_kg).toFixed(2);
+      const total = +(d.jumlah_kg * d.box * d.harga_per_kg).toFixed(2);
       return d.jumlah_dibayar > 0 && d.jumlah_dibayar < total;
     },
     { message: "Jumlah dibayar harus > 0 dan < total", path: ["jumlah_dibayar"] },
   );
+
 
 export function FormPembelian() {
   const navigate = useNavigate();
@@ -42,6 +44,7 @@ export function FormPembelian() {
   const [petaniId, setPetaniId] = useState<string | null>(null);
   const [jenisIkan, setJenisIkan] = useState("");
   const [jumlahKg, setJumlahKg] = useState("");
+  const [box, setBox] = useState("");
   const [hargaPerKg, setHargaPerKg] = useState("");
   const [statusBayar, setStatusBayar] = useState<StatusBayar>("lunas");
   const [jumlahDibayar, setJumlahDibayar] = useState("");
@@ -65,8 +68,12 @@ export function FormPembelian() {
   });
 
   const jumlahNum = parseFloat(jumlahKg) || 0;
+  const boxNum = parseFloat(box) || 0;
   const hargaNum = parseFloat(hargaPerKg) || 0;
-  const total = useMemo(() => +(jumlahNum * 50 * hargaNum).toFixed(2), [jumlahNum, hargaNum]);
+  const total = useMemo(
+    () => +(jumlahNum * boxNum * hargaNum).toFixed(2),
+    [jumlahNum, boxNum, hargaNum],
+  );
   const dibayarNum = parseFloat(jumlahDibayar) || 0;
   const sisa =
     statusBayar === "lunas" ? 0 : statusBayar === "belum" ? total : Math.max(0, total - dibayarNum);
@@ -83,6 +90,7 @@ export function FormPembelian() {
       petani_id: petaniId ?? "",
       jenis_ikan: jenisIkan,
       jumlah_kg: jumlahNum,
+      box: boxNum,
       harga_per_kg: hargaNum,
       status_bayar: statusBayar,
       jumlah_dibayar: statusBayar === "sebagian" ? dibayarNum : 0,
@@ -96,6 +104,7 @@ export function FormPembelian() {
       _petani_id: parsed.data.petani_id,
       _jenis_ikan: parsed.data.jenis_ikan,
       _jumlah_kg: parsed.data.jumlah_kg,
+      _box: parsed.data.box,
       _harga_per_kg: parsed.data.harga_per_kg,
       _status_bayar: parsed.data.status_bayar,
       _jumlah_dibayar: parsed.data.jumlah_dibayar,
@@ -159,12 +168,27 @@ export function FormPembelian() {
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="jumlah_kg">Jumlah (kg) *</Label>
+          <Label htmlFor="jumlah_kg">Berat (Kg) *</Label>
           <InputJumlah id="jumlah_kg" value={jumlahKg} onChange={setJumlahKg} step={0.5} placeholder="0" />
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="harga_per_kg">Harga per kg (Rp) *</Label>
+          <Label htmlFor="box">Box *</Label>
+          <Input
+            id="box"
+            type="number"
+            inputMode="numeric"
+            step={1}
+            min={0}
+            value={box}
+            onChange={(e) => setBox(e.target.value)}
+            className="h-12"
+            placeholder="0"
+          />
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="harga_per_kg">Harga per Box (Rp) *</Label>
           <Input
             id="harga_per_kg"
             type="number"
@@ -178,7 +202,8 @@ export function FormPembelian() {
           />
         </div>
 
-        <RingkasanTotal total={total} sisa={sisa} />
+
+        <RingkasanTotal total={total} sisa={sisa} label="Total Pembelian" />
 
         <div className="space-y-2">
           <Label>Status Pembayaran *</Label>

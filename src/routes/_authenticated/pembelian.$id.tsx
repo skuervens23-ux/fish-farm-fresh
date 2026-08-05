@@ -41,7 +41,7 @@ function DetailPembelian() {
       const { data, error } = await supabase
         .from("pembelian")
         .select(
-          "id, tanggal, jenis_ikan, jumlah_kg, harga_per_kg, total_harga, jumlah_dibayar, status_bayar, created_at, petani:petani_id(nama, telepon)",
+          "id, tanggal, jenis_ikan, jumlah_kg, box, harga_per_kg, total_harga, jumlah_dibayar, status_bayar, created_at, petani:petani_id(nama, telepon)",
         )
         .eq("id", id)
         .maybeSingle();
@@ -105,9 +105,10 @@ function DetailPembelian() {
                 <StatusBadge status={data.status_bayar} />
               </div>
               <div className="grid grid-cols-2 gap-3 text-sm">
-                <Baris label="Jumlah" value={formatKg(Number(data.jumlah_kg))} />
-                <Baris label="Harga / kg" value={formatRupiah(Number(data.harga_per_kg))} />
-                <Baris label="Total harga" value={formatRupiah(total)} />
+                <Baris label="Berat" value={formatKg(Number(data.jumlah_kg))} />
+                <Baris label="Box" value={String(Number(data.box ?? 0))} />
+                <Baris label="Harga / box" value={formatRupiah(Number(data.harga_per_kg))} />
+                <Baris label="Total pembelian" value={formatRupiah(total)} />
                 <Baris label="Sudah dibayar" value={formatRupiah(dibayar)} />
               </div>
               {sisa > 0 && (
