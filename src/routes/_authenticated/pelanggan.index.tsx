@@ -15,12 +15,12 @@ import { pesanError } from "@/lib/pesan-error";
 export const Route = createFileRoute("/_authenticated/pelanggan/")({
   head: () => ({
     meta: [
-      { title: "Data Pelanggan | Bandar Ikan" },
+      { title: "Data Customer | Bandar Ikan" },
       {
         name: "description",
         content: "Kelola data pelanggan pembeli ikan: tambah pelanggan baru dan atur status aktif.",
       },
-      { property: "og:title", content: "Data Pelanggan" },
+      { property: "og:title", content: "Data Customer" },
       { property: "og:description", content: "Kelola pelanggan pembeli ikan." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
@@ -62,7 +62,7 @@ function PelangganPage() {
 
   if (!isLoading && !isOwner) {
     return (
-      <AppShell title="Data Pelanggan">
+      <AppShell title="Data Customer">
         <div className="mx-auto max-w-[520px] px-4 py-8">
           <Card className="p-6 text-center">
             <ShieldAlert className="mx-auto h-8 w-8 text-warning" />
@@ -84,10 +84,10 @@ function PelangganPage() {
   }
 
   return (
-    <AppShell title="Data Pelanggan">
+    <AppShell title="Data Customer">
       <div className="mx-auto w-full max-w-[900px] space-y-3 px-4 py-4">
         <Button className="h-12 w-full" onClick={() => setDialogOpen(true)}>
-          <Plus className="mr-2 h-4 w-4" /> Tambah Pelanggan
+          <Plus className="mr-2 h-4 w-4" /> Tambah Customer
         </Button>
 
         {loadingList && <p className="text-sm text-muted-foreground">Memuat…</p>}
