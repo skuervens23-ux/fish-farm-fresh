@@ -25,6 +25,21 @@ export type FileBackup = {
 export async function buatBackup(): Promise<FileBackup> {
   const data: FileBackup["data"] = {};
   for (const tabel of TABEL_BACKUP) {
+    // Kolom kontak petani/pelanggan hanya bisa dibaca owner lewat fungsi khusus.
+    if (tabel === "petani" || tabel === "pelanggan") {
+      const [list, kontak] = await Promise.all([
+        supabase.from(tabel).select("id, nama, is_active, created_by, created_at"),
+        supabase.rpc(tabel === "petani" ? "kontak_petani" : "kontak_pelanggan"),
+      ]);
+      if (list.error) throw new Error(`${tabel}: ${list.error.message}`);
+      const map = new Map((kontak.data ?? []).map((k) => [k.id, k]));
+      data[tabel] = (list.data ?? []).map((row) => ({
+        ...row,
+        telepon: map.get(row.id)?.telepon ?? null,
+        alamat: map.get(row.id)?.alamat ?? null,
+      }));
+      continue;
+    }
     const { data: rows, error } = await supabase.from(tabel).select("*");
     if (error) throw new Error(`${tabel}: ${error.message}`);
     data[tabel] = (rows ?? []) as Record<string, unknown>[];
@@ -36,6 +51,7 @@ export async function buatBackup(): Promise<FileBackup> {
     data,
   };
 }
+
 
 export function unduhBackup(backup: FileBackup) {
   const blob = new Blob([JSON.stringify(backup, null, 2)], { type: "application/json" });
