@@ -6,12 +6,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { InputJumlah } from "./InputJumlah";
-import { SearchSelect } from "./SearchSelect";
 import { RingkasanTotal } from "./RingkasanTotal";
 import { RadioStatusBayar, type StatusBayar } from "./RadioStatusBayar";
-import { TambahPelangganDialog } from "./TambahPelangganDialog";
 import { UploadFoto } from "./UploadFoto";
 import { toast } from "sonner";
 import { pesanError } from "@/lib/pesan-error";
@@ -20,12 +16,7 @@ import { formatKg, formatRupiah, formatTanggal } from "@/lib/format";
 import { useLotPembelian, LABEL_STATUS_JUAL, KELAS_STATUS_JUAL } from "@/lib/lot-pembelian";
 import { cn } from "@/lib/utils";
 
-const UKURAN = ["300-500 gram", "500-700 gram", "700-1000 gram", "> 1 kg"];
-const GRADE = ["A", "B", "C"];
-
 const schema = z.object({
-  pelanggan_id: z.string().uuid("Pilih pelanggan"),
-  berat_kg: z.number().positive("Berat harus > 0"),
   harga_per_kg: z.number().positive("Harga jual per kg harus > 0"),
 });
 
@@ -37,23 +28,11 @@ export function FormPenjualan() {
   const [lotId, setLotId] = useState<string | null>(null);
   const lot = lots.find((l) => l.id === lotId) ?? null;
 
-
-  const [tanggal, setTanggal] = useState(() => new Date().toISOString().slice(0, 10));
-  const [pelangganId, setPelangganId] = useState<string | null>(null);
-  const [ukuran, setUkuran] = useState("");
-  const [grade, setGrade] = useState("");
-  const [kolam, setKolam] = useState("");
-  const [jumlahEkor, setJumlahEkor] = useState("");
-  const [beratKg, setBeratKg] = useState("");
   const [hargaPerKg, setHargaPerKg] = useState("");
   const [statusBayar, setStatusBayar] = useState<StatusBayar>("lunas");
   const [jumlahDibayar, setJumlahDibayar] = useState("");
-  const [catatan, setCatatan] = useState("");
-  const [fotoTimbangan, setFotoTimbangan] = useState<string | null>(null);
   const [fotoNota, setFotoNota] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
-  const [dialogOpen, setDialogOpen] = useState(false);
-  const [dialogDefault, setDialogDefault] = useState("");
 
   const { data: pelangganList = [] } = useQuery({
     queryKey: ["pelanggan-active"],
@@ -70,7 +49,7 @@ export function FormPenjualan() {
 
   const sisaStok = lot?.kg_sisa ?? 0;
   const hargaBeliRata = lot?.harga_per_kg ?? 0;
-  const beratNum = parseFloat(beratKg) || 0;
+  const beratNum = sisaStok;
   const hargaNum = parseFloat(hargaPerKg) || 0;
   const total = useMemo(() => +(beratNum * hargaNum).toFixed(2), [beratNum, hargaNum]);
   const modal = +(beratNum * hargaBeliRata).toFixed(2);
@@ -81,40 +60,29 @@ export function FormPenjualan() {
 
   async function simpan() {
     if (saving) return;
-    const parsed = schema.safeParse({
-      pelanggan_id: pelangganId ?? "",
-      berat_kg: beratNum,
-      harga_per_kg: hargaNum,
-    });
+    const parsed = schema.safeParse({ harga_per_kg: hargaNum });
     if (!parsed.success) return toast.error(parsed.error.issues[0].message);
     if (!lot) return toast.error("Pilih lot pembelian dulu");
-    if (beratNum > sisaStok + 0.001) {
-      return toast.error(`Sisa lot hanya ${formatKg(sisaStok)}`);
-    }
+    if (beratNum <= 0) return toast.error("Sisa lot kosong");
+    const pelangganId = pelangganList[0]?.id;
+    if (!pelangganId) return toast.error("Tambahkan data pelanggan dulu di menu Pelanggan");
     if (statusBayar === "sebagian" && (dibayarNum <= 0 || dibayarNum >= total)) {
       return toast.error("Jumlah dibayar harus > 0 dan < total");
     }
 
     const payload = {
       _pembelian_id: lot.id,
-      _pelanggan_id: parsed.data.pelanggan_id,
-      _berat_kg: parsed.data.berat_kg,
+      _pelanggan_id: pelangganId,
+      _berat_kg: beratNum,
       _harga_per_kg: parsed.data.harga_per_kg,
-      _tanggal: tanggal,
+      _tanggal: new Date().toISOString().slice(0, 10),
       _status_bayar: statusBayar,
       _jumlah_dibayar: statusBayar === "sebagian" ? dibayarNum : 0,
-      _jumlah_ekor: parseInt(jumlahEkor) || 0,
-      _ukuran: ukuran || undefined,
-      _grade: grade || undefined,
-      _kolam: kolam || undefined,
-      _catatan: catatan || undefined,
-      _foto_timbangan_url: fotoTimbangan ?? undefined,
+      _jumlah_ekor: 0,
       _foto_nota_url: fotoNota ?? undefined,
     };
 
-    const namaPelanggan =
-      pelangganList.find((p) => p.id === parsed.data.pelanggan_id)?.nama ?? "Pelanggan";
-    const ringkas = `Penjualan ${formatKg(beratNum)} — ${namaPelanggan}`;
+    const ringkas = `Penjualan ${formatKg(beratNum)}`;
 
     if (sedangOffline()) {
       tambahAntrian("penjualan", ringkas, payload);
@@ -142,263 +110,121 @@ export function FormPenjualan() {
     navigate({ to: "/riwayat" });
   }
 
-  const pelangganOptions = pelangganList.map((p) => ({ value: p.id, label: p.nama }));
-
   return (
-    <>
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          void simpan();
-        }}
-        className="mx-auto w-full max-w-[520px] space-y-5"
-      >
-        <div className="space-y-2">
-          <Label>Lot Pembelian *</Label>
-          {lotLoading ? (
-            <div className="rounded-lg border border-border bg-card p-4 text-sm text-muted-foreground">
-              Memuat lot…
-            </div>
-          ) : lots.length === 0 ? (
-            <div className="rounded-lg border border-border bg-card p-4 text-sm text-muted-foreground">
-              Belum ada lot pembelian yang tersisa. Input pembelian dulu.
-            </div>
-          ) : (
-            <div className="space-y-2">
-              {lots.map((l) => (
-                <button
-                  key={l.id}
-                  type="button"
-                  onClick={() => {
-                    setLotId(l.id);
-                    setBeratKg("");
-                  }}
-                  className={cn(
-                    "w-full rounded-lg border p-3 text-left transition",
-                    lotId === l.id
-                      ? "border-primary bg-primary/5"
-                      : "border-border bg-card hover:border-primary/50",
-                  )}
-                >
-                  <div className="flex items-center justify-between gap-2">
-                    <span className="font-semibold text-foreground">{l.jenis_ikan}</span>
-                    <span
-                      className={cn(
-                        "rounded px-2 py-0.5 text-[11px] font-medium",
-                        KELAS_STATUS_JUAL[l.status_jual],
-                      )}
-                    >
-                      {LABEL_STATUS_JUAL[l.status_jual]}
-                    </span>
-                  </div>
-                  <div className="mt-1 text-xs text-muted-foreground">
-                    {formatTanggal(l.tanggal)} · {l.nama_petani ?? "—"} · {l.box} box
-                  </div>
-                  <div className="mt-2 flex items-center justify-between text-sm">
-                    <span>
-                      Sisa <span className="font-medium">{formatKg(l.kg_sisa)}</span>
-                    </span>
-                    <span className="text-muted-foreground">
-                      Beli {formatRupiah(l.harga_per_kg)}/kg
-                    </span>
-                  </div>
-                </button>
-              ))}
-            </div>
-          )}
-        </div>
-
-
-        <div className="space-y-2">
-          <Label htmlFor="tanggal-jual">Tanggal Penjualan *</Label>
-          <Input
-            id="tanggal-jual"
-            type="date"
-            value={tanggal}
-            onChange={(e) => setTanggal(e.target.value)}
-            className="h-12"
-          />
-        </div>
-
-        <div className="space-y-2">
-          <Label>Pembeli *</Label>
-          <SearchSelect
-            options={pelangganOptions}
-            value={pelangganId}
-            onChange={setPelangganId}
-            placeholder="Pilih pelanggan…"
-            emptyText="Pelanggan belum ada."
-            addNewLabel="Tambah pelanggan baru"
-            onAddNew={(q) => {
-              setDialogDefault(q);
-              setDialogOpen(true);
-            }}
-          />
-        </div>
-
-        <div className="grid grid-cols-2 gap-3">
+    <form
+      onSubmit={(e) => {
+        e.preventDefault();
+        void simpan();
+      }}
+      className="mx-auto w-full max-w-[520px] space-y-5"
+    >
+      <div className="space-y-2">
+        <Label>Lot Pembelian *</Label>
+        {lotLoading ? (
+          <div className="rounded-lg border border-border bg-card p-4 text-sm text-muted-foreground">
+            Memuat lot…
+          </div>
+        ) : lots.length === 0 ? (
+          <div className="rounded-lg border border-border bg-card p-4 text-sm text-muted-foreground">
+            Belum ada lot pembelian yang tersisa. Input pembelian dulu.
+          </div>
+        ) : (
           <div className="space-y-2">
-            <Label htmlFor="berat">Berat Dijual (kg) *</Label>
-            <InputJumlah
-              id="berat"
-              value={beratKg}
-              onChange={setBeratKg}
-              step={0.5}
-              placeholder="0"
-            />
-            <div className="flex items-center justify-between text-xs text-muted-foreground">
-              <span>Maks {formatKg(sisaStok)}</span>
+            {lots.map((l) => (
               <button
+                key={l.id}
                 type="button"
-                className="font-medium text-primary underline-offset-2 hover:underline"
-                onClick={() => setBeratKg(String(sisaStok))}
+                onClick={() => setLotId(l.id)}
+                className={cn(
+                  "w-full rounded-lg border p-3 text-left transition",
+                  lotId === l.id
+                    ? "border-primary bg-primary/5"
+                    : "border-border bg-card hover:border-primary/50",
+                )}
               >
-                Jual semua
+                <div className="flex items-center justify-between gap-2">
+                  <span className="font-semibold text-foreground">{l.jenis_ikan}</span>
+                  <span
+                    className={cn(
+                      "rounded px-2 py-0.5 text-[11px] font-medium",
+                      KELAS_STATUS_JUAL[l.status_jual],
+                    )}
+                  >
+                    {LABEL_STATUS_JUAL[l.status_jual]}
+                  </span>
+                </div>
+                <div className="mt-1 text-xs text-muted-foreground">
+                  {formatTanggal(l.tanggal)} · {l.nama_petani ?? "—"} · {l.box} box
+                </div>
+                <div className="mt-2 flex items-center justify-between text-sm">
+                  <span>
+                    Sisa <span className="font-medium">{formatKg(l.kg_sisa)}</span>
+                  </span>
+                  <span className="text-muted-foreground">Beli {formatRupiah(l.harga_per_kg)}/kg</span>
+                </div>
               </button>
-            </div>
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="harga">Harga Jual per kg (Rp) *</Label>
-            <Input
-              id="harga"
-              type="number"
-              inputMode="numeric"
-              step={500}
-              min={0}
-              value={hargaPerKg}
-              onChange={(e) => setHargaPerKg(e.target.value)}
-              className="h-12"
-              placeholder="0"
-            />
-          </div>
-        </div>
-
-        <RingkasanTotal total={total} sisa={sisaBayar} label="Total Penjualan" />
-
-        <div className="rounded-lg border border-border bg-card p-4 text-sm">
-          <div className="flex items-center justify-between">
-            <span className="text-muted-foreground">Modal ({formatKg(beratNum)})</span>
-            <span className="font-medium">{formatRupiah(modal)}</span>
-          </div>
-          <div className="mt-2 flex items-center justify-between">
-            <span className="text-muted-foreground">{laba >= 0 ? "Keuntungan" : "Kerugian"}</span>
-            <span className={cn("font-bold", laba >= 0 ? "text-success" : "text-destructive")}>
-              {formatRupiah(Math.abs(laba))}
-            </span>
-          </div>
-          <div className="mt-2 flex items-center justify-between">
-            <span className="text-muted-foreground">Sisa stok setelah dijual</span>
-            <span className="font-medium">{formatKg(Math.max(0, sisaStok - beratNum))}</span>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-2 gap-3">
-          <div className="space-y-2">
-            <Label>Ukuran</Label>
-            <SearchSelect
-              options={UKURAN.map((u) => ({ value: u, label: u }))}
-              value={ukuran || null}
-              onChange={setUkuran}
-              placeholder="Pilih ukuran…"
-              emptyText="Ketik untuk membuat baru."
-              addNewLabel="Pakai ukuran"
-              onAddNew={(q) => q.trim() && setUkuran(q.trim())}
-            />
-          </div>
-          <div className="space-y-2">
-            <Label>Grade</Label>
-            <SearchSelect
-              options={GRADE.map((g) => ({ value: g, label: g }))}
-              value={grade || null}
-              onChange={setGrade}
-              placeholder="Pilih grade…"
-              emptyText="Ketik untuk membuat baru."
-              addNewLabel="Pakai grade"
-              onAddNew={(q) => q.trim() && setGrade(q.trim())}
-            />
-          </div>
-        </div>
-
-        <div className="grid grid-cols-2 gap-3">
-          <div className="space-y-2">
-            <Label htmlFor="kolam">Kolam</Label>
-            <Input
-              id="kolam"
-              value={kolam}
-              onChange={(e) => setKolam(e.target.value)}
-              className="h-12"
-              placeholder="Kolam 2"
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="ekor">Jumlah (ekor)</Label>
-            <Input
-              id="ekor"
-              type="number"
-              inputMode="numeric"
-              min={0}
-              value={jumlahEkor}
-              onChange={(e) => setJumlahEkor(e.target.value)}
-              className="h-12"
-              placeholder="0"
-            />
-          </div>
-        </div>
-
-        <div className="space-y-2">
-          <Label>Status Pembayaran *</Label>
-          <RadioStatusBayar value={statusBayar} onChange={setStatusBayar} />
-        </div>
-
-        {statusBayar === "sebagian" && (
-          <div className="space-y-2">
-            <Label htmlFor="dibayar-jual">Jumlah Dibayar (Rp) *</Label>
-            <Input
-              id="dibayar-jual"
-              type="number"
-              inputMode="numeric"
-              step={500}
-              min={0}
-              value={jumlahDibayar}
-              onChange={(e) => setJumlahDibayar(e.target.value)}
-              className="h-12"
-              placeholder="0"
-            />
+            ))}
           </div>
         )}
+      </div>
 
-        <UploadFoto label="Foto Timbangan" value={fotoTimbangan} onChange={setFotoTimbangan} />
-        <UploadFoto label="Foto Nota" value={fotoNota} onChange={setFotoNota} />
+      <div className="space-y-2">
+        <Label htmlFor="harga">Harga Jual per kg (Rp) *</Label>
+        <Input
+          id="harga"
+          type="number"
+          inputMode="numeric"
+          step={500}
+          min={0}
+          value={hargaPerKg}
+          onChange={(e) => setHargaPerKg(e.target.value)}
+          className="h-12"
+          placeholder="0"
+        />
+      </div>
 
+      <RingkasanTotal total={total} sisa={sisaBayar} label="Total Penjualan" />
+
+      <div className="rounded-lg border border-border bg-card p-4 text-sm">
+        <div className="flex items-center justify-between">
+          <span className="text-muted-foreground">Modal ({formatKg(beratNum)})</span>
+          <span className="font-medium">{formatRupiah(modal)}</span>
+        </div>
+        <div className="mt-2 flex items-center justify-between">
+          <span className="text-muted-foreground">{laba >= 0 ? "Keuntungan" : "Kerugian"}</span>
+          <span className={cn("font-bold", laba >= 0 ? "text-success" : "text-destructive")}>
+            {formatRupiah(Math.abs(laba))}
+          </span>
+        </div>
+      </div>
+
+      <div className="space-y-2">
+        <Label>Status Pembayaran *</Label>
+        <RadioStatusBayar value={statusBayar} onChange={setStatusBayar} />
+      </div>
+
+      {statusBayar === "sebagian" && (
         <div className="space-y-2">
-          <Label htmlFor="catatan-jual">Catatan</Label>
-          <Textarea
-            id="catatan-jual"
-            value={catatan}
-            onChange={(e) => setCatatan(e.target.value)}
-            placeholder="Penjualan rutin ke pelanggan langganan"
-            rows={3}
+          <Label htmlFor="dibayar-jual">Jumlah Dibayar (Rp) *</Label>
+          <Input
+            id="dibayar-jual"
+            type="number"
+            inputMode="numeric"
+            step={500}
+            min={0}
+            value={jumlahDibayar}
+            onChange={(e) => setJumlahDibayar(e.target.value)}
+            className="h-12"
+            placeholder="0"
           />
         </div>
+      )}
 
-        <Button
-          type="submit"
-          className="h-12 w-full text-base"
-          disabled={saving || !lot || sisaStok <= 0}
-        >
-          {!lot ? "Pilih lot dulu" : saving ? "Menyimpan…" : "Simpan Penjualan"}
-        </Button>
-      </form>
+      <UploadFoto label="Foto Nota" value={fotoNota} onChange={setFotoNota} />
 
-      <TambahPelangganDialog
-        open={dialogOpen}
-        onOpenChange={setDialogOpen}
-        defaultNama={dialogDefault}
-        onCreated={(p) => {
-          qc.invalidateQueries({ queryKey: ["pelanggan-active"] });
-          setPelangganId(p.id);
-        }}
-      />
-    </>
+      <Button type="submit" className="h-12 w-full text-base" disabled={saving || !lot || sisaStok <= 0}>
+        {!lot ? "Pilih lot dulu" : saving ? "Menyimpan…" : "Simpan Penjualan"}
+      </Button>
+    </form>
   );
 }
