@@ -15,6 +15,8 @@ import {
 } from "recharts";
 import { ShoppingCart, Store, TrendingUp, Sparkle } from "lucide-react";
 import { AppShell } from "@/components/AppShell";
+import { AlurLaba } from "@/components/AlurLaba";
+import { RincianAngka } from "@/components/RincianAngka";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
