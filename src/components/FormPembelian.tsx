@@ -168,12 +168,27 @@ export function FormPembelian() {
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="jumlah_kg">Jumlah (kg) *</Label>
+          <Label htmlFor="jumlah_kg">Berat (Kg) *</Label>
           <InputJumlah id="jumlah_kg" value={jumlahKg} onChange={setJumlahKg} step={0.5} placeholder="0" />
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="harga_per_kg">Harga per kg (Rp) *</Label>
+          <Label htmlFor="box">Box *</Label>
+          <Input
+            id="box"
+            type="number"
+            inputMode="numeric"
+            step={1}
+            min={0}
+            value={box}
+            onChange={(e) => setBox(e.target.value)}
+            className="h-12"
+            placeholder="0"
+          />
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="harga_per_kg">Harga per Box (Rp) *</Label>
           <Input
             id="harga_per_kg"
             type="number"
@@ -186,6 +201,7 @@ export function FormPembelian() {
             placeholder="0"
           />
         </div>
+
 
         <RingkasanTotal total={total} sisa={sisa} />
 
