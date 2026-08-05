@@ -73,7 +73,11 @@ export function ChatAI({
         <ConversationContent className="mx-auto w-full max-w-[760px]">
           {messages.length === 0 ? (
             <ConversationEmptyState
-              icon={<Fish className="h-6 w-6 text-primary" />}
+              icon={
+                <span className="surface-card grid h-12 w-12 place-items-center rounded-2xl">
+                  <Fish className="h-6 w-6 text-primary" />
+                </span>
+              }
               title="Tanya AI Bandar Ikan"
               description="Tanyakan apa saja tentang pembelian, penjualan, kas, hutang, dan piutang Anda."
             >
@@ -83,7 +87,7 @@ export function ChatAI({
                     key={c}
                     type="button"
                     onClick={() => kirim(c)}
-                    className="rounded-full border border-border px-3 py-1.5 text-xs text-muted-foreground hover:bg-accent"
+                    className="surface-card rounded-full px-3.5 py-2 text-xs text-muted-foreground transition-colors hover:text-foreground"
                   >
                     {c}
                   </button>
@@ -92,8 +96,13 @@ export function ChatAI({
             </ConversationEmptyState>
           ) : (
             messages.map((m) => (
-              <Message key={m.id} from={m.role}>
-                <MessageContent>
+              <Message key={m.id} from={m.role} className="flex-row! items-start gap-2.5">
+                {m.role === "assistant" && (
+                  <span className="mt-0.5 grid h-7 w-7 shrink-0 place-items-center rounded-full bg-primary/12 text-primary ring-1 ring-primary/15">
+                    <Fish className="h-3.5 w-3.5" />
+                  </span>
+                )}
+                <MessageContent className="group-[.is-user]:rounded-2xl group-[.is-user]:rounded-br-md group-[.is-user]:bg-primary group-[.is-user]:text-primary-foreground group-[.is-user]:shadow-sm group-[.is-assistant]:leading-relaxed">
                   {m.parts.map((part, i) =>
                     part.type === "text" ? (
                       <MessageResponse key={i}>{part.text}</MessageResponse>
@@ -104,7 +113,10 @@ export function ChatAI({
             ))
           )}
           {status === "submitted" && (
-            <Message from="assistant">
+            <Message from="assistant" className="flex-row! items-start gap-2.5">
+              <span className="mt-0.5 grid h-7 w-7 shrink-0 place-items-center rounded-full bg-primary/12 text-primary ring-1 ring-primary/15">
+                <Fish className="h-3.5 w-3.5" />
+              </span>
               <MessageContent>
                 <Shimmer>Sedang berpikir…</Shimmer>
               </MessageContent>
@@ -114,9 +126,10 @@ export function ChatAI({
         <ConversationScrollButton />
       </Conversation>
 
-      <div className="border-t border-border bg-background p-3">
+      <div className="border-t border-border/60 bg-background/70 p-3 backdrop-blur-xl">
         <div className="mx-auto w-full max-w-[760px]">
           <PromptInput
+            className="surface-card rounded-2xl"
             onSubmit={(_msg, event) => {
               event.preventDefault();
               const form = event.currentTarget as HTMLFormElement;
@@ -126,7 +139,11 @@ export function ChatAI({
               kirim(value);
             }}
           >
-            <PromptInputTextarea ref={textareaRef} placeholder="Tanya tentang data bandar ikan Anda…" />
+            <PromptInputTextarea
+              ref={textareaRef}
+              className="bg-transparent"
+              placeholder="Tanya tentang data bandar ikan Anda…"
+            />
             <PromptInputFooter className="justify-end">
               <PromptInputSubmit status={status} disabled={sibuk} />
             </PromptInputFooter>
