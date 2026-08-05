@@ -15,6 +15,7 @@ import { AppShell } from "@/components/AppShell";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { TombolEkspor } from "@/components/TombolEkspor";
 import { formatRupiah } from "@/lib/format";
 import {
   rentang,
@@ -26,6 +27,7 @@ import {
   useRingkasanPeriode,
   type Periode,
 } from "@/lib/analitik";
+
 
 export const Route = createFileRoute("/_authenticated/analisis")({
   head: () => ({
