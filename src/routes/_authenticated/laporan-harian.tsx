@@ -117,8 +117,7 @@ function LaporanHarianPage() {
     setSibuk("excel");
     try {
       const blob = await buatExcelHarian(laporan);
-      unduhBlob(blob, `Laporan-Harian-${tanggal}.xlsx`);
-      toast.success("Excel laporan harian diunduh");
+      setPratinjau({ blob, namaFile: `Laporan-Harian-${tanggal}.xlsx`, jenis: "excel" });
     } catch (e) {
       console.error(e);
       toast.error("Gagal membuat file Excel");
