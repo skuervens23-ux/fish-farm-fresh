@@ -2,6 +2,7 @@
 import type { LaporanHarian } from "@/lib/laporan-harian";
 import { tanggalIndo } from "@/lib/laporan-harian";
 import { tambahSheetBukuBesar } from "@/lib/buku-besar-excel";
+import { tambahSheetCatatan } from "@/lib/catatan-harian-excel";
 
 const BIRU = "FF0B3F96";
 const BIRU_MUDA = "FFE8EEF9";
