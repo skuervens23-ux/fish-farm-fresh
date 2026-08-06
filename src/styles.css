@@ -227,3 +227,19 @@
     display: none !important;
   }
 }
+
+.pratinjau-excel table {
+  border-collapse: collapse;
+  width: max-content;
+  min-width: 100%;
+}
+.pratinjau-excel td,
+.pratinjau-excel th {
+  border: 1px solid hsl(var(--border, 0 0% 80%));
+  padding: 4px 8px;
+  white-space: nowrap;
+  font-size: 12px;
+}
+.pratinjau-excel tr:first-child td {
+  font-weight: 600;
+}
