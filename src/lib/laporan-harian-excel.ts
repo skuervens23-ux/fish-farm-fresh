@@ -2,6 +2,7 @@
 import type { LaporanHarian } from "@/lib/laporan-harian";
 import { tanggalIndo } from "@/lib/laporan-harian";
 import { tambahSheetBukuBesar } from "@/lib/buku-besar-excel";
+import { tambahSheetCatatan } from "@/lib/catatan-harian-excel";
 
 const BIRU = "FF0B3F96";
 const BIRU_MUDA = "FFE8EEF9";
@@ -84,6 +85,8 @@ export async function buatExcelHarian(d: LaporanHarian): Promise<Blob> {
   const wb = new ExcelJS.Workbook();
   wb.creator = d.perusahaan;
   wb.created = new Date();
+
+  tambahSheetCatatan(wb, d);
 
   const ws = wb.addWorksheet("Laporan Harian", {
     pageSetup: {
