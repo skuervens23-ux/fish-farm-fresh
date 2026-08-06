@@ -18,7 +18,7 @@ import {
 import { formatRupiah } from "@/lib/format";
 import { useLaporanHarian, tanggalIndo } from "@/lib/laporan-harian";
 import { buatExcelHarian } from "@/lib/laporan-harian-excel";
-import { unduhBlob } from "@/lib/workbook-laporan";
+import { PratinjauEkspor, type BerkasPratinjau } from "@/components/PratinjauEkspor";
 
 export const Route = createFileRoute("/_authenticated/laporan-harian")({
   head: () => ({
@@ -50,6 +50,7 @@ function LaporanHarianPage() {
   const [fIkan, setFIkan] = useState("semua");
   const [cari, setCari] = useState("");
   const [sibuk, setSibuk] = useState<"" | "excel" | "pdf">("");
+  const [pratinjau, setPratinjau] = useState<BerkasPratinjau>(null);
 
   const { data, isLoading } = useLaporanHarian(tanggal);
 
@@ -116,8 +117,7 @@ function LaporanHarianPage() {
     setSibuk("excel");
     try {
       const blob = await buatExcelHarian(laporan);
-      unduhBlob(blob, `Laporan-Harian-${tanggal}.xlsx`);
-      toast.success("Excel laporan harian diunduh");
+      setPratinjau({ blob, namaFile: `Laporan-Harian-${tanggal}.xlsx`, jenis: "excel" });
     } catch (e) {
       console.error(e);
       toast.error("Gagal membuat file Excel");
@@ -284,8 +284,11 @@ function LaporanHarianPage() {
           doc.internal.pageSize.getHeight() - 20,
         );
       }
-      doc.save(`Laporan-Harian-${tanggal}.pdf`);
-      toast.success("PDF laporan harian diunduh");
+      setPratinjau({
+        blob: doc.output("blob"),
+        namaFile: `Laporan-Harian-${tanggal}.pdf`,
+        jenis: "pdf",
+      });
     } catch (e) {
       console.error(e);
       toast.error("Gagal membuat PDF");
@@ -348,7 +351,7 @@ function LaporanHarianPage() {
               ) : (
                 <FileSpreadsheet className="mr-1.5 h-4 w-4" />
               )}
-              Export Excel
+              Lihat Excel
             </Button>
             <Button size="sm" variant="secondary" onClick={() => void unduhPDF()} disabled={sibuk !== ""}>
               {sibuk === "pdf" ? (
@@ -356,13 +359,17 @@ function LaporanHarianPage() {
               ) : (
                 <FileText className="mr-1.5 h-4 w-4" />
               )}
-              Export PDF
+              Lihat PDF
             </Button>
             <Button size="sm" variant="outline" onClick={() => window.print()}>
               <Printer className="mr-1.5 h-4 w-4" /> Cetak
             </Button>
           </div>
         </Card>
+
+        <PratinjauEkspor berkas={pratinjau} onClose={() => setPratinjau(null)} />
+
+
 
         {isLoading || !laporan ? (
           <Skeleton className="h-96 w-full" />
