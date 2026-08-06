@@ -50,6 +50,7 @@ function LaporanHarianPage() {
   const [fIkan, setFIkan] = useState("semua");
   const [cari, setCari] = useState("");
   const [sibuk, setSibuk] = useState<"" | "excel" | "pdf">("");
+  const [pratinjau, setPratinjau] = useState<BerkasPratinjau>(null);
 
   const { data, isLoading } = useLaporanHarian(tanggal);
 
