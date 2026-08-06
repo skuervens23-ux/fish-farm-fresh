@@ -85,6 +85,8 @@ export async function buatExcelHarian(d: LaporanHarian): Promise<Blob> {
   wb.creator = d.perusahaan;
   wb.created = new Date();
 
+  tambahSheetCatatan(wb, d);
+
   const ws = wb.addWorksheet("Laporan Harian", {
     pageSetup: {
       paperSize: 9,
