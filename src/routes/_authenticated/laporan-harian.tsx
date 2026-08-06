@@ -351,7 +351,7 @@ function LaporanHarianPage() {
               ) : (
                 <FileSpreadsheet className="mr-1.5 h-4 w-4" />
               )}
-              Export Excel
+              Lihat Excel
             </Button>
             <Button size="sm" variant="secondary" onClick={() => void unduhPDF()} disabled={sibuk !== ""}>
               {sibuk === "pdf" ? (
@@ -359,7 +359,7 @@ function LaporanHarianPage() {
               ) : (
                 <FileText className="mr-1.5 h-4 w-4" />
               )}
-              Export PDF
+              Lihat PDF
             </Button>
             <Button size="sm" variant="outline" onClick={() => window.print()}>
               <Printer className="mr-1.5 h-4 w-4" /> Cetak
