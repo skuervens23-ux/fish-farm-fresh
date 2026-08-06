@@ -13,7 +13,6 @@ import {
   Sparkle,
   Receipt,
   Boxes,
-  Package,
   History,
   TrendingUp,
 } from "lucide-react";
