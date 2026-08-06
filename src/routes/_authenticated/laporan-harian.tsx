@@ -284,8 +284,11 @@ function LaporanHarianPage() {
           doc.internal.pageSize.getHeight() - 20,
         );
       }
-      doc.save(`Laporan-Harian-${tanggal}.pdf`);
-      toast.success("PDF laporan harian diunduh");
+      setPratinjau({
+        blob: doc.output("blob"),
+        namaFile: `Laporan-Harian-${tanggal}.pdf`,
+        jenis: "pdf",
+      });
     } catch (e) {
       console.error(e);
       toast.error("Gagal membuat PDF");
