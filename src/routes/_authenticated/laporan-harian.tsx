@@ -367,6 +367,10 @@ function LaporanHarianPage() {
           </div>
         </Card>
 
+        <PratinjauEkspor berkas={pratinjau} onClose={() => setPratinjau(null)} />
+
+
+
         {isLoading || !laporan ? (
           <Skeleton className="h-96 w-full" />
         ) : (
