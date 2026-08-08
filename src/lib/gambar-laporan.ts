@@ -1,5 +1,5 @@
 import type { LaporanHarian } from "@/lib/laporan-harian";
-import { formatBoxKg } from "@/lib/format";
+import { formatBoxKgAngka } from "@/lib/format";
 
 const rp = (n: number) => new Intl.NumberFormat("id-ID").format(Math.round(n));
 const angka = (n: number) =>
@@ -18,7 +18,7 @@ export function barisLaporanSatuan(d: LaporanHarian): BarisGambar[] {
   return [
     ...d.pembelian.map((b) => ({
       nama: b.supplier,
-      angka: formatBoxKg(b.box, b.sisa_kg),
+      angka: formatBoxKgAngka(b.box, b.sisa_kg),
       angkaBawah: `${angka(b.berat)} kg`,
       kode: b.jenis_ikan,
       nominal: b.total,
