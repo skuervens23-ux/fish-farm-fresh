@@ -75,7 +75,7 @@ export function FormPenjualan() {
       _pelanggan_id: pelangganId,
       _berat_kg: beratNum,
       _harga_per_kg: parsed.data.harga_per_kg,
-      _tanggal: new Date().toISOString().slice(0, 10),
+      _tanggal: lot.tanggal,
       _status_bayar: statusBayar,
       _jumlah_dibayar: statusBayar === "sebagian" ? dibayarNum : 0,
       _jumlah_ekor: 0,
@@ -129,42 +129,63 @@ export function FormPenjualan() {
             Belum ada lot pembelian yang tersisa. Input pembelian dulu.
           </div>
         ) : (
-          <div className="space-y-2">
-            {lots.map((l) => (
-              <button
-                key={l.id}
-                type="button"
-                onClick={() => setLotId(l.id)}
-                className={cn(
-                  "w-full rounded-lg border p-3 text-left transition",
-                  lotId === l.id
-                    ? "border-primary bg-primary/5"
-                    : "border-border bg-card hover:border-primary/50",
-                )}
-              >
-                <div className="flex items-center justify-between gap-2">
-                  <span className="font-semibold text-foreground">{l.jenis_ikan}</span>
-                  <span
-                    className={cn(
-                      "rounded px-2 py-0.5 text-[11px] font-medium",
-                      KELAS_STATUS_JUAL[l.status_jual],
-                    )}
-                  >
-                    {LABEL_STATUS_JUAL[l.status_jual]}
-                  </span>
+          <div className="space-y-4">
+            {Object.entries(
+              lots.reduce<Record<string, typeof lots>>((acc, l) => {
+                (acc[l.tanggal] ||= []).push(l);
+                return acc;
+              }, {}),
+            )
+              .sort((a, b) => (a[0] < b[0] ? 1 : -1))
+              .map(([tanggal, grup]) => (
+                <div key={tanggal} className="space-y-2">
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                      {formatTanggal(tanggal)}
+                    </span>
+                    <span className="h-px flex-1 bg-border" />
+                    <span className="text-[11px] text-muted-foreground">{grup.length} lot</span>
+                  </div>
+                  {grup.map((l) => (
+                    <button
+                      key={l.id}
+                      type="button"
+                      onClick={() => setLotId(l.id)}
+                      className={cn(
+                        "w-full rounded-lg border p-3 text-left transition",
+                        lotId === l.id
+                          ? "border-primary bg-primary/5"
+                          : "border-border bg-card hover:border-primary/50",
+                      )}
+                    >
+                      <div className="flex items-center justify-between gap-2">
+                        <span className="font-semibold text-foreground">{l.jenis_ikan}</span>
+                        <span
+                          className={cn(
+                            "rounded px-2 py-0.5 text-[11px] font-medium",
+                            KELAS_STATUS_JUAL[l.status_jual],
+                          )}
+                        >
+                          {LABEL_STATUS_JUAL[l.status_jual]}
+                        </span>
+                      </div>
+                      <div className="mt-1 text-xs text-muted-foreground">
+                        {l.nama_petani ?? "—"} · {l.box} box
+                      </div>
+                      <div className="mt-2 flex items-center justify-between text-sm">
+                        <span>
+                          Sisa <span className="font-medium">{formatKg(l.kg_sisa)}</span>
+                        </span>
+                        <span className="text-muted-foreground">
+                          Beli {formatRupiah(l.harga_per_kg)}/kg
+                        </span>
+                      </div>
+                    </button>
+                  ))}
                 </div>
-                <div className="mt-1 text-xs text-muted-foreground">
-                  {formatTanggal(l.tanggal)} · {l.nama_petani ?? "—"} · {l.box} box
-                </div>
-                <div className="mt-2 flex items-center justify-between text-sm">
-                  <span>
-                    Sisa <span className="font-medium">{formatKg(l.kg_sisa)}</span>
-                  </span>
-                  <span className="text-muted-foreground">Beli {formatRupiah(l.harga_per_kg)}/kg</span>
-                </div>
-              </button>
-            ))}
+              ))}
           </div>
+
         )}
       </div>
 
