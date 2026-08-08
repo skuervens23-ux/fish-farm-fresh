@@ -1,4 +1,5 @@
 import type { LaporanHarian } from "@/lib/laporan-harian";
+import { formatBoxKg } from "@/lib/format";
 
 const rp = (n: number) => new Intl.NumberFormat("id-ID").format(Math.round(n));
 const angka = (n: number) =>
@@ -7,6 +8,7 @@ const angka = (n: number) =>
 export type BarisGambar = {
   nama: string;
   angka: string;
+  angkaBawah?: string;
   kode: string;
   nominal: number;
 };
@@ -16,7 +18,8 @@ export function barisLaporanSatuan(d: LaporanHarian): BarisGambar[] {
   return [
     ...d.pembelian.map((b) => ({
       nama: b.supplier,
-      angka: angka(b.berat),
+      angka: formatBoxKg(b.box, b.sisa_kg),
+      angkaBawah: `${angka(b.berat)} kg`,
       kode: b.jenis_ikan,
       nominal: b.total,
     })),
@@ -44,7 +47,7 @@ export function gambarLaporanHarian(d: LaporanHarian): string {
   const S = 2; // skala retina
   const W = 900;
   const padX = 48;
-  const tinggiBaris = 44;
+  const tinggiBaris = 48;
   const atas = 150;
   const H = atas + Math.max(baris.length, 1) * tinggiBaris + 150;
 
@@ -96,7 +99,14 @@ export function gambarLaporanHarian(d: LaporanHarian): string {
     c.textAlign = "left";
     c.fillText(b.nama, kolNama, y);
     c.textAlign = "center";
-    if (b.angka) c.fillText(b.angka, kolAngka, y);
+    if (b.angka) c.fillText(b.angka, kolAngka, b.angkaBawah ? y - 9 : y);
+    if (b.angkaBawah) {
+      c.font = "14px Georgia, serif";
+      c.fillStyle = "#6b7280";
+      c.fillText(b.angkaBawah, kolAngka, y + 11);
+      c.font = "20px Georgia, serif";
+      c.fillStyle = "#111827";
+    }
     if (b.kode) c.fillText(b.kode, kolKode, y);
     c.textAlign = "right";
     c.fillText(rp(b.nominal), kolNominal, y);
