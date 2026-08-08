@@ -19,6 +19,9 @@ import { formatRupiah } from "@/lib/format";
 import { useLaporanHarian, tanggalIndo } from "@/lib/laporan-harian";
 import { buatExcelHarian } from "@/lib/laporan-harian-excel";
 import { PratinjauEkspor, type BerkasPratinjau } from "@/components/PratinjauEkspor";
+import { PratinjauGambar } from "@/components/PratinjauGambar";
+import { gambarLaporanHarian } from "@/lib/gambar-laporan";
+
 
 export const Route = createFileRoute("/_authenticated/laporan-harian")({
   head: () => ({
