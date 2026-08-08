@@ -196,14 +196,15 @@ function LaporanHarianPage() {
               )}
               Lihat Excel
             </Button>
-            <Button size="sm" variant="secondary" onClick={() => void unduhPDF()} disabled={sibuk !== ""}>
+            <Button size="sm" variant="secondary" onClick={tampilkanGambar} disabled={sibuk !== ""}>
               {sibuk === "pdf" ? (
                 <Loader2 className="mr-1.5 h-4 w-4 animate-spin" />
               ) : (
-                <FileText className="mr-1.5 h-4 w-4" />
+                <ImageIcon className="mr-1.5 h-4 w-4" />
               )}
-              Lihat PDF
+              Lihat Laporan
             </Button>
+
             <Button size="sm" variant="outline" onClick={() => window.print()}>
               <Printer className="mr-1.5 h-4 w-4" /> Cetak
             </Button>
