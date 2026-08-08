@@ -31,7 +31,6 @@ import { Route as AuthenticatedPetaniIndexRouteImport } from './routes/_authenti
 import { Route as AuthenticatedPembelianIndexRouteImport } from './routes/_authenticated/pembelian.index'
 import { Route as AuthenticatedPelangganIndexRouteImport } from './routes/_authenticated/pelanggan.index'
 import { Route as AuthenticatedAiIndexRouteImport } from './routes/_authenticated/ai.index'
-import { Route as AuthenticatedPenjualanBaruRouteImport } from './routes/_authenticated/penjualan.baru'
 import { Route as AuthenticatedPenjualanIdRouteImport } from './routes/_authenticated/penjualan.$id'
 import { Route as AuthenticatedPembelianBaruRouteImport } from './routes/_authenticated/pembelian.baru'
 import { Route as AuthenticatedPembelianIdRouteImport } from './routes/_authenticated/pembelian.$id'
@@ -154,12 +153,6 @@ const AuthenticatedAiIndexRoute = AuthenticatedAiIndexRouteImport.update({
   path: '/ai/',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const AuthenticatedPenjualanBaruRoute =
-  AuthenticatedPenjualanBaruRouteImport.update({
-    id: '/penjualan/baru',
-    path: '/penjualan/baru',
-    getParentRoute: () => AuthenticatedRouteRoute,
-  } as any)
 const AuthenticatedPenjualanIdRoute =
   AuthenticatedPenjualanIdRouteImport.update({
     id: '/penjualan/$id',
@@ -219,7 +212,6 @@ export interface FileRoutesByFullPath {
   '/pembelian/$id': typeof AuthenticatedPembelianIdRoute
   '/pembelian/baru': typeof AuthenticatedPembelianBaruRoute
   '/penjualan/$id': typeof AuthenticatedPenjualanIdRoute
-  '/penjualan/baru': typeof AuthenticatedPenjualanBaruRoute
   '/ai/': typeof AuthenticatedAiIndexRoute
   '/pelanggan/': typeof AuthenticatedPelangganIndexRoute
   '/pembelian/': typeof AuthenticatedPembelianIndexRoute
@@ -249,7 +241,6 @@ export interface FileRoutesByTo {
   '/pembelian/$id': typeof AuthenticatedPembelianIdRoute
   '/pembelian/baru': typeof AuthenticatedPembelianBaruRoute
   '/penjualan/$id': typeof AuthenticatedPenjualanIdRoute
-  '/penjualan/baru': typeof AuthenticatedPenjualanBaruRoute
   '/ai': typeof AuthenticatedAiIndexRoute
   '/pelanggan': typeof AuthenticatedPelangganIndexRoute
   '/pembelian': typeof AuthenticatedPembelianIndexRoute
@@ -281,7 +272,6 @@ export interface FileRoutesById {
   '/_authenticated/pembelian/$id': typeof AuthenticatedPembelianIdRoute
   '/_authenticated/pembelian/baru': typeof AuthenticatedPembelianBaruRoute
   '/_authenticated/penjualan/$id': typeof AuthenticatedPenjualanIdRoute
-  '/_authenticated/penjualan/baru': typeof AuthenticatedPenjualanBaruRoute
   '/_authenticated/ai/': typeof AuthenticatedAiIndexRoute
   '/_authenticated/pelanggan/': typeof AuthenticatedPelangganIndexRoute
   '/_authenticated/pembelian/': typeof AuthenticatedPembelianIndexRoute
@@ -313,7 +303,6 @@ export interface FileRouteTypes {
     | '/pembelian/$id'
     | '/pembelian/baru'
     | '/penjualan/$id'
-    | '/penjualan/baru'
     | '/ai/'
     | '/pelanggan/'
     | '/pembelian/'
@@ -343,7 +332,6 @@ export interface FileRouteTypes {
     | '/pembelian/$id'
     | '/pembelian/baru'
     | '/penjualan/$id'
-    | '/penjualan/baru'
     | '/ai'
     | '/pelanggan'
     | '/pembelian'
@@ -374,7 +362,6 @@ export interface FileRouteTypes {
     | '/_authenticated/pembelian/$id'
     | '/_authenticated/pembelian/baru'
     | '/_authenticated/penjualan/$id'
-    | '/_authenticated/penjualan/baru'
     | '/_authenticated/ai/'
     | '/_authenticated/pelanggan/'
     | '/_authenticated/pembelian/'
@@ -549,13 +536,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAiIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/penjualan/baru': {
-      id: '/_authenticated/penjualan/baru'
-      path: '/penjualan/baru'
-      fullPath: '/penjualan/baru'
-      preLoaderRoute: typeof AuthenticatedPenjualanBaruRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
     '/_authenticated/penjualan/$id': {
       id: '/_authenticated/penjualan/$id'
       path: '/penjualan/$id'
@@ -617,7 +597,6 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedPembelianIdRoute: typeof AuthenticatedPembelianIdRoute
   AuthenticatedPembelianBaruRoute: typeof AuthenticatedPembelianBaruRoute
   AuthenticatedPenjualanIdRoute: typeof AuthenticatedPenjualanIdRoute
-  AuthenticatedPenjualanBaruRoute: typeof AuthenticatedPenjualanBaruRoute
   AuthenticatedAiIndexRoute: typeof AuthenticatedAiIndexRoute
   AuthenticatedPelangganIndexRoute: typeof AuthenticatedPelangganIndexRoute
   AuthenticatedPembelianIndexRoute: typeof AuthenticatedPembelianIndexRoute
@@ -640,7 +619,6 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedPembelianIdRoute: AuthenticatedPembelianIdRoute,
   AuthenticatedPembelianBaruRoute: AuthenticatedPembelianBaruRoute,
   AuthenticatedPenjualanIdRoute: AuthenticatedPenjualanIdRoute,
-  AuthenticatedPenjualanBaruRoute: AuthenticatedPenjualanBaruRoute,
   AuthenticatedAiIndexRoute: AuthenticatedAiIndexRoute,
   AuthenticatedPelangganIndexRoute: AuthenticatedPelangganIndexRoute,
   AuthenticatedPembelianIndexRoute: AuthenticatedPembelianIndexRoute,

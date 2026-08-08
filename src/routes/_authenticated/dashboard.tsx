@@ -13,7 +13,7 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import { ShoppingCart, Store, TrendingUp, Sparkle } from "lucide-react";
+import { ShoppingCart, TrendingUp, Sparkle } from "lucide-react";
 import { AppShell } from "@/components/AppShell";
 import { AlurLaba } from "@/components/AlurLaba";
 import { RincianAngka } from "@/components/RincianAngka";
@@ -311,11 +311,6 @@ function Dashboard() {
           <Button asChild variant="outline" className="h-11">
             <Link to="/pembelian/baru">
               <ShoppingCart className="mr-1.5 h-4 w-4" /> Pembelian
-            </Link>
-          </Button>
-          <Button asChild variant="outline" className="h-11">
-            <Link to="/penjualan/baru">
-              <Store className="mr-1.5 h-4 w-4" /> Penjualan
             </Link>
           </Button>
           <Button asChild variant="outline" className="h-11">
