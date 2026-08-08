@@ -304,8 +304,14 @@ function GrupSection({
                   <div className="mt-3 grid grid-cols-2 gap-2 text-sm">
                     <div>
                       <div className="text-xs text-muted-foreground">Jumlah</div>
-                      <div className="font-medium">{formatKg(Number(p.jumlah_kg))}</div>
+                      <div className="font-medium">
+                        {formatBoxKg(Number(p.box ?? 0), Number(p.sisa_kg ?? 0))}
+                      </div>
+                      <div className="text-xs text-muted-foreground">
+                        {formatKg(Number(p.jumlah_kg))}
+                      </div>
                     </div>
+
                     <div>
                       <div className="text-xs text-muted-foreground">Total</div>
                       <div className="font-medium">{formatRupiah(Number(p.total_harga))}</div>
