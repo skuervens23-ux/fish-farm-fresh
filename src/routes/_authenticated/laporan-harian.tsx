@@ -217,6 +217,14 @@ function LaporanHarianPage() {
         </Card>
 
         <PratinjauEkspor berkas={pratinjau} onClose={() => setPratinjau(null)} />
+        {gambar ? (
+          <PratinjauGambar
+            src={gambar}
+            namaFile={`Laporan-Harian-${tanggal}.png`}
+            onClose={() => setGambar("")}
+          />
+        ) : null}
+
 
 
 
