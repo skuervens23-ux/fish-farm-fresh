@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
-import { FileSpreadsheet, FileText, Printer, Fish, Loader2, Search } from "lucide-react";
+import { FileSpreadsheet, Image as ImageIcon, Printer, Fish, Loader2, Search } from "lucide-react";
 import { toast } from "sonner";
 import { AppShell } from "@/components/AppShell";
 import { Card } from "@/components/ui/card";
