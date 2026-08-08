@@ -2,7 +2,6 @@ import { Link, useRouterState, useNavigate } from "@tanstack/react-router";
 import {
   LayoutDashboard,
   ShoppingCart,
-  Store,
   Users,
   Contact,
   LogOut,
@@ -43,7 +42,6 @@ const UTAMA: Item[] = [
 
 const TRANSAKSI: Item[] = [
   { title: "Pembelian", url: "/pembelian", icon: ShoppingCart },
-  { title: "Penjualan", url: "/penjualan/baru", icon: Store },
   { title: "Pengeluaran Operasional", url: "/biaya", icon: Receipt },
   { title: "Kas", url: "/kas", icon: Wallet },
 ];
