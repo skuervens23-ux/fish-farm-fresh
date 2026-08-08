@@ -21,6 +21,13 @@ export function formatBoxKg(box: number, sisaKg: number): string {
   return `${angka(s)} kg`;
 }
 
+/** Tampilkan berat ringkas sebagai angka saja: "21,14" (box,kg). */
+export function formatBoxKgAngka(box: number, sisaKg: number): string {
+  const b = Number(box) || 0;
+  const s = Number(sisaKg) || 0;
+  const angka = (n: number) => new Intl.NumberFormat("id-ID", { maximumFractionDigits: 2 }).format(n);
+  return `${angka(b)},${angka(s)}`;
+}
 
 export function formatTanggal(iso: string): string {
   const d = new Date(iso);
