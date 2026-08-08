@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
-import { FileSpreadsheet, FileText, Printer, Fish, Loader2, Search } from "lucide-react";
+import { FileSpreadsheet, Image as ImageIcon, Printer, Fish, Loader2, Search } from "lucide-react";
 import { toast } from "sonner";
 import { AppShell } from "@/components/AppShell";
 import { Card } from "@/components/ui/card";
@@ -19,6 +19,9 @@ import { formatRupiah } from "@/lib/format";
 import { useLaporanHarian, tanggalIndo } from "@/lib/laporan-harian";
 import { buatExcelHarian } from "@/lib/laporan-harian-excel";
 import { PratinjauEkspor, type BerkasPratinjau } from "@/components/PratinjauEkspor";
+import { PratinjauGambar } from "@/components/PratinjauGambar";
+import { gambarLaporanHarian } from "@/lib/gambar-laporan";
+
 
 export const Route = createFileRoute("/_authenticated/laporan-harian")({
   head: () => ({
@@ -51,6 +54,8 @@ function LaporanHarianPage() {
   const [cari, setCari] = useState("");
   const [sibuk, setSibuk] = useState<"" | "excel" | "pdf">("");
   const [pratinjau, setPratinjau] = useState<BerkasPratinjau>(null);
+  const [gambar, setGambar] = useState("");
+
 
   const { data, isLoading } = useLaporanHarian(tanggal);
 
@@ -126,176 +131,19 @@ function LaporanHarianPage() {
     }
   }
 
-  async function unduhPDF() {
+  function tampilkanGambar() {
     if (!laporan) return;
     setSibuk("pdf");
     try {
-      const [{ jsPDF }, autoTableMod] = await Promise.all([
-        import("jspdf"),
-        import("jspdf-autotable"),
-      ]);
-      const autoTable = autoTableMod.default;
-      const doc = new jsPDF({ orientation: "landscape", unit: "pt", format: "a4" });
-      const W = doc.internal.pageSize.getWidth();
-
-      doc.setFontSize(15);
-      doc.text(laporan.perusahaan.toUpperCase(), W / 2, 40, { align: "center" });
-      doc.setFontSize(12);
-      doc.text("LAPORAN TRANSAKSI HARIAN", W / 2, 58, { align: "center" });
-      doc.setFontSize(9);
-      doc.setTextColor(120);
-      doc.text([laporan.alamat, laporan.telepon].filter(Boolean).join(" · "), W / 2, 72, {
-        align: "center",
-      });
-      doc.setTextColor(0);
-      doc.setFontSize(10);
-      doc.text(`Tanggal : ${tanggalIndo(tanggal)}`, 40, 92);
-      doc.text(`No. Laporan : ${laporan.nomor}`, W - 40, 92, { align: "right" });
-
-      const head = { fillColor: [11, 63, 150] as [number, number, number], textColor: 255 };
-      const opsiTabel = {
-        margin: { left: 40, right: 40 },
-        styles: { fontSize: 8, cellPadding: 4, lineWidth: 0.4, lineColor: [190, 200, 215] as [number, number, number] },
-        headStyles: head,
-      };
-      let y = 108;
-      const seksi = (judul: string) => {
-        doc.setFontSize(10);
-        doc.text(judul, 40, y);
-        y += 6;
-      };
-      const lanjut = () => {
-        y = (doc as unknown as { lastAutoTable: { finalY: number } }).lastAutoTable.finalY + 24;
-        if (y > doc.internal.pageSize.getHeight() - 110) {
-          doc.addPage();
-          y = 50;
-        }
-      };
-
-      seksi("A. DATA PEMBELIAN IKAN");
-      autoTable(doc, {
-        ...opsiTabel,
-        startY: y,
-        head: [["No", "Supplier", "Jenis Ikan", "Box", "Sisa Kg", "Total Berat", "Harga/Kg", "Total"]],
-        body: laporan.pembelian.length
-          ? laporan.pembelian.map((r) => [
-              r.no,
-              r.supplier,
-              r.jenis_ikan,
-              r.box,
-              kg(r.sisa_kg),
-              kg(r.berat),
-              formatRupiah(r.harga),
-              formatRupiah(r.total),
-            ])
-          : [["-", "Tidak ada pembelian", "", "", "", "", "", ""]],
-        foot: [["", "TOTAL", "", "", "", kg(total.beratBeli), "", formatRupiah(total.beli)]],
-        footStyles: { fillColor: [232, 238, 249], textColor: 20, fontStyle: "bold" },
-      });
-      lanjut();
-
-      seksi("B. BIAYA OPERASIONAL");
-      autoTable(doc, {
-        ...opsiTabel,
-        startY: y,
-        head: [["No", "Kategori", "Keterangan", "Nominal"]],
-        body: laporan.biaya.length
-          ? laporan.biaya.map((r) => [r.no, r.kategori, r.keterangan, formatRupiah(r.nominal)])
-          : [["-", "Tidak ada biaya", "", ""]],
-        foot: [["", "TOTAL OPERASIONAL", "", formatRupiah(total.biaya)]],
-        footStyles: { fillColor: [232, 238, 249], textColor: 20, fontStyle: "bold" },
-      });
-      lanjut();
-
-      seksi("C. TOTAL PENGELUARAN (PEMBELIAN + OPERASIONAL)");
-      autoTable(doc, {
-        ...opsiTabel,
-        startY: y,
-        head: [["Total Pembelian", "Total Operasional", "Total Pengeluaran"]],
-        body: [
-          [formatRupiah(total.beli), formatRupiah(total.biaya), formatRupiah(total.pengeluaran)],
-        ],
-      });
-      lanjut();
-
-      seksi("D. DATA PENJUALAN");
-      autoTable(doc, {
-        ...opsiTabel,
-        startY: y,
-        head: [["No", "Pembeli", "Jenis Ikan", "Berat Terjual", "Harga Jual/Kg", "Total"]],
-        body: laporan.penjualan.length
-          ? laporan.penjualan.map((r) => [
-              r.no,
-              r.pembeli,
-              r.jenis_ikan,
-              kg(r.berat),
-              formatRupiah(r.harga),
-              formatRupiah(r.total),
-            ])
-          : [["-", "Tidak ada penjualan", "", "", "", ""]],
-        foot: [["", "TOTAL", "", kg(total.beratJual), "", formatRupiah(total.jual)]],
-        footStyles: { fillColor: [232, 238, 249], textColor: 20, fontStyle: "bold" },
-      });
-      lanjut();
-
-      seksi("E. RINGKASAN KEUANGAN");
-      autoTable(doc, {
-        ...opsiTabel,
-        startY: y,
-        head: [
-          ["Total Pembelian", "Total Operasional", "Total Pengeluaran", "Total Penjualan", "Laba Bersih"],
-        ],
-        body: [
-          [
-            formatRupiah(total.beli),
-            formatRupiah(total.biaya),
-            formatRupiah(total.pengeluaran),
-            formatRupiah(total.jual),
-            formatRupiah(total.laba),
-          ],
-        ],
-      });
-
-      lanjut();
-
-      seksi("F. STOK");
-      autoTable(doc, {
-        ...opsiTabel,
-        startY: y,
-        head: [["Total Berat Masuk", "Total Berat Keluar", "Sisa Stok", "Nilai Persediaan"]],
-        body: [
-          [
-            kg(laporan.stok.masuk),
-            kg(laporan.stok.keluar),
-            kg(laporan.stok.sisa),
-            formatRupiah(laporan.stok.nilai),
-          ],
-        ],
-      });
-
-      const halaman = doc.getNumberOfPages();
-      for (let i = 1; i <= halaman; i++) {
-        doc.setPage(i);
-        doc.setFontSize(8);
-        doc.setTextColor(130);
-        doc.text(
-          `${laporan.nomor} · Halaman ${i} dari ${halaman} · dicetak ${new Date().toLocaleString("id-ID")}`,
-          40,
-          doc.internal.pageSize.getHeight() - 20,
-        );
-      }
-      setPratinjau({
-        blob: doc.output("blob"),
-        namaFile: `Laporan-Harian-${tanggal}.pdf`,
-        jenis: "pdf",
-      });
+      setGambar(gambarLaporanHarian(laporan));
     } catch (e) {
       console.error(e);
-      toast.error("Gagal membuat PDF");
+      toast.error("Gagal membuat laporan gambar");
     } finally {
       setSibuk("");
     }
   }
+
 
   return (
     <AppShell title="Laporan Harian">
@@ -353,14 +201,15 @@ function LaporanHarianPage() {
               )}
               Lihat Excel
             </Button>
-            <Button size="sm" variant="secondary" onClick={() => void unduhPDF()} disabled={sibuk !== ""}>
+            <Button size="sm" variant="secondary" onClick={tampilkanGambar} disabled={sibuk !== ""}>
               {sibuk === "pdf" ? (
                 <Loader2 className="mr-1.5 h-4 w-4 animate-spin" />
               ) : (
-                <FileText className="mr-1.5 h-4 w-4" />
+                <ImageIcon className="mr-1.5 h-4 w-4" />
               )}
-              Lihat PDF
+              Lihat Laporan
             </Button>
+
             <Button size="sm" variant="outline" onClick={() => window.print()}>
               <Printer className="mr-1.5 h-4 w-4" /> Cetak
             </Button>
@@ -368,6 +217,14 @@ function LaporanHarianPage() {
         </Card>
 
         <PratinjauEkspor berkas={pratinjau} onClose={() => setPratinjau(null)} />
+        {gambar ? (
+          <PratinjauGambar
+            src={gambar}
+            namaFile={`Laporan-Harian-${tanggal}.png`}
+            onClose={() => setGambar("")}
+          />
+        ) : null}
+
 
 
 
