@@ -10,7 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { formatKg, formatRupiah, formatTanggal } from "@/lib/format";
+import { formatBoxKg, formatKg, formatRupiah, formatTanggal } from "@/lib/format";
 import { useUserRole } from "@/hooks/useUserRole";
 import { unduhLaporanMingguan } from "@/lib/laporan";
 import { toast } from "sonner";
@@ -20,12 +20,16 @@ type Pembelian = {
   tanggal: string;
   jenis_ikan: string;
   jumlah_kg: number | string;
+  box: number | string | null;
+  faktor_box: number | string | null;
+  sisa_kg: number | string | null;
   harga_per_kg: number | string;
   total_harga: number | string;
   jumlah_dibayar: number | string;
   status_bayar: "lunas" | "belum" | "sebagian";
   petani: { nama: string } | null;
 };
+
 
 const FILTER_STATUS = [
   { value: "semua", label: "Semua" },
@@ -66,8 +70,9 @@ function PembelianList() {
       const { data, error } = await supabase
         .from("pembelian")
         .select(
-          "id, tanggal, jenis_ikan, jumlah_kg, harga_per_kg, total_harga, status_bayar, jumlah_dibayar, petani:petani_id(nama)",
+          "id, tanggal, jenis_ikan, jumlah_kg, box, faktor_box, sisa_kg, harga_per_kg, total_harga, status_bayar, jumlah_dibayar, petani:petani_id(nama)",
         )
+
         .order("tanggal", { ascending: false })
         .order("created_at", { ascending: false })
         .limit(200);
@@ -252,6 +257,8 @@ function GrupSection({
     0,
   );
   const totalKg = items.reduce((s, p) => s + Number(p.jumlah_kg), 0);
+  const totalBox = items.reduce((s, p) => s + Number(p.box ?? 0), 0);
+  const totalSisaKg = items.reduce((s, p) => s + Number(p.sisa_kg ?? 0), 0);
 
   return (
     <section>
@@ -261,9 +268,11 @@ function GrupSection({
       </div>
       <Card className="mb-3 grid grid-cols-3 gap-2 p-3 text-xs">
         <div>
-          <div className="text-muted-foreground">Kg</div>
-          <div className="font-medium text-foreground">{formatKg(totalKg)}</div>
+          <div className="text-muted-foreground">Jumlah</div>
+          <div className="font-medium text-foreground">{formatBoxKg(totalBox, totalSisaKg)}</div>
+          <div className="text-[11px] text-muted-foreground">{formatKg(totalKg)}</div>
         </div>
+
         <div>
           <div className="text-muted-foreground">Total</div>
           <div className="font-medium text-primary">{formatRupiah(total)}</div>
@@ -295,8 +304,14 @@ function GrupSection({
                   <div className="mt-3 grid grid-cols-2 gap-2 text-sm">
                     <div>
                       <div className="text-xs text-muted-foreground">Jumlah</div>
-                      <div className="font-medium">{formatKg(Number(p.jumlah_kg))}</div>
+                      <div className="font-medium">
+                        {formatBoxKg(Number(p.box ?? 0), Number(p.sisa_kg ?? 0))}
+                      </div>
+                      <div className="text-xs text-muted-foreground">
+                        {formatKg(Number(p.jumlah_kg))}
+                      </div>
                     </div>
+
                     <div>
                       <div className="text-xs text-muted-foreground">Total</div>
                       <div className="font-medium">{formatRupiah(Number(p.total_harga))}</div>
