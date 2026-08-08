@@ -279,8 +279,14 @@ export function FormPembelian() {
               ({boxNum || 0} box × {faktorNum || 0} kg) + {sisaNum || 0} kg
             </p>
           </div>
-          <p className="text-lg font-semibold text-foreground">{formatKg(totalBerat)}</p>
+          <div className="text-right">
+            <p className="text-lg font-semibold text-foreground">
+              {formatBoxKg(boxNum, sisaNum)}
+            </p>
+            <p className="text-xs text-muted-foreground">Total {formatKg(totalBerat)}</p>
+          </div>
         </div>
+
 
         <RingkasanTotal total={total} sisa={sisa} label="Total Pembelian" />
         <p className="-mt-3 text-[11px] text-muted-foreground">
