@@ -10,7 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { formatBoxKg, formatKg, formatRupiah, formatTanggal } from "@/lib/format";
+import { formatBoxKgAngka, formatKg, formatRupiah, formatTanggal } from "@/lib/format";
 import { useUserRole } from "@/hooks/useUserRole";
 import { unduhLaporanMingguan } from "@/lib/laporan";
 import { toast } from "sonner";
@@ -269,7 +269,7 @@ function GrupSection({
       <Card className="mb-3 grid grid-cols-3 gap-2 p-3 text-xs">
         <div>
           <div className="text-muted-foreground">Jumlah</div>
-          <div className="font-medium text-foreground">{formatBoxKg(totalBox, totalSisaKg)}</div>
+          <div className="font-medium text-foreground">{formatBoxKgAngka(totalBox, totalSisaKg)}</div>
           <div className="text-[11px] text-muted-foreground">{formatKg(totalKg)}</div>
         </div>
 
@@ -305,7 +305,7 @@ function GrupSection({
                     <div>
                       <div className="text-xs text-muted-foreground">Jumlah</div>
                       <div className="font-medium">
-                        {formatBoxKg(Number(p.box ?? 0), Number(p.sisa_kg ?? 0))}
+                        {formatBoxKgAngka(Number(p.box ?? 0), Number(p.sisa_kg ?? 0))}
                       </div>
                       <div className="text-xs text-muted-foreground">
                         {formatKg(Number(p.jumlah_kg))}
