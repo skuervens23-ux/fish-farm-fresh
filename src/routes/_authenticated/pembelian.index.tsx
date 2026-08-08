@@ -257,6 +257,8 @@ function GrupSection({
     0,
   );
   const totalKg = items.reduce((s, p) => s + Number(p.jumlah_kg), 0);
+  const totalBox = items.reduce((s, p) => s + Number(p.box ?? 0), 0);
+  const totalSisaKg = items.reduce((s, p) => s + Number(p.sisa_kg ?? 0), 0);
 
   return (
     <section>
@@ -266,9 +268,11 @@ function GrupSection({
       </div>
       <Card className="mb-3 grid grid-cols-3 gap-2 p-3 text-xs">
         <div>
-          <div className="text-muted-foreground">Kg</div>
-          <div className="font-medium text-foreground">{formatKg(totalKg)}</div>
+          <div className="text-muted-foreground">Jumlah</div>
+          <div className="font-medium text-foreground">{formatBoxKg(totalBox, totalSisaKg)}</div>
+          <div className="text-[11px] text-muted-foreground">{formatKg(totalKg)}</div>
         </div>
+
         <div>
           <div className="text-muted-foreground">Total</div>
           <div className="font-medium text-primary">{formatRupiah(total)}</div>
